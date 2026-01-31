@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Developers can run agents, teams, and workflows with streaming responses in under 5 lines of code
-**Current focus:** Phase 3 Complete - Type Generation & First Resource delivered
+**Current focus:** Phase 4 In Progress - Streaming Support infrastructure underway
 
 ## Current Position
 
-Phase: 3 of 7 (Type Generation & First Resource)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-01-31 - Completed 03-02-PLAN.md (Agents Resource Implementation)
+Phase: 4 of 7 (Streaming Support)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-31 - Completed 04-01-PLAN.md (SSE Streaming Infrastructure)
 
-Progress: [██████░░░░] ~40%
+Progress: [███████░░░] ~43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: ~2.3 min
-- Total execution time: ~0.45 hours
+- Total plans completed: 9
+- Average duration: ~2.2 min
+- Total execution time: ~0.5 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [██████░░░░] ~40%
 | 01 | 2 | ~5 min | ~2.5 min |
 | 02 | 3 | ~8 min | ~2.7 min |
 | 03 | 3 | ~6 min | ~2.0 min |
+| 04 | 1 | ~2 min | ~2.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (~3 min), 03-01 (~2 min), 03-03 (~1 min), 03-02 (~3 min)
-- Trend: consistent ~2 min average
+- Last 5 plans: 03-01 (~2 min), 03-03 (~1 min), 03-02 (~3 min), 04-01 (~2 min)
+- Trend: consistent ~2 min average, excellent velocity
 
 *Updated after each plan completion*
 
@@ -65,6 +66,9 @@ Recent decisions affecting current work:
 - 03-03: Remove Content-Type header for FormData to allow browser auto-set boundary
 - 03-02: Resource classes receive client instance (not config) to call client.request()
 - 03-02: AgentsResource pattern established for all future resources
+- 04-01: Use eventsource-parser library for spec-compliant SSE parsing
+- 04-01: Discriminated union on 'event' field for type-safe event handling
+- 04-01: parseSSEResponse accepts AbortController for cancellation support
 
 ### Pending Todos
 
@@ -88,7 +92,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 03-02-PLAN.md (Agents Resource Implementation) - Phase 3 Complete
+Stopped at: Completed 04-01-PLAN.md (SSE Streaming Infrastructure)
 Resume file: None
 
 ## Phase 2 Complete
@@ -147,3 +151,25 @@ Phase 3 (Type Generation & First Resource) complete!
 - Type-safe API methods with OpenAPI-derived types
 
 **Ready for Phase 4:** Streaming support with dual interfaces (iterators + events)
+
+## Phase 4 In Progress
+
+Phase 4 (Streaming Support) in progress - plan 1 of 3 complete!
+
+**Plans completed:**
+- 04-01: SSE Streaming Infrastructure (event types and parser)
+
+**Deliverables so far:**
+- eventsource-parser@3.0.6 dependency installed
+- 5 typed event interfaces with discriminated union (RunStarted, RunContent, RunCompleted, MemoryUpdateStarted, MemoryUpdateCompleted)
+- parseSSEResponse async generator for Response body streaming
+- src/streaming barrel export module
+- 13 new tests (5 event types + 8 parser) - total 140 tests passing
+
+**Patterns established:**
+- Discriminated union on 'event' field enables type-safe event handling in switch statements
+- SSE parser yields typed events via async generator pattern
+- Parser handles abort signal and ensures controller is aborted on completion/error
+- eventsource-parser handles chunked responses, multi-line data, SSE comments/pings
+
+**Next in Phase 4:** AgentStream class with async iterator and EventEmitter interfaces
