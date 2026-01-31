@@ -63,13 +63,19 @@ export class AgentOSClient {
   /**
    * Make an authenticated request to the API
    */
-  private async request<T>(
+  protected async request<T>(
     method: RequestOptions["method"],
     path: string,
     options: Omit<RequestOptions, "method"> = {},
   ): Promise<T> {
     const url = `${this.baseUrl}${path}`;
-    const headers = this.buildHeaders(options.headers);
+    let headers = this.buildHeaders(options.headers);
+
+    // Remove Content-Type for FormData - fetch auto-sets with boundary
+    if (options.body instanceof FormData) {
+      const { "Content-Type": _, ...headersWithoutContentType } = headers;
+      headers = headersWithoutContentType;
+    }
 
     return requestWithRetry<T>(
       url,
