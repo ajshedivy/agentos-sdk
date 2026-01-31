@@ -1,0 +1,51 @@
+{
+  "name": "@ajshedivy/agentos-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for AgentOS HTTP API",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run build && publint && attw --pack ."
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["agentos", "sdk", "api-client", "typescript"],
+  "author": "Adam Shedivy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajshedivy/agentos-sdk.git"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.0",
+    "@biomejs/biome": "^1.9.4",
+    "publint": "^0.2.12",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
