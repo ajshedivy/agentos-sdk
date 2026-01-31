@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 4 of 7 (Streaming Support)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-31 - Completed 04-01-PLAN.md (SSE Streaming Infrastructure)
+Last activity: 2026-01-31 - Completed 04-02-PLAN.md (AgentStream Class)
 
-Progress: [███████░░░] ~43%
+Progress: [████████░░] ~48%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: ~2.2 min
-- Total execution time: ~0.5 hours
+- Total execution time: ~0.6 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [███████░░░] ~43%
 | 01 | 2 | ~5 min | ~2.5 min |
 | 02 | 3 | ~8 min | ~2.7 min |
 | 03 | 3 | ~6 min | ~2.0 min |
-| 04 | 1 | ~2 min | ~2.0 min |
+| 04 | 2 | ~5 min | ~2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (~2 min), 03-03 (~1 min), 03-02 (~3 min), 04-01 (~2 min)
+- Last 5 plans: 03-03 (~1 min), 03-02 (~3 min), 04-01 (~2 min), 04-02 (~3 min)
 - Trend: consistent ~2 min average, excellent velocity
 
 *Updated after each plan completion*
@@ -69,6 +69,10 @@ Recent decisions affecting current work:
 - 04-01: Use eventsource-parser library for spec-compliant SSE parsing
 - 04-01: Discriminated union on 'event' field for type-safe event handling
 - 04-01: parseSSEResponse accepts AbortController for cancellation support
+- 04-02: AgentStream implements both AsyncIterable and event emitter patterns for flexible consumption
+- 04-02: Throw error on double iteration to prevent developer confusion
+- 04-02: Handler errors logged but don't break iteration (error isolation)
+- 04-02: Factory method fromSSEResponse for stream creation (constructor is @internal)
 
 ### Pending Todos
 
@@ -92,7 +96,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 04-01-PLAN.md (SSE Streaming Infrastructure)
+Stopped at: Completed 04-02-PLAN.md (AgentStream Class)
 Resume file: None
 
 ## Phase 2 Complete
@@ -154,22 +158,29 @@ Phase 3 (Type Generation & First Resource) complete!
 
 ## Phase 4 In Progress
 
-Phase 4 (Streaming Support) in progress - plan 1 of 3 complete!
+Phase 4 (Streaming Support) in progress - plan 2 of 3 complete!
 
 **Plans completed:**
 - 04-01: SSE Streaming Infrastructure (event types and parser)
+- 04-02: AgentStream Class (dual-interface stream abstraction)
 
 **Deliverables so far:**
 - eventsource-parser@3.0.6 dependency installed
 - 5 typed event interfaces with discriminated union (RunStarted, RunContent, RunCompleted, MemoryUpdateStarted, MemoryUpdateCompleted)
 - parseSSEResponse async generator for Response body streaming
-- src/streaming barrel export module
-- 13 new tests (5 event types + 8 parser) - total 140 tests passing
+- AgentStream class with AsyncIterable + EventEmitter interfaces
+- fromSSEResponse factory method, abort control, consumption state tracking
+- src/streaming barrel export module with public API exports
+- 28 new tests (5 event types + 8 parser + 15 stream) - total 155 tests passing
 
 **Patterns established:**
 - Discriminated union on 'event' field enables type-safe event handling in switch statements
 - SSE parser yields typed events via async generator pattern
 - Parser handles abort signal and ensures controller is aborted on completion/error
 - eventsource-parser handles chunked responses, multi-line data, SSE comments/pings
+- Dual consumption interface (AsyncIterable + EventEmitter) for maximum flexibility
+- Type-safe event handlers via discriminated union extraction
+- Factory method pattern for stream creation
+- Error isolation in event handlers (log but don't break iteration)
 
-**Next in Phase 4:** AgentStream class with async iterator and EventEmitter interfaces
+**Next in Phase 4:** AgentsResource.runStream() method integration
