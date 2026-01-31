@@ -9,11 +9,11 @@ Requirements for initial release. Full functional parity with Python AgentOSClie
 
 ### Core
 
-- [ ] **CORE-01**: Client can be instantiated with baseUrl and timeout configuration
-- [ ] **CORE-02**: Client can retrieve OS configuration via getConfig()
-- [ ] **CORE-03**: Client can check health status via health()
-- [ ] **CORE-04**: Client supports Bearer token auth (client-level or per-request headers)
-- [ ] **CORE-05**: All requests/responses have full TypeScript types
+- [x] **CORE-01**: Client can be instantiated with baseUrl and timeout configuration
+- [x] **CORE-02**: Client can retrieve OS configuration via getConfig()
+- [x] **CORE-03**: Client can check health status via health()
+- [x] **CORE-04**: Client supports Bearer token auth (client-level or per-request headers)
+- [x] **CORE-05**: All requests/responses have full TypeScript types
 
 ### Agents
 
@@ -85,9 +85,9 @@ Requirements for initial release. Full functional parity with Python AgentOSClie
 
 ### Errors
 
-- [ ] **ERRR-01**: Client throws typed error when server unavailable (RemoteServerUnavailableError)
-- [ ] **ERRR-02**: Client throws typed errors for HTTP status codes (BadRequestError, NotFoundError, etc.)
-- [ ] **ERRR-03**: All errors include response details (status, message, requestId)
+- [x] **ERRR-01**: Client throws typed error when server unavailable (RemoteServerUnavailableError)
+- [x] **ERRR-02**: Client throws typed errors for HTTP status codes (BadRequestError, NotFoundError, etc.)
+- [x] **ERRR-03**: All errors include response details (status, message, requestId)
 
 ### Infrastructure
 
@@ -133,11 +133,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 2 | Pending |
-| CORE-02 | Phase 2 | Pending |
-| CORE-03 | Phase 2 | Pending |
-| CORE-04 | Phase 2 | Pending |
-| CORE-05 | Phase 2 | Pending |
+| CORE-01 | Phase 2 | Complete |
+| CORE-02 | Phase 2 | Complete |
+| CORE-03 | Phase 2 | Complete |
+| CORE-04 | Phase 2 | Complete |
+| CORE-05 | Phase 2 | Complete |
 | AGNT-01 | Phase 3 | Pending |
 | AGNT-02 | Phase 3 | Pending |
 | AGNT-03 | Phase 3 | Pending |
@@ -179,9 +179,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | KNOW-02 | Phase 6 | Pending |
 | KNOW-03 | Phase 6 | Pending |
 | KNOW-04 | Phase 6 | Pending |
-| ERRR-01 | Phase 2 | Pending |
-| ERRR-02 | Phase 2 | Pending |
-| ERRR-03 | Phase 2 | Pending |
+| ERRR-01 | Phase 2 | Complete |
+| ERRR-02 | Phase 2 | Complete |
+| ERRR-03 | Phase 2 | Complete |
 | INFR-01 | Phase 7 | Pending |
 | INFR-02 | Phase 7 | Pending |
 | INFR-03 | Phase 1 | Complete |
