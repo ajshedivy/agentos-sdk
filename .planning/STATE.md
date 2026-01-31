@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 4 of 7 (Streaming Support)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-31 - Completed 04-02-PLAN.md (AgentStream Class)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-31 - Completed 04-03-PLAN.md (AgentsResource Streaming Integration)
 
-Progress: [████████░░] ~48%
+Progress: [█████████░] ~52%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: ~2.2 min
-- Total execution time: ~0.6 hours
+- Total plans completed: 11
+- Average duration: ~2.3 min
+- Total execution time: ~0.7 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [████████░░] ~48%
 | 01 | 2 | ~5 min | ~2.5 min |
 | 02 | 3 | ~8 min | ~2.7 min |
 | 03 | 3 | ~6 min | ~2.0 min |
-| 04 | 2 | ~5 min | ~2.5 min |
+| 04 | 3 | ~9 min | ~3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (~1 min), 03-02 (~3 min), 04-01 (~2 min), 04-02 (~3 min)
-- Trend: consistent ~2 min average, excellent velocity
+- Last 5 plans: 03-02 (~3 min), 04-01 (~2 min), 04-02 (~3 min), 04-03 (~4 min)
+- Trend: stable ~3 min average, excellent velocity maintained
 
 *Updated after each plan completion*
 
@@ -73,6 +73,10 @@ Recent decisions affecting current work:
 - 04-02: Throw error on double iteration to prevent developer confusion
 - 04-02: Handler errors logged but don't break iteration (error isolation)
 - 04-02: Factory method fromSSEResponse for stream creation (constructor is @internal)
+- 04-03: requestStream() has no retry logic (streaming requests not safely retryable)
+- 04-03: requestStream() sets Accept: text/event-stream header automatically
+- 04-03: continue() defaults to streaming (stream: true), supports opt-out with stream: false
+- 04-03: Resource methods create AbortController and pass to stream for user cancellation support
 
 ### Pending Todos
 
@@ -96,7 +100,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 04-02-PLAN.md (AgentStream Class)
+Stopped at: Completed 04-03-PLAN.md (AgentsResource Streaming Integration) - Phase 4 complete
 Resume file: None
 
 ## Phase 2 Complete
@@ -156,22 +160,26 @@ Phase 3 (Type Generation & First Resource) complete!
 
 **Ready for Phase 4:** Streaming support with dual interfaces (iterators + events)
 
-## Phase 4 In Progress
+## Phase 4 Complete
 
-Phase 4 (Streaming Support) in progress - plan 2 of 3 complete!
+Phase 4 (Streaming Support) complete!
 
 **Plans completed:**
 - 04-01: SSE Streaming Infrastructure (event types and parser)
 - 04-02: AgentStream Class (dual-interface stream abstraction)
+- 04-03: AgentsResource Streaming Integration (runStream, continue, cancel methods)
 
-**Deliverables so far:**
+**Deliverables:**
 - eventsource-parser@3.0.6 dependency installed
 - 5 typed event interfaces with discriminated union (RunStarted, RunContent, RunCompleted, MemoryUpdateStarted, MemoryUpdateCompleted)
 - parseSSEResponse async generator for Response body streaming
 - AgentStream class with AsyncIterable + EventEmitter interfaces
-- fromSSEResponse factory method, abort control, consumption state tracking
-- src/streaming barrel export module with public API exports
-- 28 new tests (5 event types + 8 parser + 15 stream) - total 155 tests passing
+- AgentOSClient.requestStream() method for SSE endpoints
+- AgentsResource.runStream() returns AgentStream for streaming runs
+- AgentsResource.continue() with streaming and non-streaming modes
+- AgentsResource.cancel() for agent run cancellation
+- Complete public API exports (AgentStream, event types, option types)
+- 180 tests passing (26 new in 04-03: 7 client + 15 agents + 4 index)
 
 **Patterns established:**
 - Discriminated union on 'event' field enables type-safe event handling in switch statements
@@ -182,5 +190,8 @@ Phase 4 (Streaming Support) in progress - plan 2 of 3 complete!
 - Type-safe event handlers via discriminated union extraction
 - Factory method pattern for stream creation
 - Error isolation in event handlers (log but don't break iteration)
+- requestStream() method pattern for SSE endpoints (no retry logic)
+- Resource methods create AbortController for stream cancellation
+- continue() method with dual return type (AgentStream | result)
 
-**Next in Phase 4:** AgentsResource.runStream() method integration
+**Ready for Phase 5:** Teams Resource implementation with streaming support
