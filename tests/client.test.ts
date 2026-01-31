@@ -1,0 +1,417 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AgentOSClient } from "../src/client";
+import { AuthenticationError } from "../src/errors";
+
+// Mock the http module
+vi.mock("../src/http", () => ({
+  requestWithRetry: vi.fn(),
+}));
+
+import { requestWithRetry } from "../src/http";
+
+const mockRequestWithRetry = vi.mocked(requestWithRetry);
+
+describe("AgentOSClient", () => {
+  beforeEach(() => {
+    mockRequestWithRetry.mockReset();
+  });
+
+  describe("constructor", () => {
+    it("should require baseUrl", () => {
+      expect(() => new AgentOSClient({} as AgentOSClientOptions)).toThrow(
+        "baseUrl is required",
+      );
+      expect(() => new AgentOSClient({ baseUrl: "" })).toThrow(
+        "baseUrl is required",
+      );
+    });
+
+    it("should accept valid options", () => {
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "test-key",
+        timeout: 5000,
+        maxRetries: 3,
+      });
+
+      expect(client.version).toBe("0.1.0");
+    });
+
+    it("should remove trailing slash from baseUrl", async () => {
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com/",
+      });
+
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/health",
+        expect.any(Object),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it("should handle baseUrl without trailing slash", async () => {
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/health",
+        expect.any(Object),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+  });
+
+  describe("getConfig", () => {
+    it("should fetch config from /config endpoint", async () => {
+      const mockConfig = {
+        version: "1.0.0",
+        environment: "production",
+        features: { streaming: true },
+      };
+      mockRequestWithRetry.mockResolvedValueOnce(mockConfig);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      const config = await client.getConfig();
+
+      expect(config).toEqual(mockConfig);
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/config",
+        expect.objectContaining({ method: "GET" }),
+        2, // default maxRetries
+        30000, // default timeout
+      );
+    });
+
+    it("should include default headers in getConfig request", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ version: "1.0.0" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      await client.getConfig();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "Content-Type": "application/json",
+            "User-Agent": "agentos-sdk/0.1.0",
+          }),
+        }),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+  });
+
+  describe("health", () => {
+    it("should fetch health from /health endpoint", async () => {
+      const mockHealth = {
+        status: "healthy",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+      mockRequestWithRetry.mockResolvedValueOnce(mockHealth);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      const health = await client.health();
+
+      expect(health).toEqual(mockHealth);
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/health",
+        expect.objectContaining({ method: "GET" }),
+        2, // default maxRetries
+        30000, // default timeout
+      );
+    });
+
+    it("should handle degraded health status", async () => {
+      const mockHealth = {
+        status: "degraded",
+        timestamp: "2026-01-31T00:00:00Z",
+        details: { database: "slow" },
+      };
+      mockRequestWithRetry.mockResolvedValueOnce(mockHealth);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      const health = await client.health();
+
+      expect(health.status).toBe("degraded");
+      expect(health.details).toEqual({ database: "slow" });
+    });
+  });
+
+  describe("authentication", () => {
+    it("should include Bearer token when apiKey is set", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "my-secret-key",
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer my-secret-key",
+          }),
+        }),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it("should not include Authorization header when apiKey is not set", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      await client.health();
+
+      const call = mockRequestWithRetry.mock.calls[0];
+      const headers = call?.[1]?.headers as Record<string, string>;
+      expect(headers.Authorization).toBeUndefined();
+    });
+
+    it("should work with empty string apiKey (treated as not set)", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "",
+      });
+
+      await client.health();
+
+      const call = mockRequestWithRetry.mock.calls[0];
+      const headers = call?.[1]?.headers as Record<string, string>;
+      // Empty string is falsy, so no Authorization header
+      expect(headers.Authorization).toBeUndefined();
+    });
+  });
+
+  describe("custom options", () => {
+    it("should use custom timeout", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        timeout: 5000,
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Object),
+        2,
+        5000, // custom timeout
+      );
+    });
+
+    it("should use custom maxRetries", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        maxRetries: 5,
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Object),
+        5, // custom maxRetries
+        30000,
+      );
+    });
+
+    it("should use zero maxRetries when explicitly set", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        maxRetries: 0,
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Object),
+        0, // zero maxRetries
+        30000,
+      );
+    });
+
+    it("should include custom headers", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        headers: { "X-Custom-Header": "custom-value" },
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "X-Custom-Header": "custom-value",
+          }),
+        }),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it("should allow custom headers to override defaults", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        headers: { "Content-Type": "application/xml" },
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "Content-Type": "application/xml",
+          }),
+        }),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it("should combine multiple custom options", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "test-key",
+        timeout: 10000,
+        maxRetries: 3,
+        headers: { "X-Trace-Id": "abc123" },
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/health",
+        expect.objectContaining({
+          method: "GET",
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-key",
+            "X-Trace-Id": "abc123",
+            "Content-Type": "application/json",
+            "User-Agent": "agentos-sdk/0.1.0",
+          }),
+        }),
+        3, // custom maxRetries
+        10000, // custom timeout
+      );
+    });
+  });
+
+  describe("error handling", () => {
+    it("should propagate AuthenticationError from requestWithRetry", async () => {
+      mockRequestWithRetry.mockRejectedValueOnce(
+        new AuthenticationError("Invalid API key", "req-123"),
+      );
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "invalid-key",
+      });
+
+      const healthPromise = client.health();
+      await expect(healthPromise).rejects.toThrow(AuthenticationError);
+      await expect(healthPromise).rejects.toThrow("Invalid API key");
+    });
+
+    it("should propagate generic Error from requestWithRetry", async () => {
+      mockRequestWithRetry.mockRejectedValueOnce(new Error("Network failure"));
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      await expect(client.health()).rejects.toThrow("Network failure");
+    });
+
+    it("should propagate errors for getConfig", async () => {
+      mockRequestWithRetry.mockRejectedValueOnce(
+        new AuthenticationError("Unauthorized", "req-456"),
+      );
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      await expect(client.getConfig()).rejects.toThrow(AuthenticationError);
+    });
+  });
+
+  describe("version", () => {
+    it("should expose version as readonly property", () => {
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      expect(client.version).toBe("0.1.0");
+    });
+
+    it("should include version in User-Agent header", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ status: "healthy" });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      await client.health();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            "User-Agent": "agentos-sdk/0.1.0",
+          }),
+        }),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+  });
+});
+
+// Type import for testing
+import type { AgentOSClientOptions } from "../src/types";
