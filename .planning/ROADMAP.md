@@ -64,10 +64,12 @@ Plans:
   3. User can get agent details by ID with type-safe response
   4. User can run agent (non-streaming) and receive typed result
   5. Client class exposes agents namespace with resource methods
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 03-01-PLAN.md — Set up OpenAPI type generation with openapi-typescript
+- [ ] 03-02-PLAN.md — Create AgentsResource class with list, get, run methods
+- [ ] 03-03-PLAN.md — Integrate AgentsResource into AgentOSClient
 
 ### Phase 4: Streaming Support
 **Goal**: Streaming interface supports SSE with dual async iterator and event emitter patterns
@@ -141,7 +143,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Project Setup & Foundation | 2/2 | Complete | 2026-01-31 |
 | 2. Core Infrastructure | 3/3 | Complete | 2026-01-31 |
-| 3. Type Generation & First Resource | 0/TBD | Not started | - |
+| 3. Type Generation & First Resource | 0/3 | Not started | - |
 | 4. Streaming Support | 0/TBD | Not started | - |
 | 5. Resource Expansion | 0/TBD | Not started | - |
 | 6. File Uploads & Knowledge | 0/TBD | Not started | - |
