@@ -535,7 +535,10 @@ describe("AgentOSClient", () => {
         headers: { "Content-Type": "text/event-stream" },
       });
 
-      vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(mockResponse)));
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(() => Promise.resolve(mockResponse)),
+      );
 
       const client = new AgentOSClient({
         baseUrl: "https://api.example.com",

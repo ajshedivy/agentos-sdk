@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   APIError,
   AgentOSClient,
+  AgentStream,
   AgentsResource,
   AuthenticationError,
   BadRequestError,
@@ -12,7 +13,19 @@ import {
   UnprocessableEntityError,
   VERSION,
 } from "../src/index";
-import type { RunOptions, components, paths } from "../src/index";
+import type {
+  AgentRunEvent,
+  ContinueOptions,
+  MemoryUpdateCompletedEvent,
+  MemoryUpdateStartedEvent,
+  RunCompletedEvent,
+  RunContentEvent,
+  RunOptions,
+  RunStartedEvent,
+  StreamRunOptions,
+  components,
+  paths,
+} from "../src/index";
 
 describe("Package Exports", () => {
   it("should export VERSION", () => {
@@ -111,6 +124,71 @@ describe("Package Exports", () => {
       const error = new RemoteServerUnavailableError("Service unavailable");
       expect(error.status).toBe(503);
       expect(error.name).toBe("RemoteServerUnavailableError");
+    });
+  });
+
+  describe("streaming exports", () => {
+    it("exports AgentStream class", () => {
+      expect(AgentStream).toBeDefined();
+      expect(typeof AgentStream).toBe("function");
+    });
+
+    it("exports streaming option types", () => {
+      // Type-level test - if these compile, types are exported
+      const streamOpts: StreamRunOptions = { message: "test" };
+      const continueOpts: ContinueOptions = { tools: "[]" };
+      expect(streamOpts.message).toBe("test");
+      expect(continueOpts.tools).toBe("[]");
+    });
+
+    it("exports event types", () => {
+      // Type-level test - if these compile, types are exported
+      const runStarted: RunStartedEvent = {
+        event: "RunStarted",
+        run_id: "run-123",
+        agent_id: "agent-1",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+      const runContent: RunContentEvent = {
+        event: "RunContent",
+        content: "Hello",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+      const runCompleted: RunCompletedEvent = {
+        event: "RunCompleted",
+        status: "success",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+      const memUpdateStarted: MemoryUpdateStartedEvent = {
+        event: "MemoryUpdateStarted",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+      const memUpdateCompleted: MemoryUpdateCompletedEvent = {
+        event: "MemoryUpdateCompleted",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+
+      expect(runStarted.event).toBe("RunStarted");
+      expect(runContent.event).toBe("RunContent");
+      expect(runCompleted.event).toBe("RunCompleted");
+      expect(memUpdateStarted.event).toBe("MemoryUpdateStarted");
+      expect(memUpdateCompleted.event).toBe("MemoryUpdateCompleted");
+    });
+
+    it("exports discriminated union AgentRunEvent", () => {
+      // Type-level test - verify union discriminates correctly
+      const event: AgentRunEvent = {
+        event: "RunContent",
+        content: "test",
+        timestamp: "2026-01-31T00:00:00Z",
+      };
+
+      // TypeScript should narrow the type based on discriminator
+      if (event.event === "RunContent") {
+        expect(event.content).toBe("test");
+      } else {
+        throw new Error("Union discriminator failed");
+      }
     });
   });
 });

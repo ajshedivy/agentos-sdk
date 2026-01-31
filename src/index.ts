@@ -20,7 +20,11 @@ export type {
 
 // Resource classes
 export { AgentsResource } from "./resources/agents";
-export type { RunOptions } from "./resources/agents";
+export type {
+  ContinueOptions,
+  RunOptions,
+  StreamRunOptions,
+} from "./resources/agents";
 
 // Generated types (re-export useful types)
 export type { components, paths } from "./generated/types";
