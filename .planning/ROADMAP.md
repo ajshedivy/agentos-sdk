@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Project Setup & Foundation** - Dual ESM/CJS package with TypeScript strict mode
 - [x] **Phase 2: Core Infrastructure** - HTTP client with auth and typed errors
-- [ ] **Phase 3: Type Generation & First Resource** - OpenAPI types with complete agents resource
+- [x] **Phase 3: Type Generation & First Resource** - OpenAPI types with complete agents resource
 - [ ] **Phase 4: Streaming Support** - SSE streaming with dual interfaces
 - [ ] **Phase 5: Resource Expansion** - All remaining API resources
 - [ ] **Phase 6: File Uploads & Knowledge** - Multipart uploads with platform-specific handling
@@ -67,9 +67,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Set up OpenAPI type generation with openapi-typescript
-- [ ] 03-02-PLAN.md — Create AgentsResource class with list, get, run methods
-- [ ] 03-03-PLAN.md — Integrate AgentsResource into AgentOSClient
+- [x] 03-01-PLAN.md — Set up OpenAPI type generation with openapi-typescript
+- [x] 03-02-PLAN.md — Create AgentsResource class with list, get, run methods
+- [x] 03-03-PLAN.md — Integrate AgentsResource into AgentOSClient
 
 ### Phase 4: Streaming Support
 **Goal**: Streaming interface supports SSE with dual async iterator and event emitter patterns
@@ -143,7 +143,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Project Setup & Foundation | 2/2 | Complete | 2026-01-31 |
 | 2. Core Infrastructure | 3/3 | Complete | 2026-01-31 |
-| 3. Type Generation & First Resource | 0/3 | Not started | - |
+| 3. Type Generation & First Resource | 3/3 | Complete | 2026-01-31 |
 | 4. Streaming Support | 0/TBD | Not started | - |
 | 5. Resource Expansion | 0/TBD | Not started | - |
 | 6. File Uploads & Knowledge | 0/TBD | Not started | - |

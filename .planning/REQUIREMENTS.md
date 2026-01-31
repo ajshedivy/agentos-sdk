@@ -17,9 +17,9 @@ Requirements for initial release. Full functional parity with Python AgentOSClie
 
 ### Agents
 
-- [ ] **AGNT-01**: Client can list all agents via agents.list()
-- [ ] **AGNT-02**: Client can get agent details via agents.get(agentId)
-- [ ] **AGNT-03**: Client can run agent (non-streaming) via agents.run(agentId, options)
+- [x] **AGNT-01**: Client can list all agents via agents.list()
+- [x] **AGNT-02**: Client can get agent details via agents.get(agentId)
+- [x] **AGNT-03**: Client can run agent (non-streaming) via agents.run(agentId, options)
 - [ ] **AGNT-04**: Client can run agent (streaming) via agents.runStream(agentId, options)
 - [ ] **AGNT-05**: Client can continue paused agent run via agents.continue(agentId, runId, options)
 - [ ] **AGNT-06**: Client can cancel agent run via agents.cancel(agentId, runId)

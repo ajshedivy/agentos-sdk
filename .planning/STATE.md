@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Developers can run agents, teams, and workflows with streaming responses in under 5 lines of code
-**Current focus:** Phase 2 Complete - Core Infrastructure delivered
+**Current focus:** Phase 3 Complete - Type Generation & First Resource delivered
 
 ## Current Position
 
@@ -14,14 +14,14 @@ Plan: 3 of 3 in current phase
 Status: Phase complete
 Last activity: 2026-01-31 - Completed 03-02-PLAN.md (Agents Resource Implementation)
 
-Progress: [███████░░░] ~43%
+Progress: [██████░░░░] ~40%
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed: 8
-- Average duration: ~2.5 min
-- Total execution time: ~0.47 hours
+- Average duration: ~2.3 min
+- Total execution time: ~0.45 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [███████░░░] ~43%
 |-------|-------|-------|----------|
 | 01 | 2 | ~5 min | ~2.5 min |
 | 02 | 3 | ~8 min | ~2.7 min |
-| 03 | 3 | ~7 min | ~2.3 min |
+| 03 | 3 | ~6 min | ~2.0 min |
 
 **Recent Trend:**
 - Last 5 plans: 02-03 (~3 min), 03-01 (~2 min), 03-03 (~1 min), 03-02 (~3 min)
-- Trend: consistent (2-3 min for implementation tasks)
+- Trend: consistent ~2 min average
 
 *Updated after each plan completion*
 
@@ -61,10 +61,10 @@ Recent decisions affecting current work:
 - 03-01: Generated types committed to git (version-controlled with code)
 - 03-01: Single types.ts file for all OpenAPI schemas (not split by resource)
 - 03-01: Manual type generation via npm script (no pre-build hook)
-- 03-02: Changed request() from protected to public with @internal doc comment
-- 03-02: Resource classes receive client instance for centralized request handling
-- 03-02: AgentsResource exposed as readonly property on AgentOSClient
+- 03-03: Changed request() from protected to public (@internal) for resource class access
 - 03-03: Remove Content-Type header for FormData to allow browser auto-set boundary
+- 03-02: Resource classes receive client instance (not config) to call client.request()
+- 03-02: AgentsResource pattern established for all future resources
 
 ### Pending Todos
 
@@ -78,6 +78,8 @@ None yet.
 
 **Research Notes:**
 - Phase 4 (Streaming): SSE connection pooling needs validation during planning to avoid 6-connection browser limit
+
+**Resolved:**
 - ~~Phase 6 (File Uploads): Content-Type header must NOT be set manually for FormData (breaks boundary parameter)~~ RESOLVED in 03-03
 
 **Minor:**
@@ -114,7 +116,7 @@ Phase 2 (Core Infrastructure) complete!
 - Parse error bodies from multiple JSON formats
 - Extract x-request-id header for error tracking
 - Client constructor validates required options
-- Private request method centralizes URL building, headers, and retry config
+- request method centralizes URL building, headers, and retry config
 - Bearer token injection via buildHeaders
 
 ## Phase 3 Complete
@@ -122,27 +124,26 @@ Phase 2 (Core Infrastructure) complete!
 Phase 3 (Type Generation & First Resource) complete!
 
 **Plans completed:**
-- 03-01: Type Generation Setup (OpenAPI-to-TypeScript pipeline with openapi-typescript)
-- 03-02: Agents Resource Implementation (AgentsResource with list, get, run methods)
-- 03-03: Protected Request Method (Changed request() to public, added FormData handling)
+- 03-01: Type Generation Setup (OpenAPI-to-TypeScript pipeline)
+- 03-03: Protected Request Method (enable resource class access)
+- 03-02: Agents Resource Implementation (first complete API resource)
 
 **Deliverables:**
-- openapi-typescript package installed and configured
-- npm script for type generation (npm run generate:types)
-- src/generated/types.ts with OpenAPI schema types
+- openapi-typescript package and generate:types script
+- src/generated/types.ts with 93 OpenAPI schemas (AgentResponse, error types, etc.)
 - AgentsResource class with list(), get(), run() methods
-- AgentOSClient.agents property for accessing agent operations
-- Public exports for AgentsResource and generated types
-- FormData Content-Type header removal for multipart uploads
-- 127 tests passing (22 new resource tests + 3 integration tests)
+- AgentOSClient.agents property for namespace access
+- FormData Content-Type handling in client.request()
+- Complete public API exports (AgentsResource, RunOptions, components, paths)
+- 127 tests passing (22 resource + 3 integration + 5 generated + 24 client + 13 index + 20 http + 38 errors)
 
 **Patterns established:**
-- Resource class pattern: Receives client instance, calls client.request()
-- Namespace pattern: client.agents.list() for shallow API structure
-- Generated type usage: Extract from components['schemas'] for type safety
-- FormData detection removes Content-Type header
-- Manual type generation via npm script
-- Single types.ts file for all OpenAPI schemas
+- OpenAPI type generation from committed spec file
+- Resource class pattern: receives client instance, calls client.request()
+- Public request() method with @internal JSDoc for resource access
+- FormData Content-Type removal for proper multipart uploads
+- Shallow namespace pattern (client.agents.list vs client.resources.agents.list)
+- Generated types imported by resource classes
+- Type-safe API methods with OpenAPI-derived types
 
-**Next:**
-- Phase 4: Streaming Responses (SSE for agent runs)
+**Ready for Phase 4:** Streaming support with dual interfaces (iterators + events)
