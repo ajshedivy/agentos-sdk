@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Developers can run agents, teams, and workflows with streaming responses in under 5 lines of code
-**Current focus:** Phase 1 - Project Setup & Foundation (COMPLETE)
+**Current focus:** Phase 2 - Core Infrastructure (Types & Errors complete)
 
 ## Current Position
 
-Phase: 1 of 7 (Project Setup & Foundation)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-01-31 - Completed 01-02-PLAN.md (Test Infrastructure & Validation)
+Phase: 2 of 7 (Core Infrastructure)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-31 - Completed 02-01-PLAN.md (Types & Errors)
 
-Progress: [██░░░░░░░░] ~10%
+Progress: [███░░░░░░░] ~15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: ~2.5 min
-- Total execution time: ~0.08 hours
+- Total plans completed: 3
+- Average duration: ~2.3 min
+- Total execution time: ~0.12 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 2 | ~5 min | ~2.5 min |
+| 02 | 1 | ~2 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (~3 min), 01-02 (~2 min)
-- Trend: improving
+- Last 5 plans: 01-01 (~3 min), 01-02 (~2 min), 02-01 (~2 min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -50,6 +51,8 @@ Recent decisions affecting current work:
 - 01-01: Use Biome over ESLint (20x faster, single tool, sufficient rules)
 - 01-02: Use explicit vitest imports (globals: false) for SDK clarity
 - 01-02: No coverage thresholds - report only, don't fail builds
+- 02-01: Placeholder OSConfig/HealthStatus interfaces - will be refined in Phase 3 with OpenAPI types
+- 02-01: All 5xx errors (except 503) map to InternalServerError for simplicity
 
 ### Pending Todos
 
@@ -71,22 +74,26 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 01-02-PLAN.md (Phase 1 Complete)
+Stopped at: Completed 02-01-PLAN.md (Types & Errors)
 Resume file: None
 
-## Phase 1 Completion Summary
+## Phase 2 Progress
 
-Phase 1 (Project Setup & Foundation) is now complete:
+Phase 2 (Core Infrastructure) in progress:
 
 **Plans completed:**
-- 01-01: Package Initialization (npm, TypeScript, tsup, Biome)
-- 01-02: Test Infrastructure & Validation (Vitest, publint, attw)
+- 02-01: Types & Errors (TypeScript interfaces and error class hierarchy)
 
-**Deliverables:**
-- Dual ESM/CJS package with correct exports
-- TypeScript strict mode configuration
-- Vitest test runner with coverage reporting
-- Biome linting and formatting
-- Full validation pipeline (build, test, lint, typecheck, validate)
+**Plans remaining:**
+- 02-02: HTTP Client (fetch wrapper with retry logic)
+- 02-03: AgentOS Client (main client class with configuration)
 
-**Ready for Phase 2:** Core client implementation can begin.
+**Deliverables so far:**
+- AgentOSClientOptions, RequestOptions, OSConfig, HealthStatus interfaces
+- APIError base class + 7 specific error subclasses
+- createErrorFromResponse helper function
+- Comprehensive error class test suite (38 tests)
+
+**Patterns established:**
+- Object.setPrototypeOf for ES5 instanceof compatibility
+- Error class hierarchy with typed status codes
