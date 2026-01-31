@@ -62,8 +62,10 @@ export class AgentOSClient {
 
   /**
    * Make an authenticated request to the API
+   *
+   * @internal - Used by resource classes, not intended for direct SDK user access
    */
-  protected async request<T>(
+  async request<T>(
     method: RequestOptions["method"],
     path: string,
     options: Omit<RequestOptions, "method"> = {},
