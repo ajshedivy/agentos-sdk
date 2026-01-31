@@ -12,16 +12,16 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 Phase: 3 of 7 (Type Generation & First Resource)
 Plan: 3 of 3 in current phase
 Status: Phase complete
-Last activity: 2026-01-31 - Completed 03-03-PLAN.md (Protected Request Method)
+Last activity: 2026-01-31 - Completed 03-02-PLAN.md (Agents Resource Implementation)
 
-Progress: [██████░░░░] ~35%
+Progress: [███████░░░] ~43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: ~2.3 min
-- Total execution time: ~0.42 hours
+- Total plans completed: 8
+- Average duration: ~2.5 min
+- Total execution time: ~0.47 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████░░░░] ~35%
 |-------|-------|-------|----------|
 | 01 | 2 | ~5 min | ~2.5 min |
 | 02 | 3 | ~8 min | ~2.7 min |
-| 03 | 2 | ~3 min | ~1.5 min |
+| 03 | 3 | ~7 min | ~2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (~3 min), 02-03 (~3 min), 03-01 (~2 min), 03-03 (~1 min)
-- Trend: improving (sub-2 min for focused tasks)
+- Last 5 plans: 02-03 (~3 min), 03-01 (~2 min), 03-03 (~1 min), 03-02 (~3 min)
+- Trend: consistent (2-3 min for implementation tasks)
 
 *Updated after each plan completion*
 
@@ -61,7 +61,9 @@ Recent decisions affecting current work:
 - 03-01: Generated types committed to git (version-controlled with code)
 - 03-01: Single types.ts file for all OpenAPI schemas (not split by resource)
 - 03-01: Manual type generation via npm script (no pre-build hook)
-- 03-03: Changed request() from private to protected for resource class access
+- 03-02: Changed request() from protected to public with @internal doc comment
+- 03-02: Resource classes receive client instance for centralized request handling
+- 03-02: AgentsResource exposed as readonly property on AgentOSClient
 - 03-03: Remove Content-Type header for FormData to allow browser auto-set boundary
 
 ### Pending Todos
@@ -84,7 +86,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 03-03-PLAN.md (Protected Request Method) - Phase 3 Complete
+Stopped at: Completed 03-02-PLAN.md (Agents Resource Implementation) - Phase 3 Complete
 Resume file: None
 
 ## Phase 2 Complete
@@ -117,25 +119,30 @@ Phase 2 (Core Infrastructure) complete!
 
 ## Phase 3 Complete
 
-Phase 3 (Type Generation & First Resource) in progress - base infrastructure complete!
+Phase 3 (Type Generation & First Resource) complete!
 
 **Plans completed:**
 - 03-01: Type Generation Setup (OpenAPI-to-TypeScript pipeline with openapi-typescript)
-- 03-03: Protected Request Method (Changed request() to protected, added FormData handling)
+- 03-02: Agents Resource Implementation (AgentsResource with list, get, run methods)
+- 03-03: Protected Request Method (Changed request() to public, added FormData handling)
 
 **Deliverables:**
 - openapi-typescript package installed and configured
 - npm script for type generation (npm run generate:types)
 - src/generated/types.ts with OpenAPI schema types
-- AgentOSClient.request() changed from private to protected
+- AgentsResource class with list(), get(), run() methods
+- AgentOSClient.agents property for accessing agent operations
+- Public exports for AgentsResource and generated types
 - FormData Content-Type header removal for multipart uploads
-- 100 tests passing (24 client tests including 2 new FormData tests)
+- 127 tests passing (22 new resource tests + 3 integration tests)
 
 **Patterns established:**
-- Protected request() method for resource class access
+- Resource class pattern: Receives client instance, calls client.request()
+- Namespace pattern: client.agents.list() for shallow API structure
+- Generated type usage: Extract from components['schemas'] for type safety
 - FormData detection removes Content-Type header
 - Manual type generation via npm script
 - Single types.ts file for all OpenAPI schemas
 
 **Next:**
-- 03-02/03-04: Agents Resource Implementation (when user is ready)
+- Phase 4: Streaming Responses (SSE for agent runs)
