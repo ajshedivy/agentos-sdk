@@ -1,5 +1,5 @@
-import { EventSourceParserStream } from 'eventsource-parser/stream';
-import type { AgentRunEvent } from './events';
+import { EventSourceParserStream } from "eventsource-parser/stream";
+import type { AgentRunEvent } from "./events";
 
 /**
  * Parse SSE response body into typed AgentRunEvent objects.
@@ -17,10 +17,10 @@ import type { AgentRunEvent } from './events';
  */
 export async function* parseSSEResponse(
   response: Response,
-  controller: AbortController
+  controller: AbortController,
 ): AsyncGenerator<AgentRunEvent> {
   if (!response.body) {
-    throw new Error('Response body is null');
+    throw new Error("Response body is null");
   }
 
   const eventStream = response.body
@@ -38,8 +38,8 @@ export async function* parseSSEResponse(
       // Parse JSON data and add event type
       const data = JSON.parse(event.data);
       yield {
-        event: event.event ?? 'message',
-        ...data
+        event: event.event ?? "message",
+        ...data,
       } as AgentRunEvent;
     }
   } finally {

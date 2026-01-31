@@ -14,7 +14,7 @@ export interface BaseEvent {
  * @public
  */
 export interface RunStartedEvent extends BaseEvent {
-  event: 'RunStarted';
+  event: "RunStarted";
   session_id: string;
   agent_id: string;
   agent_name: string;
@@ -28,7 +28,7 @@ export interface RunStartedEvent extends BaseEvent {
  * @public
  */
 export interface RunContentEvent extends BaseEvent {
-  event: 'RunContent';
+  event: "RunContent";
   content: string;
   content_type: string;
 }
@@ -39,7 +39,7 @@ export interface RunContentEvent extends BaseEvent {
  * @public
  */
 export interface RunCompletedEvent extends BaseEvent {
-  event: 'RunCompleted';
+  event: "RunCompleted";
   session_id: string;
   agent_id: string;
   agent_name: string;
@@ -60,7 +60,7 @@ export interface RunCompletedEvent extends BaseEvent {
  * @public
  */
 export interface MemoryUpdateStartedEvent extends BaseEvent {
-  event: 'MemoryUpdateStarted';
+  event: "MemoryUpdateStarted";
 }
 
 /**
@@ -69,7 +69,7 @@ export interface MemoryUpdateStartedEvent extends BaseEvent {
  * @public
  */
 export interface MemoryUpdateCompletedEvent extends BaseEvent {
-  event: 'MemoryUpdateCompleted';
+  event: "MemoryUpdateCompleted";
 }
 
 /**

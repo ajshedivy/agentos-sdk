@@ -1,2 +1,2 @@
-export * from './events';
-export { parseSSEResponse } from './parser';
+export * from "./events";
+export { parseSSEResponse } from "./parser";
