@@ -7,15 +7,11 @@
 /**
  * SDK version number
  */
-export const VERSION = '0.1.0'
+export const VERSION = "0.1.0";
 
 /**
  * Placeholder for AgentOSClient class (implemented in Phase 2)
  */
 export class AgentOSClient {
-  readonly version = VERSION
-
-  constructor() {
-    // Placeholder - real implementation in Phase 2
-  }
+  readonly version = VERSION;
 }

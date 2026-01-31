@@ -8,9 +8,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "import": {
-        "types": "./dist/index.d.mts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       },
       "require": {
@@ -19,11 +18,7 @@
       }
     }
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
@@ -37,12 +32,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": [
-    "agentos",
-    "sdk",
-    "api-client",
-    "typescript"
-  ],
+  "keywords": ["agentos", "sdk", "api-client", "typescript"],
   "author": "Adam Shedivy",
   "license": "MIT",
   "repository": {
