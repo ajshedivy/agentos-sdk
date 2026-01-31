@@ -18,7 +18,11 @@
       }
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
@@ -33,7 +37,12 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["agentos", "sdk", "api-client", "typescript"],
+  "keywords": [
+    "agentos",
+    "sdk",
+    "api-client",
+    "typescript"
+  ],
   "author": "Adam Shedivy",
   "license": "MIT",
   "repository": {
@@ -51,6 +60,7 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
+    "eventsource-parser": "^3.0.6",
     "exponential-backoff": "^3.1.3"
   }
 }
