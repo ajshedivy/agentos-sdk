@@ -1,3 +1,4 @@
+import { createErrorFromResponse } from "./errors";
 import { requestWithRetry } from "./http";
 import { AgentsResource } from "./resources/agents";
 import type {
@@ -98,6 +99,55 @@ export class AgentOSClient {
   }
 
   /**
+   * Make a streaming request that returns raw Response.
+   *
+   * Unlike request() which parses JSON, this returns the Response
+   * for SSE streaming. Does NOT use retry logic - streaming requests
+   * are not safely retryable.
+   *
+   * @internal - Used by resource classes for streaming endpoints
+   */
+  async requestStream(
+    method: RequestOptions["method"],
+    path: string,
+    options: Omit<RequestOptions, "method"> = {},
+  ): Promise<Response> {
+    const url = `${this.baseUrl}${path}`;
+    let headers = this.buildHeaders(options.headers);
+
+    // Remove Content-Type for FormData - fetch auto-sets with boundary
+    if (options.body instanceof FormData) {
+      const { "Content-Type": _, ...headersWithoutContentType } = headers;
+      headers = headersWithoutContentType;
+    }
+
+    // Add Accept header for SSE
+    headers.Accept = "text/event-stream";
+
+    const fetchOptions: globalThis.RequestInit = {
+      method,
+      headers,
+      body: options.body instanceof FormData ? options.body : undefined,
+      signal: options.signal,
+    };
+
+    const response = await fetch(url, fetchOptions);
+
+    if (!response.ok) {
+      const message = await response.text();
+      const requestId = response.headers.get("x-request-id") ?? undefined;
+      throw createErrorFromResponse(
+        response.status,
+        message,
+        requestId,
+        this.extractHeaders(response.headers),
+      );
+    }
+
+    return response;
+  }
+
+  /**
    * Build request headers with authentication
    */
   private buildHeaders(
@@ -116,5 +166,16 @@ export class AgentOSClient {
     }
 
     return headers;
+  }
+
+  /**
+   * Extract headers from Headers object to plain record
+   */
+  private extractHeaders(headers: Headers): Record<string, string> {
+    const result: Record<string, string> = {};
+    headers.forEach((value, key) => {
+      result[key] = value;
+    });
+    return result;
   }
 }

@@ -513,6 +513,180 @@ describe("AgentOSClient", () => {
       );
     });
   });
+
+  describe("requestStream()", () => {
+    beforeEach(() => {
+      // Reset fetch mock
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(() =>
+          Promise.resolve({
+            ok: true,
+            headers: new Headers(),
+            body: null,
+          }),
+        ),
+      );
+    });
+
+    it("should return Response object for successful request", async () => {
+      const mockResponse = new Response("data: event", {
+        status: 200,
+        headers: { "Content-Type": "text/event-stream" },
+      });
+
+      vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(mockResponse)));
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      const response = await (client as any).requestStream("POST", "/stream");
+
+      expect(response).toBe(mockResponse);
+    });
+
+    it("should set Accept: text/event-stream header", async () => {
+      const mockFetch = vi.fn(() =>
+        Promise.resolve(
+          new Response("data: event", {
+            status: 200,
+          }),
+        ),
+      );
+
+      vi.stubGlobal("fetch", mockFetch);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      await (client as any).requestStream("POST", "/stream");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://api.example.com/stream",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Accept: "text/event-stream",
+          }),
+        }),
+      );
+    });
+
+    it("should remove Content-Type header for FormData", async () => {
+      const mockFetch = vi.fn(() =>
+        Promise.resolve(
+          new Response("data: event", {
+            status: 200,
+          }),
+        ),
+      );
+
+      vi.stubGlobal("fetch", mockFetch);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      const formData = new FormData();
+      formData.append("message", "test");
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      await (client as any).requestStream("POST", "/stream", {
+        body: formData,
+      });
+
+      const call = mockFetch.mock.calls[0];
+      const headers = call?.[1]?.headers as Record<string, string>;
+      expect(headers["Content-Type"]).toBeUndefined();
+      expect(headers.Accept).toBe("text/event-stream");
+    });
+
+    it("should throw appropriate error on non-2xx status", async () => {
+      const mockFetch = vi.fn(() =>
+        Promise.resolve(
+          new Response("Unauthorized", {
+            status: 401,
+            headers: { "x-request-id": "req-123" },
+          }),
+        ),
+      );
+
+      vi.stubGlobal("fetch", mockFetch);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "invalid-key",
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      const promise = (client as any).requestStream("POST", "/stream");
+
+      await expect(promise).rejects.toThrow(AuthenticationError);
+    });
+
+    it("should include Authorization header when apiKey is set", async () => {
+      const mockFetch = vi.fn(() =>
+        Promise.resolve(
+          new Response("data: event", {
+            status: 200,
+          }),
+        ),
+      );
+
+      vi.stubGlobal("fetch", mockFetch);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "test-key",
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      await (client as any).requestStream("POST", "/stream");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-key",
+            Accept: "text/event-stream",
+          }),
+        }),
+      );
+    });
+
+    it("should pass AbortSignal for cancellation support", async () => {
+      const mockFetch = vi.fn(() =>
+        Promise.resolve(
+          new Response("data: event", {
+            status: 200,
+          }),
+        ),
+      );
+
+      vi.stubGlobal("fetch", mockFetch);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      const controller = new AbortController();
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      await (client as any).requestStream("POST", "/stream", {
+        signal: controller.signal,
+      });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          signal: controller.signal,
+        }),
+      );
+    });
+  });
 });
 
 // Type import for testing
