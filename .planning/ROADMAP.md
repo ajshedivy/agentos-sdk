@@ -12,7 +12,7 @@ This roadmap delivers a production-ready TypeScript SDK for the AgentOS API in s
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Project Setup & Foundation** - Dual ESM/CJS package with TypeScript strict mode
+- [x] **Phase 1: Project Setup & Foundation** - Dual ESM/CJS package with TypeScript strict mode
 - [ ] **Phase 2: Core Infrastructure** - HTTP client with auth and typed errors
 - [ ] **Phase 3: Type Generation & First Resource** - OpenAPI types with complete agents resource
 - [ ] **Phase 4: Streaming Support** - SSE streaming with dual interfaces
@@ -34,8 +34,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Initialize package with dual ESM/CJS config, TypeScript strict mode, build tooling
-- [ ] 01-02-PLAN.md — Configure test runner, create placeholder files, validate complete package
+- [x] 01-01-PLAN.md — Initialize package with dual ESM/CJS config, TypeScript strict mode, build tooling
+- [x] 01-02-PLAN.md — Configure test runner, create placeholder files, validate complete package
 
 ### Phase 2: Core Infrastructure
 **Goal**: HTTP client layer provides authentication, error handling, and retry logic
@@ -137,7 +137,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Setup & Foundation | 0/2 | Planned | - |
+| 1. Project Setup & Foundation | 2/2 | ✓ Complete | 2026-01-31 |
 | 2. Core Infrastructure | 0/TBD | Not started | - |
 | 3. Type Generation & First Resource | 0/TBD | Not started | - |
 | 4. Streaming Support | 0/TBD | Not started | - |
