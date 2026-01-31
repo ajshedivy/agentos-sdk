@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentOSClient } from "../../src/client";
 import { AgentsResource } from "../../src/resources/agents";
+import { AgentStream } from "../../src/streaming";
 
 describe("AgentsResource", () => {
   let resource: AgentsResource;
   let mockClient: AgentOSClient;
   let requestSpy: ReturnType<typeof vi.fn>;
+  let requestStreamSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Create a real client, then spy on its request method
@@ -14,9 +16,12 @@ describe("AgentsResource", () => {
       apiKey: "test-key",
     });
     requestSpy = vi.fn();
-    // Mock the request method
+    requestStreamSpy = vi.fn();
+    // Mock the request methods
     // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
     (mockClient as any).request = requestSpy;
+    // biome-ignore lint/suspicious/noExplicitAny: Need to mock requestStream method for testing
+    (mockClient as any).requestStream = requestStreamSpy;
 
     resource = new AgentsResource(mockClient);
   });
@@ -266,6 +271,221 @@ describe("AgentsResource", () => {
       const callArgs = requestSpy.mock.calls[0];
       const formData = callArgs[2].body as FormData;
       expect(formData.get("user_id")).toBeNull();
+    });
+  });
+
+  describe("runStream()", () => {
+    it("returns AgentStream instance", async () => {
+      const mockResponse = new Response("data: event", {
+        status: 200,
+        headers: { "Content-Type": "text/event-stream" },
+      });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      const result = await resource.runStream("agent-1", { message: "Hi" });
+
+      expect(result).toBeInstanceOf(AgentStream);
+    });
+
+    it("builds FormData with stream=true", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.runStream("agent-1", { message: "Hi there" });
+
+      expect(requestStreamSpy).toHaveBeenCalledWith(
+        "POST",
+        "/agents/agent-1/runs",
+        expect.objectContaining({
+          body: expect.any(FormData),
+          signal: expect.any(AbortSignal),
+        }),
+      );
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("message")).toBe("Hi there");
+      expect(formData.get("stream")).toBe("true");
+    });
+
+    it("includes session_id when provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.runStream("agent-1", {
+        message: "Hi",
+        sessionId: "session-456",
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("session_id")).toBe("session-456");
+    });
+
+    it("includes user_id when provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.runStream("agent-1", {
+        message: "Hi",
+        userId: "user-789",
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("user_id")).toBe("user-789");
+    });
+
+    it("passes AbortController to stream", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      const stream = await resource.runStream("agent-1", { message: "Hi" });
+
+      expect(stream.controller).toBeInstanceOf(AbortController);
+    });
+  });
+
+  describe("continue()", () => {
+    it("returns AgentStream when streaming (default)", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      const result = await resource.continue("agent-1", "run-123", {
+        tools: "[]",
+      });
+
+      expect(result).toBeInstanceOf(AgentStream);
+      expect(requestStreamSpy).toHaveBeenCalledWith(
+        "POST",
+        "/agents/agent-1/runs/run-123/continue",
+        expect.objectContaining({
+          body: expect.any(FormData),
+          signal: expect.any(AbortSignal),
+        }),
+      );
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("stream")).toBe("true");
+    });
+
+    it("returns AgentStream when stream=true explicitly", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      const result = await resource.continue("agent-1", "run-123", {
+        tools: "[]",
+        stream: true,
+      });
+
+      expect(result).toBeInstanceOf(AgentStream);
+    });
+
+    it("returns result when stream=false", async () => {
+      const mockResult = { run_id: "run-123", content: "Done!" };
+      requestSpy.mockResolvedValueOnce(mockResult);
+
+      const result = await resource.continue("agent-1", "run-123", {
+        tools: "[]",
+        stream: false,
+      });
+
+      expect(result).toEqual(mockResult);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/agents/agent-1/runs/run-123/continue",
+        expect.objectContaining({ body: expect.any(FormData) }),
+      );
+
+      const callArgs = requestSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("stream")).toBe("false");
+    });
+
+    it("includes tools parameter", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      const toolsJSON = '[{"name":"get_weather","result":"sunny"}]';
+      await resource.continue("agent-1", "run-123", { tools: toolsJSON });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("tools")).toBe(toolsJSON);
+    });
+
+    it("includes session_id when provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("agent-1", "run-123", {
+        tools: "[]",
+        sessionId: "session-456",
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("session_id")).toBe("session-456");
+    });
+
+    it("includes user_id when provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("agent-1", "run-123", {
+        tools: "[]",
+        userId: "user-789",
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("user_id")).toBe("user-789");
+    });
+
+    it("URL-encodes agent ID and run ID", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("agent/special", "run/123", { tools: "[]" });
+
+      expect(requestStreamSpy).toHaveBeenCalledWith(
+        "POST",
+        "/agents/agent%2Fspecial/runs/run%2F123/continue",
+        expect.any(Object),
+      );
+    });
+  });
+
+  describe("cancel()", () => {
+    it("calls cancel endpoint", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.cancel("agent-1", "run-123");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/agents/agent-1/runs/run-123/cancel",
+      );
+    });
+
+    it("URL-encodes agent ID and run ID", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.cancel("agent/special", "run/123");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/agents/agent%2Fspecial/runs/run%2F123/cancel",
+      );
+    });
+
+    it("propagates errors from client.request", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("Run not found"));
+
+      await expect(resource.cancel("agent-1", "run-123")).rejects.toThrow(
+        "Run not found",
+      );
     });
   });
 });
