@@ -20,10 +20,10 @@ Requirements for initial release. Full functional parity with Python AgentOSClie
 - [x] **AGNT-01**: Client can list all agents via agents.list()
 - [x] **AGNT-02**: Client can get agent details via agents.get(agentId)
 - [x] **AGNT-03**: Client can run agent (non-streaming) via agents.run(agentId, options)
-- [ ] **AGNT-04**: Client can run agent (streaming) via agents.runStream(agentId, options)
-- [ ] **AGNT-05**: Client can continue paused agent run via agents.continue(agentId, runId, options)
-- [ ] **AGNT-06**: Client can cancel agent run via agents.cancel(agentId, runId)
-- [ ] **AGNT-07**: Streaming returns typed events (RunStartedEvent, RunContentEvent, RunCompletedEvent, etc.)
+- [x] **AGNT-04**: Client can run agent (streaming) via agents.runStream(agentId, options)
+- [x] **AGNT-05**: Client can continue paused agent run via agents.continue(agentId, runId, options)
+- [x] **AGNT-06**: Client can cancel agent run via agents.cancel(agentId, runId)
+- [x] **AGNT-07**: Streaming returns typed events (RunStartedEvent, RunContentEvent, RunCompletedEvent, etc.)
 
 ### Teams
 
@@ -141,10 +141,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AGNT-01 | Phase 3 | Pending |
 | AGNT-02 | Phase 3 | Pending |
 | AGNT-03 | Phase 3 | Pending |
-| AGNT-04 | Phase 4 | Pending |
-| AGNT-05 | Phase 4 | Pending |
-| AGNT-06 | Phase 4 | Pending |
-| AGNT-07 | Phase 4 | Pending |
+| AGNT-04 | Phase 4 | Complete |
+| AGNT-05 | Phase 4 | Complete |
+| AGNT-06 | Phase 4 | Complete |
+| AGNT-07 | Phase 4 | Complete |
 | TEAM-01 | Phase 5 | Pending |
 | TEAM-02 | Phase 5 | Pending |
 | TEAM-03 | Phase 5 | Pending |

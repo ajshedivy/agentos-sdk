@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Project Setup & Foundation** - Dual ESM/CJS package with TypeScript strict mode
 - [x] **Phase 2: Core Infrastructure** - HTTP client with auth and typed errors
 - [x] **Phase 3: Type Generation & First Resource** - OpenAPI types with complete agents resource
-- [ ] **Phase 4: Streaming Support** - SSE streaming with dual interfaces
+- [x] **Phase 4: Streaming Support** - SSE streaming with dual interfaces
 - [ ] **Phase 5: Resource Expansion** - All remaining API resources
 - [ ] **Phase 6: File Uploads & Knowledge** - Multipart uploads with platform-specific handling
 - [ ] **Phase 7: Runtime Support & Polish** - Node.js and browser validation
@@ -85,9 +85,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — SSE infrastructure: eventsource-parser, event types, parser utilities
-- [ ] 04-02-PLAN.md — AgentStream class with dual async iterator and event emitter interfaces
-- [ ] 04-03-PLAN.md — Streaming methods on AgentsResource (runStream, continue, cancel) + exports
+- [x] 04-01-PLAN.md — SSE infrastructure: eventsource-parser, event types, parser utilities
+- [x] 04-02-PLAN.md — AgentStream class with dual async iterator and event emitter interfaces
+- [x] 04-03-PLAN.md — Streaming methods on AgentsResource (runStream, continue, cancel) + exports
 
 ### Phase 5: Resource Expansion
 **Goal**: All core API resources implemented with consistent patterns
@@ -146,7 +146,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Project Setup & Foundation | 2/2 | Complete | 2026-01-31 |
 | 2. Core Infrastructure | 3/3 | Complete | 2026-01-31 |
 | 3. Type Generation & First Resource | 3/3 | Complete | 2026-01-31 |
-| 4. Streaming Support | 0/3 | Planned | - |
+| 4. Streaming Support | 3/3 | Complete | 2026-01-31 |
 | 5. Resource Expansion | 0/TBD | Not started | - |
 | 6. File Uploads & Knowledge | 0/TBD | Not started | - |
 | 7. Runtime Support & Polish | 0/TBD | Not started | - |
