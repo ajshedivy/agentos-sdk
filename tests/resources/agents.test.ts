@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { AgentsResource } from "../../src/resources/agents";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentOSClient } from "../../src/client";
+import { AgentsResource } from "../../src/resources/agents";
 
 describe("AgentsResource", () => {
   let resource: AgentsResource;
@@ -15,6 +15,7 @@ describe("AgentsResource", () => {
     });
     requestSpy = vi.fn();
     // Mock the request method
+    // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
     (mockClient as any).request = requestSpy;
 
     resource = new AgentsResource(mockClient);

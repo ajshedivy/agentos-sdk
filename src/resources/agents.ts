@@ -1,5 +1,5 @@
-import type { components } from "../generated/types";
 import type { AgentOSClient } from "../client";
+import type { components } from "../generated/types";
 
 // Extract types from generated schemas
 type AgentResponse = components["schemas"]["AgentResponse"];
