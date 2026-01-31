@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   APIError,
   AgentOSClient,
+  AgentsResource,
   AuthenticationError,
   BadRequestError,
   InternalServerError,
@@ -11,6 +12,7 @@ import {
   UnprocessableEntityError,
   VERSION,
 } from "../src/index";
+import type { RunOptions, components, paths } from "../src/index";
 
 describe("Package Exports", () => {
   it("should export VERSION", () => {
@@ -20,6 +22,20 @@ describe("Package Exports", () => {
   it("should export AgentOSClient", () => {
     expect(AgentOSClient).toBeDefined();
     expect(typeof AgentOSClient).toBe("function");
+  });
+
+  it("should export AgentsResource", () => {
+    expect(AgentsResource).toBeDefined();
+    expect(typeof AgentsResource).toBe("function");
+  });
+
+  it("should export generated types namespace", () => {
+    // Type-level check - if this compiles, exports work
+    // Runtime: just verify the import doesn't throw
+    const _typeCheck: RunOptions = { message: "test" };
+    const _componentCheck: components = {} as components;
+    const _pathsCheck: paths = {} as paths;
+    expect(true).toBe(true);
   });
 
   it("should export all error classes", () => {

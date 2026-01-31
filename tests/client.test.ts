@@ -451,6 +451,68 @@ describe("AgentOSClient", () => {
       expect(headers["Content-Type"]).toBe("application/json");
     });
   });
+
+  describe("agents property", () => {
+    it("exposes AgentsResource instance", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.agents).toBeDefined();
+      expect(typeof client.agents.list).toBe("function");
+      expect(typeof client.agents.get).toBe("function");
+      expect(typeof client.agents.run).toBe("function");
+    });
+
+    it("agents resource uses client.request for API calls", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce([]);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "test-key",
+      });
+
+      await client.agents.list();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/agents",
+        expect.objectContaining({
+          method: "GET",
+          headers: expect.objectContaining({
+            Authorization: "Bearer test-key",
+            "Content-Type": "application/json",
+            "User-Agent": "agentos-sdk/0.1.0",
+          }),
+        }),
+        2, // default maxRetries
+        30000, // default timeout
+      );
+    });
+
+    it("agents resource respects custom client configuration", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({
+        id: "agent-1",
+        name: "Test Agent",
+      });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://custom.api.com",
+        apiKey: "custom-key",
+        timeout: 5000,
+        maxRetries: 5,
+      });
+
+      await client.agents.get("agent-1");
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://custom.api.com/agents/agent-1",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer custom-key",
+          }),
+        }),
+        5, // custom maxRetries
+        5000, // custom timeout
+      );
+    });
+  });
 });
 
 // Type import for testing
