@@ -411,6 +411,46 @@ describe("AgentOSClient", () => {
       );
     });
   });
+
+  describe("request() FormData handling", () => {
+    it("should remove Content-Type header when body is FormData", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ success: true });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "test-key",
+      });
+
+      // Access protected method via any cast for testing
+      const formData = new FormData();
+      formData.append("message", "test");
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access protected method for testing
+      await (client as any).request("POST", "/test", { body: formData });
+
+      const call = mockRequestWithRetry.mock.calls[0];
+      const headers = call?.[1]?.headers as Record<string, string>;
+      // Content-Type should NOT be set - fetch auto-sets for FormData
+      expect(headers["Content-Type"]).toBeUndefined();
+    });
+
+    it("should keep Content-Type header for non-FormData bodies", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({ success: true });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access protected method for testing
+      await (client as any).request("POST", "/test", {
+        body: '{"data": "test"}',
+      });
+
+      const call = mockRequestWithRetry.mock.calls[0];
+      const headers = call?.[1]?.headers as Record<string, string>;
+      expect(headers["Content-Type"]).toBe("application/json");
+    });
+  });
 });
 
 // Type import for testing
