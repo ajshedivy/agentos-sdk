@@ -82,10 +82,12 @@ Plans:
   4. User can consume stream via event emitter (.on('content', ...) pattern)
   5. User can continue paused agent run with streaming support
   6. User can cancel running agent via agents.cancel()
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 04-01-PLAN.md — SSE infrastructure: eventsource-parser, event types, parser utilities
+- [ ] 04-02-PLAN.md — AgentStream class with dual async iterator and event emitter interfaces
+- [ ] 04-03-PLAN.md — Streaming methods on AgentsResource (runStream, continue, cancel) + exports
 
 ### Phase 5: Resource Expansion
 **Goal**: All core API resources implemented with consistent patterns
@@ -137,14 +139,14 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Setup & Foundation | 2/2 | Complete | 2026-01-31 |
 | 2. Core Infrastructure | 3/3 | Complete | 2026-01-31 |
 | 3. Type Generation & First Resource | 3/3 | Complete | 2026-01-31 |
-| 4. Streaming Support | 0/TBD | Not started | - |
+| 4. Streaming Support | 0/3 | Planned | - |
 | 5. Resource Expansion | 0/TBD | Not started | - |
 | 6. File Uploads & Knowledge | 0/TBD | Not started | - |
 | 7. Runtime Support & Polish | 0/TBD | Not started | - |
