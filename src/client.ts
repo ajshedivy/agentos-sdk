@@ -1,4 +1,5 @@
 import { requestWithRetry } from "./http";
+import { AgentsResource } from "./resources/agents";
 import type {
   AgentOSClientOptions,
   HealthStatus,
@@ -22,6 +23,7 @@ import type {
  */
 export class AgentOSClient {
   readonly version = "0.1.0";
+  readonly agents: AgentsResource;
 
   private readonly baseUrl: string;
   private readonly apiKey?: string;
@@ -44,6 +46,9 @@ export class AgentOSClient {
       "User-Agent": `agentos-sdk/${this.version}`,
       ...options.headers,
     };
+
+    // Initialize resource namespaces - pass client instance
+    this.agents = new AgentsResource(this);
   }
 
   /**
