@@ -18,6 +18,13 @@ export type {
   RequestOptions,
 } from "./types";
 
+// Resource classes
+export { AgentsResource } from "./resources/agents";
+export type { RunOptions } from "./resources/agents";
+
+// Generated types (re-export useful types)
+export type { components, paths } from "./generated/types";
+
 // Errors
 export {
   APIError,
