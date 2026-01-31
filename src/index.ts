@@ -4,14 +4,28 @@
  * @packageDocumentation
  */
 
-/**
- * SDK version number
- */
+// Version
 export const VERSION = "0.1.0";
 
-/**
- * Placeholder for AgentOSClient class (implemented in Phase 2)
- */
-export class AgentOSClient {
-  readonly version = VERSION;
-}
+// Client
+export { AgentOSClient } from "./client";
+
+// Types
+export type {
+  AgentOSClientOptions,
+  HealthStatus,
+  OSConfig,
+  RequestOptions,
+} from "./types";
+
+// Errors
+export {
+  APIError,
+  AuthenticationError,
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+  RateLimitError,
+  RemoteServerUnavailableError,
+  UnprocessableEntityError,
+} from "./errors";
