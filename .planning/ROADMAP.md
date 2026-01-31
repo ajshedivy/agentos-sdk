@@ -47,10 +47,12 @@ Plans:
   3. Client can retrieve OS configuration and health status
   4. Client implements retry logic with exponential backoff for transient failures
   5. All requests and responses have full TypeScript types
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 02-01-PLAN.md — Create type definitions and error class hierarchy with instanceof support
+- [ ] 02-02-PLAN.md — Build HTTP wrapper with retry logic using exponential-backoff
+- [ ] 02-03-PLAN.md — Implement AgentOSClient with getConfig() and health() methods
 
 ### Phase 3: Type Generation & First Resource
 **Goal**: OpenAPI type generation pipeline delivers typed SDK with complete agents resource
@@ -137,8 +139,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Setup & Foundation | 2/2 | ✓ Complete | 2026-01-31 |
-| 2. Core Infrastructure | 0/TBD | Not started | - |
+| 1. Project Setup & Foundation | 2/2 | Complete | 2026-01-31 |
+| 2. Core Infrastructure | 0/3 | Not started | - |
 | 3. Type Generation & First Resource | 0/TBD | Not started | - |
 | 4. Streaming Support | 0/TBD | Not started | - |
 | 5. Resource Expansion | 0/TBD | Not started | - |
