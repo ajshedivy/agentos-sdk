@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
-import { AgentStream } from "../../src/streaming/stream";
+import { describe, expect, it, vi } from "vitest";
 import type {
   AgentRunEvent,
-  RunStartedEvent,
-  RunContentEvent,
   RunCompletedEvent,
+  RunContentEvent,
+  RunStartedEvent,
 } from "../../src/streaming/events";
+import { AgentStream } from "../../src/streaming/stream";
 
 /**
  * Create mock Response with SSE body.

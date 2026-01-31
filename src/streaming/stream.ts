@@ -93,10 +93,12 @@ export class AgentStream implements AsyncIterable<AgentRunEvent> {
     eventType: K,
     handler: (event: Extract<AgentRunEvent, { event: K }>) => void,
   ): this {
-    if (!this.listeners.has(eventType)) {
-      this.listeners.set(eventType, new Set());
+    let handlers = this.listeners.get(eventType);
+    if (!handlers) {
+      handlers = new Set();
+      this.listeners.set(eventType, handlers);
     }
-    this.listeners.get(eventType)!.add(handler as (event: AgentRunEvent) => void);
+    handlers.add(handler as (event: AgentRunEvent) => void);
     return this;
   }
 
