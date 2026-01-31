@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 ## Current Position
 
-Phase: 2 of 7 (Core Infrastructure)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-01-31 - Completed 02-03-PLAN.md (AgentOS Client)
+Phase: 3 of 7 (Type Generation & First Resource)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-31 - Completed 03-01-PLAN.md (Type Generation Setup)
 
-Progress: [█████░░░░░] ~25%
+Progress: [█████░░░░░] ~30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~2.6 min
-- Total execution time: ~0.22 hours
+- Total plans completed: 6
+- Average duration: ~2.5 min
+- Total execution time: ~0.37 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [█████░░░░░] ~25%
 |-------|-------|-------|----------|
 | 01 | 2 | ~5 min | ~2.5 min |
 | 02 | 3 | ~8 min | ~2.7 min |
+| 03 | 1 | ~2 min | ~2.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (~2 min), 02-01 (~2 min), 02-02 (~3 min), 02-03 (~3 min)
-- Trend: stable
+- Last 5 plans: 02-01 (~2 min), 02-02 (~3 min), 02-03 (~3 min), 03-01 (~2 min)
+- Trend: stable around 2-3 min per plan
 
 *Updated after each plan completion*
 
@@ -57,6 +58,9 @@ Recent decisions affecting current work:
 - 02-02: Use AbortSignal.timeout() for request timeout (native, Node 18+)
 - 02-03: User-Agent header includes SDK version for API tracking
 - 02-03: Empty apiKey string treated as unset (no Authorization header)
+- 03-01: Generated types committed to git (version-controlled with code)
+- 03-01: Single types.ts file for all OpenAPI schemas (not split by resource)
+- 03-01: Manual type generation via npm script (no pre-build hook)
 
 ### Pending Todos
 
@@ -78,7 +82,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 02-03-PLAN.md (AgentOS Client) - Phase 2 Complete
+Stopped at: Completed 03-01-PLAN.md (Type Generation Setup)
 Resume file: None
 
 ## Phase 2 Complete
@@ -109,4 +113,11 @@ Phase 2 (Core Infrastructure) complete!
 - Private request method centralizes URL building, headers, and retry config
 - Bearer token injection via buildHeaders
 
-**Ready for Phase 3:** Resource APIs (agents.run, teams.run, workflows.run)
+## Phase 3 In Progress
+
+**Plans completed:**
+- 03-01: Type Generation Setup (OpenAPI-to-TypeScript pipeline)
+
+**Next:**
+- 03-02: Agents Resource Implementation
+- 03-03: Agents Resource Tests
