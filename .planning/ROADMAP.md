@@ -31,10 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. TypeScript strict mode enabled with zero compiler errors
   3. Development environment runs tests and linting without errors
   4. Package structure verified by publint.dev with no dual-package hazard warnings
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 01-01-PLAN.md — Initialize package with dual ESM/CJS config, TypeScript strict mode, build tooling
+- [ ] 01-02-PLAN.md — Configure test runner, create placeholder files, validate complete package
 
 ### Phase 2: Core Infrastructure
 **Goal**: HTTP client layer provides authentication, error handling, and retry logic
@@ -136,7 +137,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Setup & Foundation | 0/TBD | Not started | - |
+| 1. Project Setup & Foundation | 0/2 | Planned | - |
 | 2. Core Infrastructure | 0/TBD | Not started | - |
 | 3. Type Generation & First Resource | 0/TBD | Not started | - |
 | 4. Streaming Support | 0/TBD | Not started | - |
