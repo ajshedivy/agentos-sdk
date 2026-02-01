@@ -625,12 +625,13 @@ describe("AgentOSClient", () => {
     });
 
     it("should remove Content-Type header for FormData", async () => {
-      const mockFetch = vi.fn(() =>
-        Promise.resolve(
-          new Response("data: event", {
-            status: 200,
-          }),
-        ),
+      const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>(
+        () =>
+          Promise.resolve(
+            new Response("data: event", {
+              status: 200,
+            }),
+          ),
       );
 
       vi.stubGlobal("fetch", mockFetch);
