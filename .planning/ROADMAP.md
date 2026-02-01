@@ -100,10 +100,15 @@ Plans:
   4. User can perform CRUD operations on memories with filtering
   5. User can retrieve traces with filtering
   6. User can get and refresh metrics
-**Plans**: TBD
+**Plans**: 6 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 05-01-PLAN.md — Create TeamsResource class mirroring AgentsResource pattern
+- [ ] 05-02-PLAN.md — Create WorkflowsResource class mirroring AgentsResource pattern
+- [ ] 05-03-PLAN.md — Create SessionsResource with CRUD and pagination/filtering
+- [ ] 05-04-PLAN.md — Create MemoriesResource with CRUD and filtering
+- [ ] 05-05-PLAN.md — Create TracesResource and MetricsResource (read-only)
+- [ ] 05-06-PLAN.md — Integrate all resources into AgentOSClient and exports
 
 ### Phase 6: File Uploads & Knowledge
 **Goal**: File upload infrastructure supports multiple input types across Node and browser
@@ -147,6 +152,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Core Infrastructure | 3/3 | Complete | 2026-01-31 |
 | 3. Type Generation & First Resource | 3/3 | Complete | 2026-01-31 |
 | 4. Streaming Support | 3/3 | Complete | 2026-01-31 |
-| 5. Resource Expansion | 0/TBD | Not started | - |
+| 5. Resource Expansion | 0/6 | Not started | - |
 | 6. File Uploads & Knowledge | 0/TBD | Not started | - |
 | 7. Runtime Support & Polish | 0/TBD | Not started | - |
