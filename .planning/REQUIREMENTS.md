@@ -27,61 +27,61 @@ Requirements for initial release. Full functional parity with Python AgentOSClie
 
 ### Teams
 
-- [ ] **TEAM-01**: Client can list all teams via teams.list()
-- [ ] **TEAM-02**: Client can get team details via teams.get(teamId)
-- [ ] **TEAM-03**: Client can run team (non-streaming) via teams.run(teamId, options)
-- [ ] **TEAM-04**: Client can run team (streaming) via teams.runStream(teamId, options)
-- [ ] **TEAM-05**: Client can cancel team run via teams.cancel(teamId, runId)
+- [x] **TEAM-01**: Client can list all teams via teams.list()
+- [x] **TEAM-02**: Client can get team details via teams.get(teamId)
+- [x] **TEAM-03**: Client can run team (non-streaming) via teams.run(teamId, options)
+- [x] **TEAM-04**: Client can run team (streaming) via teams.runStream(teamId, options)
+- [x] **TEAM-05**: Client can cancel team run via teams.cancel(teamId, runId)
 
 ### Workflows
 
-- [ ] **WKFL-01**: Client can list all workflows via workflows.list()
-- [ ] **WKFL-02**: Client can get workflow details via workflows.get(workflowId)
-- [ ] **WKFL-03**: Client can run workflow (non-streaming) via workflows.run(workflowId, options)
-- [ ] **WKFL-04**: Client can run workflow (streaming) via workflows.runStream(workflowId, options)
-- [ ] **WKFL-05**: Client can cancel workflow run via workflows.cancel(workflowId, runId)
+- [x] **WKFL-01**: Client can list all workflows via workflows.list()
+- [x] **WKFL-02**: Client can get workflow details via workflows.get(workflowId)
+- [x] **WKFL-03**: Client can run workflow (non-streaming) via workflows.run(workflowId, options)
+- [x] **WKFL-04**: Client can run workflow (streaming) via workflows.runStream(workflowId, options)
+- [x] **WKFL-05**: Client can cancel workflow run via workflows.cancel(workflowId, runId)
 
 ### Sessions
 
-- [ ] **SESS-01**: Client can list sessions with filtering/pagination via sessions.list(options)
-- [ ] **SESS-02**: Client can get session details via sessions.get(sessionId, options)
-- [ ] **SESS-03**: Client can create session via sessions.create(options)
-- [ ] **SESS-04**: Client can rename session via sessions.rename(sessionId, name)
-- [ ] **SESS-05**: Client can delete session via sessions.delete(sessionId)
-- [ ] **SESS-06**: Client can get runs for session via sessions.getRuns(sessionId)
+- [x] **SESS-01**: Client can list sessions with filtering/pagination via sessions.list(options)
+- [x] **SESS-02**: Client can get session details via sessions.get(sessionId, options)
+- [x] **SESS-03**: Client can create session via sessions.create(options)
+- [x] **SESS-04**: Client can rename session via sessions.rename(sessionId, name)
+- [x] **SESS-05**: Client can delete session via sessions.delete(sessionId)
+- [x] **SESS-06**: Client can get runs for session via sessions.getRuns(sessionId)
 
 ### Memories
 
-- [ ] **MEMO-01**: Client can list memories with filtering/pagination via memories.list(options)
-- [ ] **MEMO-02**: Client can get memory via memories.get(memoryId, options)
-- [ ] **MEMO-03**: Client can create memory via memories.create(options)
-- [ ] **MEMO-04**: Client can update memory via memories.update(memoryId, options)
-- [ ] **MEMO-05**: Client can delete memory via memories.delete(memoryId, options)
+- [x] **MEMO-01**: Client can list memories with filtering/pagination via memories.list(options)
+- [x] **MEMO-02**: Client can get memory via memories.get(memoryId, options)
+- [x] **MEMO-03**: Client can create memory via memories.create(options)
+- [x] **MEMO-04**: Client can update memory via memories.update(memoryId, options)
+- [x] **MEMO-05**: Client can delete memory via memories.delete(memoryId, options)
 
 ### Knowledge
 
-- [ ] **KNOW-01**: Client can get knowledge config via knowledge.getConfig()
-- [ ] **KNOW-02**: Client can list knowledge content via knowledge.list(options)
-- [ ] **KNOW-03**: Client can upload content (file, URL, or text) via knowledge.upload(options)
-- [ ] **KNOW-04**: Client can search knowledge base via knowledge.search(query, options)
+- [x] **KNOW-01**: Client can get knowledge config via knowledge.getConfig()
+- [x] **KNOW-02**: Client can list knowledge content via knowledge.list(options)
+- [x] **KNOW-03**: Client can upload content (file, URL, or text) via knowledge.upload(options)
+- [x] **KNOW-04**: Client can search knowledge base via knowledge.search(query, options)
 
 ### Traces
 
-- [ ] **TRAC-01**: Client can list traces with filtering via traces.list(options)
-- [ ] **TRAC-02**: Client can get trace details via traces.get(traceId)
+- [x] **TRAC-01**: Client can list traces with filtering via traces.list(options)
+- [x] **TRAC-02**: Client can get trace details via traces.get(traceId)
 
 ### Metrics
 
-- [ ] **METR-01**: Client can get metrics via metrics.get(options)
-- [ ] **METR-02**: Client can refresh metrics via metrics.refresh()
+- [x] **METR-01**: Client can get metrics via metrics.get(options)
+- [x] **METR-02**: Client can refresh metrics via metrics.refresh()
 
 ### Files & Media
 
-- [ ] **FILE-01**: Run methods accept images parameter (matching Python's Image type)
-- [ ] **FILE-02**: Run methods accept audio parameter (matching Python's Audio type)
-- [ ] **FILE-03**: Run methods accept videos parameter (matching Python's Video type)
-- [ ] **FILE-04**: Run methods accept files parameter (matching Python's File type)
-- [ ] **FILE-05**: File inputs support Buffer, Stream, and file path strings
+- [x] **FILE-01**: Run methods accept images parameter (matching Python's Image type)
+- [x] **FILE-02**: Run methods accept audio parameter (matching Python's Audio type)
+- [x] **FILE-03**: Run methods accept videos parameter (matching Python's Video type)
+- [x] **FILE-04**: Run methods accept files parameter (matching Python's File type)
+- [x] **FILE-05**: File inputs support Buffer, Stream, and file path strings
 
 ### Errors
 
@@ -91,10 +91,10 @@ Requirements for initial release. Full functional parity with Python AgentOSClie
 
 ### Infrastructure
 
-- [ ] **INFR-01**: SDK works in Node.js 18+
-- [ ] **INFR-02**: SDK works in modern browsers (fetch-based)
-- [ ] **INFR-03**: Package published as dual ESM/CommonJS
-- [ ] **INFR-04**: Comprehensive test suite with mocks
+- [x] **INFR-01**: SDK works in Node.js 18+
+- [ ] **INFR-02**: SDK works in modern browsers (fetch-based) *(deferred to v2)*
+- [x] **INFR-03**: Package published as dual ESM/CommonJS
+- [x] **INFR-04**: Comprehensive test suite with mocks
 
 ## v2 Requirements
 
