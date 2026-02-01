@@ -122,10 +122,13 @@ Plans:
   5. User can upload content to knowledge base (file, URL, or text)
   6. User can search knowledge base and list knowledge content
   7. FormData constructed without manual Content-Type header (automatic boundary)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 06-01-PLAN.md — File input types (FileInput, Image, Audio, Video) and normalizeFileInput utility
+- [ ] 06-02-PLAN.md — Extend agents/teams/workflows run methods with media file support
+- [ ] 06-03-PLAN.md — KnowledgeResource with upload, search, list, and CRUD operations
+- [ ] 06-04-PLAN.md — Client integration and public API exports for Phase 6
 
 ### Phase 7: Runtime Support & Polish
 **Goal**: SDK validated across Node.js and browser environments with comprehensive tests
@@ -153,5 +156,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Type Generation & First Resource | 3/3 | Complete | 2026-01-31 |
 | 4. Streaming Support | 3/3 | Complete | 2026-01-31 |
 | 5. Resource Expansion | 6/6 | Complete | 2026-01-31 |
-| 6. File Uploads & Knowledge | 0/TBD | Not started | - |
+| 6. File Uploads & Knowledge | 0/4 | Not started | - |
 | 7. Runtime Support & Polish | 0/TBD | Not started | - |
