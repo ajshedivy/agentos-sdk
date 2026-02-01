@@ -7,6 +7,7 @@ import { SessionsResource } from "./resources/sessions";
 import { MemoriesResource } from "./resources/memories";
 import { TracesResource } from "./resources/traces";
 import { MetricsResource } from "./resources/metrics";
+import { KnowledgeResource } from "./resources/knowledge";
 import type {
   AgentOSClientOptions,
   HealthStatus,
@@ -37,6 +38,7 @@ export class AgentOSClient {
   readonly memories: MemoriesResource;
   readonly traces: TracesResource;
   readonly metrics: MetricsResource;
+  readonly knowledge: KnowledgeResource;
 
   private readonly baseUrl: string;
   private readonly apiKey?: string;
@@ -68,6 +70,7 @@ export class AgentOSClient {
     this.memories = new MemoriesResource(this);
     this.traces = new TracesResource(this);
     this.metrics = new MetricsResource(this);
+    this.knowledge = new KnowledgeResource(this);
   }
 
   /**
