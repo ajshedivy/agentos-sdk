@@ -181,8 +181,11 @@ async function main() {
 
       console.log('   ✓ Non-streaming run completed');
       console.log(`   Run ID: ${result.run_id || 'unknown'}`);
-      if (result.response) {
-        console.log(`   Response length: ${result.response.length} characters`);
+      // Server returns 'content' field (not 'response')
+      const content = result.content;
+      if (content) {
+        console.log(`   Content: ${typeof content === 'string' ? content.slice(0, 100) : JSON.stringify(content)?.slice(0, 100)}${String(content).length > 100 ? '...' : ''}`);
+        console.log(`   Content length: ${String(content).length} characters`);
       }
     }
   } catch (error) {
