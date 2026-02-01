@@ -86,9 +86,10 @@ export async function request<T>(
   const { method = "GET", body, headers = {}, signal } = options;
 
   // Don't set Content-Type for FormData - fetch auto-sets with boundary
-  const fetchHeaders: Record<string, string> = body instanceof FormData
-    ? { ...headers }
-    : { "Content-Type": "application/json", ...headers };
+  const fetchHeaders: Record<string, string> =
+    body instanceof FormData
+      ? { ...headers }
+      : { "Content-Type": "application/json", ...headers };
 
   const fetchOptions: globalThis.RequestInit = {
     method,
