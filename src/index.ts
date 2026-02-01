@@ -59,6 +59,14 @@ export type { ListTracesOptions } from "./resources/traces";
 export { MetricsResource } from "./resources/metrics";
 export type { GetMetricsOptions } from "./resources/metrics";
 
+export { KnowledgeResource } from "./resources/knowledge";
+export type {
+  UploadOptions,
+  ListKnowledgeOptions,
+  SearchOptions,
+  UpdateContentOptions,
+} from "./resources/knowledge";
+
 // Generated types (re-export useful types)
 export type { components, paths } from "./generated/types";
 
@@ -85,3 +93,15 @@ export type {
   RunContentEvent,
   RunStartedEvent,
 } from "./streaming";
+
+// File input types (Phase 6)
+export type {
+  FileInput,
+  Image,
+  Audio,
+  Video,
+  FileType,
+} from "./types/files";
+
+// File utilities (Phase 6)
+export { normalizeFileInput } from "./utils/files";
