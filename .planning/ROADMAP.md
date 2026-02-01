@@ -131,20 +131,21 @@ Plans:
 - [x] 06-04-PLAN.md — Client integration and public API exports for Phase 6
 
 ### Phase 7: Runtime Support & Polish
-**Goal**: SDK validated across Node.js and browser environments with comprehensive tests
+**Goal**: SDK validated in Node.js 18+ with comprehensive tests and CI/CD pipeline (browser support deferred to v2)
 **Depends on**: Phase 6
-**Requirements**: INFR-01, INFR-02, INFR-04
+**Requirements**: INFR-01, INFR-04 (INFR-02 browser support deferred to v2)
 **Success Criteria** (what must be TRUE):
   1. SDK works in Node.js 18+ with all features functional
-  2. SDK works in modern browsers (Chrome, Safari, Firefox) with fetch-based implementation
-  3. Comprehensive test suite covers core functionality with mocks
-  4. Package published to npm with proper dual-format configuration verified
+  2. V8 coverage reporting enabled with line/branch percentages
+  3. Comprehensive README documents all resources with examples
+  4. CI runs tests on Node.js 18, 20, 22 with coverage reports
+  5. npm publishing automated via version tags
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Install coverage tooling and add runtime compatibility tests
-- [ ] 07-02-PLAN.md — Create comprehensive README and browser usage example
-- [ ] 07-03-PLAN.md — Add publishing scripts, integration tests, and CI pipeline
+- [ ] 07-01-PLAN.md — Configure V8 coverage and add Node.js runtime compatibility tests
+- [ ] 07-02-PLAN.md — Create comprehensive README documentation
+- [ ] 07-03-PLAN.md — Create CI/CD pipeline for testing and npm publishing
 
 ## Progress
 
