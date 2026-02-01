@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 6 of 7 (File Uploads & Knowledge)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-01 - Completed 06-02-PLAN.md (Resource Media Support)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-01 - Completed 06-04-PLAN.md (Client Integration & Public API)
 
-Progress: [█████████████] ~78%
+Progress: [██████████████] ~82%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: ~2.2 min
-- Total execution time: ~1.2 hours
+- Total plans completed: 21
+- Average duration: ~2.3 min
+- Total execution time: ~1.3 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [█████████████] ~78%
 | 03 | 3 | ~6 min | ~2.0 min |
 | 04 | 3 | ~9 min | ~3.0 min |
 | 05 | 6 | ~13 min | ~2.2 min |
-| 06 | 2 | ~8 min | ~4.0 min |
+| 06 | 3 | ~12 min | ~4.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-04 (~3 min), 05-06 (~2 min), 06-01 (~3 min), 06-02 (~5 min)
+- Last 5 plans: 05-06 (~2 min), 06-01 (~3 min), 06-02 (~5 min), 06-03 (~4 min), 06-04 (~3 min)
 - Trend: stable ~2-5 min average, excellent velocity maintained
 
 *Updated after each plan completion*
@@ -100,6 +100,8 @@ Recent decisions affecting current work:
 - 06-03: search() uses JSON body while uploads use FormData (mixed patterns per OpenAPI spec)
 - 06-03: KnowledgeResource getStatus() method for async content processing status polling
 - 06-03: Local PaginatedResponse type definition (could be shared in future refactoring)
+- 06-04: normalizeFileInput utility exported from package root for advanced file handling scenarios
+- 06-04: Integration tests mock client.request method directly (not fetch) for FormData inspection
 
 ### Pending Todos
 
@@ -123,7 +125,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 06-02-PLAN.md (Resource Media Support)
+Stopped at: Completed 06-04-PLAN.md (Client Integration & Public API)
 Resume file: None
 
 ## Phase 2 Complete
@@ -289,3 +291,38 @@ Phase 5 (Resource Expansion) complete!
 - Proper URL encoding with encodeURIComponent for all path parameters
 
 **Ready for Phase 6:** File upload support (images, audio, videos, files) and knowledge base operations
+
+## Phase 6 Complete
+
+Phase 6 (File Uploads & Knowledge) complete!
+
+**Plans completed:**
+- 06-01: File Input Types (FileInput union type and normalizeFileInput utility)
+- 06-02: Resource Media Support (media parameters for agents/teams/workflows)
+- 06-03: KnowledgeResource Implementation (complete knowledge base operations)
+- 06-04: Client Integration & Public API (exports and integration tests)
+
+**Deliverables:**
+- File input types (FileInput, Image, Audio, Video, FileType) exported from package root
+- normalizeFileInput utility for cross-platform file handling (Node.js and browser)
+- Media support in AgentsResource, TeamsResource, WorkflowsResource (images, audio, videos, files arrays)
+- KnowledgeResource class with 9 methods (getConfig, list, upload, get, getStatus, update, delete, deleteAll, search)
+- Flexible upload support (files, URLs, text content)
+- Vector/keyword/hybrid search with filters and pagination
+- Complete public API exports for all Phase 6 features
+- Integration tests verifying knowledge namespace, file types, and media parameters
+- 431 tests passing (117 new for Phase 6)
+
+**Patterns established:**
+- FileInput union type supporting multiple input formats (string path, Buffer, ReadStream, Blob, File)
+- Semantic type aliases for self-documenting APIs (Image, Audio, Video, FileType)
+- Runtime environment detection for cross-platform file handling
+- normalizeFileInput converts all input types to FormData-compatible formats
+- Multiple files appended with same field name (FormData pattern)
+- Media fields as optional arrays in RunOptions/StreamRunOptions
+- Mixed request patterns: FormData for uploads, JSON for search
+- Content processing status polling via getStatus() method
+- Integration testing pattern for client namespace access
+- Type-level testing for exported TypeScript types
+
+**Ready for Phase 7:** Deployment preparation, documentation, and publishing workflows
