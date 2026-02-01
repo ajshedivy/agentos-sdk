@@ -103,6 +103,9 @@ Recent decisions affecting current work:
 - 06-03: Local PaginatedResponse type definition (could be shared in future refactoring)
 - 06-04: normalizeFileInput utility exported from package root for advanced file handling scenarios
 - 06-04: Integration tests mock client.request method directly (not fetch) for FormData inspection
+- 07-01: V8 coverage provider for fast and accurate coverage reporting (Vitest 2.1.9 AST-based remapping)
+- 07-01: Coverage configuration excludes generated files (src/generated/**) and test directories
+- 07-01: Runtime compatibility tests document Node.js version requirements for native APIs
 - 07-02: README structure follows Python SDK reference pattern with focus on quick start and practical examples
 - 07-02: One focused example per resource concept (not exhaustive but representative)
 - 07-02: Runtime limitations documented in relevant sections (no prominent "Limitations" section)
