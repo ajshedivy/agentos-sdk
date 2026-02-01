@@ -1,11 +1,11 @@
 /**
- * Live SDK Test Script
+ * Agents Live Test Script
  *
- * This script tests the AgentOS SDK against a live instance running at http://localhost:7777.
- * It demonstrates health checks, resource listing, and streaming patterns.
+ * This script tests the AgentOS SDK agents resource against a live instance running at http://localhost:7777.
+ * It demonstrates health checks, resource listing, and streaming patterns for agents.
  *
  * Usage:
- *   npm run test:live
+ *   npm run test:agents
  *
  * Prerequisites:
  *   - AgentOS server running at http://localhost:7777
@@ -15,7 +15,7 @@
 import { AgentOSClient, APIError, NotFoundError, InternalServerError } from '../dist/index.js';
 
 async function main() {
-  console.log('=== AgentOS SDK Live Test ===\n');
+  console.log('=== AgentOS SDK Agents Test ===\n');
 
   // Initialize client (no API key needed for local development)
   console.log('1. Initializing client...');
