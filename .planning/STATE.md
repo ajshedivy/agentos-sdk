@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 6 of 7 (File Uploads & Knowledge)
-Plan: 3 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-31 - Completed 06-03-PLAN.md (KnowledgeResource Implementation)
+Last activity: 2026-02-01 - Completed 06-02-PLAN.md (Resource Media Support)
 
-Progress: [█████████████] ~79%
+Progress: [█████████████] ~78%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: ~2.2 min
-- Total execution time: ~1.1 hours
+- Total execution time: ~1.2 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [█████████████] ~79%
 | 03 | 3 | ~6 min | ~2.0 min |
 | 04 | 3 | ~9 min | ~3.0 min |
 | 05 | 6 | ~13 min | ~2.2 min |
-| 06 | 2 | ~7 min | ~3.5 min |
+| 06 | 2 | ~8 min | ~4.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-05 (~2 min), 05-04 (~3 min), 05-06 (~2 min), 06-01 (~3 min), 06-03 (~4 min)
-- Trend: stable ~2-4 min average, excellent velocity maintained
+- Last 5 plans: 05-04 (~3 min), 05-06 (~2 min), 06-01 (~3 min), 06-02 (~5 min)
+- Trend: stable ~2-5 min average, excellent velocity maintained
 
 *Updated after each plan completion*
 
@@ -94,6 +94,8 @@ Recent decisions affecting current work:
 - 06-01: normalizeFileInput helper converts all input types to FormData-compatible formats
 - 06-01: Runtime environment detection for cross-platform file handling (Node.js vs browser)
 - 06-01: Cast Buffer as 'any' for Blob/File constructor to avoid TypeScript ArrayBufferLike incompatibility
+- 06-02: Multiple files in array appended with same field name (images, audio, videos, files)
+- 06-02: Media fields are optional arrays in RunOptions/StreamRunOptions across agents/teams/workflows
 - 06-03: upload() accepts file, URL, or textContent (flexible input pattern for multiple content sources)
 - 06-03: search() uses JSON body while uploads use FormData (mixed patterns per OpenAPI spec)
 - 06-03: KnowledgeResource getStatus() method for async content processing status polling
@@ -120,8 +122,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-31
-Stopped at: Completed 06-03-PLAN.md (KnowledgeResource Implementation)
+Last session: 2026-02-01
+Stopped at: Completed 06-02-PLAN.md (Resource Media Support)
 Resume file: None
 
 ## Phase 2 Complete
