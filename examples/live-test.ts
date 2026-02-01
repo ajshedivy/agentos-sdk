@@ -87,12 +87,12 @@ async function main() {
   try {
     const agents = await client.agents.list();
 
-    if (agents.length === 0) {
+    if (agents.length === 0 || !agents[0].id) {
       console.log('   ⊘ Skipped: No agents available for streaming test');
       console.log('   Create an agent in AgentOS to test streaming functionality');
     } else {
       const agentId = agents[0].id;
-      console.log(`   Running agent "${agents[0].name}" with streaming...`);
+      console.log(`   Running agent "${agents[0].name ?? 'Unnamed'}" with streaming...`);
 
       const stream = await client.agents.runStream(agentId, {
         message: 'Hello! This is a test message from the SDK live test script.',
@@ -167,11 +167,11 @@ async function main() {
   try {
     const agents = await client.agents.list();
 
-    if (agents.length === 0) {
+    if (agents.length === 0 || !agents[0].id) {
       console.log('   ⊘ Skipped: No agents available for non-streaming test');
     } else {
       const agentId = agents[0].id;
-      console.log(`   Running agent "${agents[0].name}" without streaming...`);
+      console.log(`   Running agent "${agents[0].name ?? 'Unnamed'}" without streaming...`);
 
       // Note: This might take longer than streaming as it waits for completion
       const result = await client.agents.run(agentId, {
