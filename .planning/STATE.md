@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Developers can run agents, teams, and workflows with streaming responses in under 5 lines of code
-**Current focus:** Phase 5 In Progress - Resource Expansion underway
+**Current focus:** Phase 5 Complete - All core API resources implemented
 
 ## Current Position
 
 Phase: 5 of 7 (Resource Expansion)
 Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-01-31 - Completed 05-06-PLAN.md (Client Integration and Public API)
+Status: Phase complete ✓
+Last activity: 2026-01-31 - Completed Phase 5 with all 6 resource implementations
 
 Progress: [███████████] ~71%
 
@@ -242,3 +242,38 @@ Phase 5 (Resource Expansion) complete!
 - Complete option type exports for developer TypeScript experience
 
 **Ready for Phase 6:** File upload support for AgentsResource with multipart/form-data handling
+
+## Phase 5 Complete
+
+Phase 5 (Resource Expansion) complete!
+
+**Plans completed:**
+- 05-01: Teams Resource (CRUD + streaming support)
+- 05-02: Workflows Resource (CRUD + streaming support)
+- 05-03: Sessions Resource (CRUD + pagination/filtering)
+- 05-04: Memories Resource (CRUD + filtering)
+- 05-05: Traces & Metrics Resources (read-only observability)
+- 05-06: Client Integration (all resources wired into AgentOSClient)
+
+**Deliverables:**
+- TeamsResource class (247 lines, 37 tests) - Full CRUD + streaming
+- WorkflowsResource class (247 lines, 37 tests) - Full CRUD + streaming
+- SessionsResource class (272 lines, 35 tests) - CRUD + pagination/filtering
+- MemoriesResource class (346 lines, 45 tests) - CRUD + filtering with JSON body
+- TracesResource class (122 lines, 17 tests) - Read-only with filtering
+- MetricsResource class (90 lines, 9 tests) - Read-only with refresh
+- AgentOSClient with 7 resource namespaces (agents, teams, workflows, sessions, memories, traces, metrics)
+- Complete public API exports (all resource classes + 17 option types)
+- 372 tests passing (192 new for Phase 5)
+
+**Patterns established:**
+- Resource pattern consistency across all resources (AgentsResource template)
+- URLSearchParams for query parameter building (only append defined values)
+- FormData for POST mutations (teams, workflows, agents, sessions)
+- JSON body for memory mutations (create/update use application/json)
+- Read-only resource pattern (TracesResource, MetricsResource - no mutations)
+- Pagination support with PaginatedResponse types
+- Database routing via query params (dbId, table)
+- Proper URL encoding with encodeURIComponent for all path parameters
+
+**Ready for Phase 6:** File upload support (images, audio, videos, files) and knowledge base operations

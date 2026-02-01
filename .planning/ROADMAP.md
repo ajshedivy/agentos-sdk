@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Core Infrastructure** - HTTP client with auth and typed errors
 - [x] **Phase 3: Type Generation & First Resource** - OpenAPI types with complete agents resource
 - [x] **Phase 4: Streaming Support** - SSE streaming with dual interfaces
-- [ ] **Phase 5: Resource Expansion** - All remaining API resources
+- [x] **Phase 5: Resource Expansion** - All remaining API resources
 - [ ] **Phase 6: File Uploads & Knowledge** - Multipart uploads with platform-specific handling
 - [ ] **Phase 7: Runtime Support & Polish** - Node.js and browser validation
 
@@ -103,12 +103,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Create TeamsResource class mirroring AgentsResource pattern
-- [ ] 05-02-PLAN.md — Create WorkflowsResource class mirroring AgentsResource pattern
-- [ ] 05-03-PLAN.md — Create SessionsResource with CRUD and pagination/filtering
-- [ ] 05-04-PLAN.md — Create MemoriesResource with CRUD and filtering
-- [ ] 05-05-PLAN.md — Create TracesResource and MetricsResource (read-only)
-- [ ] 05-06-PLAN.md — Integrate all resources into AgentOSClient and exports
+- [x] 05-01-PLAN.md — Create TeamsResource class mirroring AgentsResource pattern
+- [x] 05-02-PLAN.md — Create WorkflowsResource class mirroring AgentsResource pattern
+- [x] 05-03-PLAN.md — Create SessionsResource with CRUD and pagination/filtering
+- [x] 05-04-PLAN.md — Create MemoriesResource with CRUD and filtering
+- [x] 05-05-PLAN.md — Create TracesResource and MetricsResource (read-only)
+- [x] 05-06-PLAN.md — Integrate all resources into AgentOSClient and exports
 
 ### Phase 6: File Uploads & Knowledge
 **Goal**: File upload infrastructure supports multiple input types across Node and browser
@@ -152,6 +152,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Core Infrastructure | 3/3 | Complete | 2026-01-31 |
 | 3. Type Generation & First Resource | 3/3 | Complete | 2026-01-31 |
 | 4. Streaming Support | 3/3 | Complete | 2026-01-31 |
-| 5. Resource Expansion | 0/6 | Not started | - |
+| 5. Resource Expansion | 6/6 | Complete | 2026-01-31 |
 | 6. File Uploads & Knowledge | 0/TBD | Not started | - |
 | 7. Runtime Support & Polish | 0/TBD | Not started | - |
