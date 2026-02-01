@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Developers can run agents, teams, and workflows with streaming responses in under 5 lines of code
-**Current focus:** Phase 5 Complete - All core API resources implemented
+**Current focus:** Phase 6 - File Uploads & Knowledge
 
 ## Current Position
 
-Phase: 5 of 7 (Resource Expansion)
-Plan: 6 of 6 in current phase
-Status: Phase complete ✓
-Last activity: 2026-01-31 - Completed Phase 5 with all 6 resource implementations
+Phase: 6 of 7 (File Uploads & Knowledge)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-01 - Completed 06-01-PLAN.md (File Input Types & Utilities)
 
-Progress: [███████████] ~71%
+Progress: [████████████] ~74%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: ~2.1 min
-- Total execution time: ~0.95 hours
+- Total execution time: ~1.0 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [███████████] ~71%
 | 03 | 3 | ~6 min | ~2.0 min |
 | 04 | 3 | ~9 min | ~3.0 min |
 | 05 | 6 | ~13 min | ~2.2 min |
+| 06 | 1 | ~3 min | ~3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (~2 min), 05-03 (~2 min), 05-05 (~2 min), 05-04 (~3 min), 05-06 (~2 min)
-- Trend: stable ~2 min average, excellent velocity maintained
+- Last 5 plans: 05-03 (~2 min), 05-05 (~2 min), 05-04 (~3 min), 05-06 (~2 min), 06-01 (~3 min)
+- Trend: stable ~2-3 min average, excellent velocity maintained
 
 *Updated after each plan completion*
 
@@ -88,6 +89,11 @@ Recent decisions affecting current work:
 - 05-06: All resources initialized in constructor passing client instance
 - 05-06: Resource namespaces follow shallow pattern (client.teams not client.resources.teams)
 - 05-06: Complete option type exports for developer TypeScript experience
+- 06-01: FileInput union type (string | Buffer | ReadStream | Blob | File) for flexible file inputs
+- 06-01: Semantic type aliases (Image, Audio, Video, FileType) for self-documenting APIs
+- 06-01: normalizeFileInput helper converts all input types to FormData-compatible formats
+- 06-01: Runtime environment detection for cross-platform file handling (Node.js vs browser)
+- 06-01: Cast Buffer as 'any' for Blob/File constructor to avoid TypeScript ArrayBufferLike incompatibility
 
 ### Pending Todos
 
@@ -110,8 +116,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-31
-Stopped at: Completed 05-06-PLAN.md (Client Integration and Public API)
+Last session: 2026-02-01
+Stopped at: Completed 06-01-PLAN.md (File Input Types & Utilities)
 Resume file: None
 
 ## Phase 2 Complete
