@@ -240,14 +240,18 @@ describe("Package Exports", () => {
   describe("Phase 6: File Uploads & Knowledge Integration", () => {
     describe("client.knowledge namespace", () => {
       it("provides knowledge resource via client", () => {
-        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const client = new AgentOSClient({
+          baseUrl: "https://api.example.com",
+        });
 
         expect(client.knowledge).toBeDefined();
         expect(client.knowledge).toBeInstanceOf(KnowledgeResource);
       });
 
       it("exposes all knowledge methods", () => {
-        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const client = new AgentOSClient({
+          baseUrl: "https://api.example.com",
+        });
 
         expect(typeof client.knowledge.getConfig).toBe("function");
         expect(typeof client.knowledge.list).toBe("function");
@@ -332,7 +336,9 @@ describe("Package Exports", () => {
 
     describe("media parameters in run methods", () => {
       it("agents run accepts media arrays", async () => {
-        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const client = new AgentOSClient({
+          baseUrl: "https://api.example.com",
+        });
         const requestSpy = vi.fn().mockResolvedValue({ content: "response" });
         // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
         (client as any).request = requestSpy;
@@ -360,7 +366,9 @@ describe("Package Exports", () => {
       });
 
       it("teams run accepts media arrays", async () => {
-        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const client = new AgentOSClient({
+          baseUrl: "https://api.example.com",
+        });
         const requestSpy = vi.fn().mockResolvedValue({ content: "response" });
         // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
         (client as any).request = requestSpy;
@@ -381,7 +389,9 @@ describe("Package Exports", () => {
       });
 
       it("workflows run accepts media arrays", async () => {
-        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const client = new AgentOSClient({
+          baseUrl: "https://api.example.com",
+        });
         const requestSpy = vi.fn().mockResolvedValue({ content: "response" });
         // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
         (client as any).request = requestSpy;

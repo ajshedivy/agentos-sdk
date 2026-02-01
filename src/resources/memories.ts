@@ -3,7 +3,8 @@ import type { components } from "../generated/types";
 
 // Extract types from generated schemas
 type UserMemorySchema = components["schemas"]["UserMemorySchema"];
-type PaginatedResponse = components["schemas"]["PaginatedResponse_UserMemorySchema_"];
+type PaginatedResponse =
+  components["schemas"]["PaginatedResponse_UserMemorySchema_"];
 
 /**
  * Options for listing memories

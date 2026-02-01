@@ -1,13 +1,13 @@
 import { createErrorFromResponse } from "./errors";
 import { requestWithRetry } from "./http";
 import { AgentsResource } from "./resources/agents";
-import { TeamsResource } from "./resources/teams";
-import { WorkflowsResource } from "./resources/workflows";
-import { SessionsResource } from "./resources/sessions";
-import { MemoriesResource } from "./resources/memories";
-import { TracesResource } from "./resources/traces";
-import { MetricsResource } from "./resources/metrics";
 import { KnowledgeResource } from "./resources/knowledge";
+import { MemoriesResource } from "./resources/memories";
+import { MetricsResource } from "./resources/metrics";
+import { SessionsResource } from "./resources/sessions";
+import { TeamsResource } from "./resources/teams";
+import { TracesResource } from "./resources/traces";
+import { WorkflowsResource } from "./resources/workflows";
 import type {
   AgentOSClientOptions,
   HealthStatus,

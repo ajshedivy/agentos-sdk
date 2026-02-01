@@ -45,7 +45,10 @@ describe("KnowledgeResource", () => {
 
       await resource.getConfig("db-123");
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/knowledge/config?db_id=db-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/config?db_id=db-123",
+      );
     });
   });
 
@@ -85,7 +88,10 @@ describe("KnowledgeResource", () => {
 
   describe("upload()", () => {
     it("uploads file with FormData", async () => {
-      requestSpy.mockResolvedValueOnce({ id: "content-123", status: "processing" });
+      requestSpy.mockResolvedValueOnce({
+        id: "content-123",
+        status: "processing",
+      });
 
       const buffer = Buffer.from("file content");
       await resource.upload({
@@ -99,7 +105,7 @@ describe("KnowledgeResource", () => {
         "/knowledge/content",
         expect.objectContaining({
           body: expect.any(FormData),
-        })
+        }),
       );
 
       const formData = requestSpy.mock.calls[0][2].body as FormData;
@@ -180,7 +186,10 @@ describe("KnowledgeResource", () => {
       const result = await resource.get("content-123");
 
       expect(result).toEqual(mockContent);
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/knowledge/content/content-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/content/content-123",
+      );
     });
 
     it("includes db_id query param when provided", async () => {
@@ -190,7 +199,7 @@ describe("KnowledgeResource", () => {
 
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
-        "/knowledge/content/content-123?db_id=db-456"
+        "/knowledge/content/content-123?db_id=db-456",
       );
     });
   });
@@ -205,7 +214,7 @@ describe("KnowledgeResource", () => {
       expect(result).toEqual(statusResponse);
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
-        "/knowledge/content/content-123/status"
+        "/knowledge/content/content-123/status",
       );
     });
 
@@ -216,14 +225,17 @@ describe("KnowledgeResource", () => {
 
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
-        "/knowledge/content/content-123/status?db_id=db-456"
+        "/knowledge/content/content-123/status?db_id=db-456",
       );
     });
   });
 
   describe("update()", () => {
     it("updates content properties", async () => {
-      requestSpy.mockResolvedValueOnce({ id: "content-123", name: "Updated Name" });
+      requestSpy.mockResolvedValueOnce({
+        id: "content-123",
+        name: "Updated Name",
+      });
 
       await resource.update("content-123", {
         name: "Updated Name",
@@ -235,7 +247,7 @@ describe("KnowledgeResource", () => {
         "/knowledge/content/content-123",
         expect.objectContaining({
           body: expect.any(FormData),
-        })
+        }),
       );
 
       const formData = requestSpy.mock.calls[0][2].body as FormData;
@@ -261,7 +273,10 @@ describe("KnowledgeResource", () => {
 
       await resource.delete("content-123");
 
-      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/knowledge/content/content-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "DELETE",
+        "/knowledge/content/content-123",
+      );
     });
 
     it("includes db_id query param when provided", async () => {
@@ -271,7 +286,7 @@ describe("KnowledgeResource", () => {
 
       expect(requestSpy).toHaveBeenCalledWith(
         "DELETE",
-        "/knowledge/content/content-123?db_id=db-456"
+        "/knowledge/content/content-123?db_id=db-456",
       );
     });
   });
@@ -290,14 +305,19 @@ describe("KnowledgeResource", () => {
 
       await resource.deleteAll("db-123");
 
-      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/knowledge/content?db_id=db-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "DELETE",
+        "/knowledge/content?db_id=db-123",
+      );
     });
   });
 
   describe("search()", () => {
     it("searches knowledge base with query", async () => {
       const searchResponse = {
-        data: [{ id: "doc-1", content: "Result content", reranking_score: 0.95 }],
+        data: [
+          { id: "doc-1", content: "Result content", reranking_score: 0.95 },
+        ],
         meta: { page: 1, limit: 20, total_pages: 1, total_count: 1 },
       };
       requestSpy.mockResolvedValueOnce(searchResponse);
@@ -311,7 +331,7 @@ describe("KnowledgeResource", () => {
         expect.objectContaining({
           body: expect.any(String),
           headers: { "Content-Type": "application/json" },
-        })
+        }),
       );
 
       const body = JSON.parse(requestSpy.mock.calls[0][2].body);

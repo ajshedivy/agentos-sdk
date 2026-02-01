@@ -153,7 +153,10 @@ describe("SessionsResource", () => {
         page: 1,
       });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/sessions?type=agent&page=1");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/sessions?type=agent&page=1",
+      );
       // Verify undefined params are not included
       const callArgs = requestSpy.mock.calls[0][1];
       expect(callArgs).not.toContain("undefined");
@@ -229,10 +232,7 @@ describe("SessionsResource", () => {
 
       await resource.get("session@123");
 
-      expect(requestSpy).toHaveBeenCalledWith(
-        "GET",
-        "/sessions/session%40123",
-      );
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/sessions/session%40123");
     });
 
     it("adds db_id query param when provided", async () => {
@@ -404,7 +404,10 @@ describe("SessionsResource", () => {
       await resource.delete("session-123");
 
       expect(requestSpy).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/sessions/session-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "DELETE",
+        "/sessions/session-123",
+      );
     });
 
     it("adds db_id query param when provided", async () => {
@@ -423,7 +426,10 @@ describe("SessionsResource", () => {
 
       await resource.delete("session-123", { dbId: undefined });
 
-      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/sessions/session-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "DELETE",
+        "/sessions/session-123",
+      );
     });
 
     it("URL-encodes sessionId", async () => {

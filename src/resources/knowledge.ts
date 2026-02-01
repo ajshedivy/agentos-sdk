@@ -61,7 +61,7 @@ export interface ListKnowledgeOptions {
   /** Field to sort by (default: 'created_at') */
   sortBy?: string;
   /** Sort order: 'asc' or 'desc' (default: 'desc') */
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   /** Database ID to filter by */
   dbId?: string;
 }
@@ -75,7 +75,7 @@ export interface SearchOptions {
   /** Vector database IDs to search in */
   vectorDbIds?: string[];
   /** Search type: 'vector', 'keyword', or 'hybrid' */
-  searchType?: 'vector' | 'keyword' | 'hybrid';
+  searchType?: "vector" | "keyword" | "hybrid";
   /** Maximum number of results (1-1000) */
   maxResults?: number;
   /** Additional filters for search */
@@ -137,12 +137,12 @@ export class KnowledgeResource {
    */
   async getConfig(dbId?: string): Promise<ConfigResponse> {
     const params = new URLSearchParams();
-    if (dbId) params.append('db_id', dbId);
+    if (dbId) params.append("db_id", dbId);
 
     const query = params.toString();
-    const path = query ? `/knowledge/config?${query}` : '/knowledge/config';
+    const path = query ? `/knowledge/config?${query}` : "/knowledge/config";
 
-    return this.client.request<ConfigResponse>('GET', path);
+    return this.client.request<ConfigResponse>("GET", path);
   }
 
   /**
@@ -150,19 +150,23 @@ export class KnowledgeResource {
    *
    * @param options - Filtering and pagination options
    */
-  async list(options?: ListKnowledgeOptions): Promise<PaginatedResponse<ContentResponse>> {
+  async list(
+    options?: ListKnowledgeOptions,
+  ): Promise<PaginatedResponse<ContentResponse>> {
     const params = new URLSearchParams();
 
-    if (options?.limit !== undefined) params.append('limit', String(options.limit));
-    if (options?.page !== undefined) params.append('page', String(options.page));
-    if (options?.sortBy) params.append('sort_by', options.sortBy);
-    if (options?.sortOrder) params.append('sort_order', options.sortOrder);
-    if (options?.dbId) params.append('db_id', options.dbId);
+    if (options?.limit !== undefined)
+      params.append("limit", String(options.limit));
+    if (options?.page !== undefined)
+      params.append("page", String(options.page));
+    if (options?.sortBy) params.append("sort_by", options.sortBy);
+    if (options?.sortOrder) params.append("sort_order", options.sortOrder);
+    if (options?.dbId) params.append("db_id", options.dbId);
 
     const query = params.toString();
-    const path = query ? `/knowledge/content?${query}` : '/knowledge/content';
+    const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
 
-    return this.client.request<PaginatedResponse<ContentResponse>>('GET', path);
+    return this.client.request<PaginatedResponse<ContentResponse>>("GET", path);
   }
 
   /**
@@ -178,31 +182,37 @@ export class KnowledgeResource {
 
     // Content source (one of: file, url, textContent)
     if (options.file) {
-      formData.append('file', normalizeFileInput(options.file));
+      formData.append("file", normalizeFileInput(options.file));
     }
     if (options.url) {
-      formData.append('url', options.url);
+      formData.append("url", options.url);
     }
     if (options.textContent) {
-      formData.append('text_content', options.textContent);
+      formData.append("text_content", options.textContent);
     }
 
     // Optional fields
-    if (options.name) formData.append('name', options.name);
-    if (options.description) formData.append('description', options.description);
-    if (options.metadata) formData.append('metadata', JSON.stringify(options.metadata));
-    if (options.readerId) formData.append('reader_id', options.readerId);
-    if (options.chunker) formData.append('chunker', options.chunker);
-    if (options.chunkSize !== undefined) formData.append('chunk_size', String(options.chunkSize));
-    if (options.chunkOverlap !== undefined) formData.append('chunk_overlap', String(options.chunkOverlap));
+    if (options.name) formData.append("name", options.name);
+    if (options.description)
+      formData.append("description", options.description);
+    if (options.metadata)
+      formData.append("metadata", JSON.stringify(options.metadata));
+    if (options.readerId) formData.append("reader_id", options.readerId);
+    if (options.chunker) formData.append("chunker", options.chunker);
+    if (options.chunkSize !== undefined)
+      formData.append("chunk_size", String(options.chunkSize));
+    if (options.chunkOverlap !== undefined)
+      formData.append("chunk_overlap", String(options.chunkOverlap));
 
     // Add db_id as query param
     const params = new URLSearchParams();
-    if (options.dbId) params.append('db_id', options.dbId);
+    if (options.dbId) params.append("db_id", options.dbId);
     const query = params.toString();
-    const path = query ? `/knowledge/content?${query}` : '/knowledge/content';
+    const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
 
-    return this.client.request<ContentResponse>('POST', path, { body: formData });
+    return this.client.request<ContentResponse>("POST", path, {
+      body: formData,
+    });
   }
 
   /**
@@ -213,13 +223,13 @@ export class KnowledgeResource {
    */
   async get(contentId: string, dbId?: string): Promise<ContentResponse> {
     const params = new URLSearchParams();
-    if (dbId) params.append('db_id', dbId);
+    if (dbId) params.append("db_id", dbId);
 
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}`;
     const path = query ? `${basePath}?${query}` : basePath;
 
-    return this.client.request<ContentResponse>('GET', path);
+    return this.client.request<ContentResponse>("GET", path);
   }
 
   /**
@@ -228,15 +238,18 @@ export class KnowledgeResource {
    * @param contentId - Content identifier
    * @param dbId - Optional database ID
    */
-  async getStatus(contentId: string, dbId?: string): Promise<ContentStatusResponse> {
+  async getStatus(
+    contentId: string,
+    dbId?: string,
+  ): Promise<ContentStatusResponse> {
     const params = new URLSearchParams();
-    if (dbId) params.append('db_id', dbId);
+    if (dbId) params.append("db_id", dbId);
 
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}/status`;
     const path = query ? `${basePath}?${query}` : basePath;
 
-    return this.client.request<ContentStatusResponse>('GET', path);
+    return this.client.request<ContentStatusResponse>("GET", path);
   }
 
   /**
@@ -245,21 +258,28 @@ export class KnowledgeResource {
    * @param contentId - Content identifier
    * @param options - Properties to update
    */
-  async update(contentId: string, options: UpdateContentOptions): Promise<ContentResponse> {
+  async update(
+    contentId: string,
+    options: UpdateContentOptions,
+  ): Promise<ContentResponse> {
     const formData = new FormData();
 
-    if (options.name) formData.append('name', options.name);
-    if (options.description) formData.append('description', options.description);
-    if (options.metadata) formData.append('metadata', JSON.stringify(options.metadata));
-    if (options.readerId) formData.append('reader_id', options.readerId);
+    if (options.name) formData.append("name", options.name);
+    if (options.description)
+      formData.append("description", options.description);
+    if (options.metadata)
+      formData.append("metadata", JSON.stringify(options.metadata));
+    if (options.readerId) formData.append("reader_id", options.readerId);
 
     const params = new URLSearchParams();
-    if (options.dbId) params.append('db_id', options.dbId);
+    if (options.dbId) params.append("db_id", options.dbId);
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}`;
     const path = query ? `${basePath}?${query}` : basePath;
 
-    return this.client.request<ContentResponse>('PATCH', path, { body: formData });
+    return this.client.request<ContentResponse>("PATCH", path, {
+      body: formData,
+    });
   }
 
   /**
@@ -270,13 +290,13 @@ export class KnowledgeResource {
    */
   async delete(contentId: string, dbId?: string): Promise<void> {
     const params = new URLSearchParams();
-    if (dbId) params.append('db_id', dbId);
+    if (dbId) params.append("db_id", dbId);
 
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}`;
     const path = query ? `${basePath}?${query}` : basePath;
 
-    await this.client.request<void>('DELETE', path);
+    await this.client.request<void>("DELETE", path);
   }
 
   /**
@@ -288,12 +308,12 @@ export class KnowledgeResource {
    */
   async deleteAll(dbId?: string): Promise<void> {
     const params = new URLSearchParams();
-    if (dbId) params.append('db_id', dbId);
+    if (dbId) params.append("db_id", dbId);
 
     const query = params.toString();
-    const path = query ? `/knowledge/content?${query}` : '/knowledge/content';
+    const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
 
-    await this.client.request<void>('DELETE', path);
+    await this.client.request<void>("DELETE", path);
   }
 
   /**
@@ -304,7 +324,10 @@ export class KnowledgeResource {
    * @param query - Search query text
    * @param options - Search options (filters, pagination, search type)
    */
-  async search(query: string, options?: SearchOptions): Promise<PaginatedResponse<VectorSearchResult>> {
+  async search(
+    query: string,
+    options?: SearchOptions,
+  ): Promise<PaginatedResponse<VectorSearchResult>> {
     const body: Record<string, unknown> = { query };
 
     if (options?.dbId) body.db_id = options.dbId;
@@ -320,12 +343,12 @@ export class KnowledgeResource {
     }
 
     return this.client.request<PaginatedResponse<VectorSearchResult>>(
-      'POST',
-      '/knowledge/search',
+      "POST",
+      "/knowledge/search",
       {
         body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      }
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }

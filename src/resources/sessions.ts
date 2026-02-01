@@ -3,7 +3,8 @@ import type { components } from "../generated/types";
 
 // Extract types from generated schemas
 type SessionSchema = components["schemas"]["SessionSchema"];
-type PaginatedResponse = components["schemas"]["PaginatedResponse_SessionSchema_"];
+type PaginatedResponse =
+  components["schemas"]["PaginatedResponse_SessionSchema_"];
 
 /**
  * Options for listing sessions

@@ -1,7 +1,7 @@
 import type { AgentOSClient } from "../client";
 import type { components } from "../generated/types";
 import { AgentStream } from "../streaming";
-import type { Image, Audio, Video, FileType } from "../types/files";
+import type { Audio, FileType, Image, Video } from "../types/files";
 import { normalizeFileInput } from "../utils/files";
 
 // Extract types from generated schemas

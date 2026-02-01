@@ -6,9 +6,9 @@
  * Node.js environments.
  */
 
-import { describe, it, expect } from "vitest";
+import { createReadStream, readFile } from "node:fs";
 import { Readable } from "node:stream";
-import { readFile, createReadStream } from "node:fs";
+import { describe, expect, it } from "vitest";
 
 describe("Node.js Runtime Compatibility", () => {
   describe("Fetch API (Node 18 experimental, stable in Node 21+)", () => {
@@ -85,9 +85,10 @@ describe("Node.js Runtime Compatibility", () => {
       const chunks: string[] = [];
       const reader = stream.pipeThrough(new TextDecoderStream()).getReader();
 
-      let result;
-      while (!(result = await reader.read()).done) {
+      let result = await reader.read();
+      while (!result.done) {
         chunks.push(result.value);
+        result = await reader.read();
       }
 
       expect(chunks.length).toBeGreaterThan(0);

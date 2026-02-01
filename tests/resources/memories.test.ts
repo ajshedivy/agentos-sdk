@@ -49,7 +49,10 @@ describe("MemoriesResource", () => {
 
       await resource.list({ userId: "user-123" });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/memories?user_id=user-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memories?user_id=user-123",
+      );
     });
 
     it("adds team_id query param", async () => {
@@ -61,7 +64,10 @@ describe("MemoriesResource", () => {
 
       await resource.list({ teamId: "team-456" });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/memories?team_id=team-456");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memories?team_id=team-456",
+      );
     });
 
     it("adds agent_id query param", async () => {
@@ -73,7 +79,10 @@ describe("MemoriesResource", () => {
 
       await resource.list({ agentId: "agent-789" });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/memories?agent_id=agent-789");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memories?agent_id=agent-789",
+      );
     });
 
     it("adds searchContent query param", async () => {
@@ -100,7 +109,10 @@ describe("MemoriesResource", () => {
 
       await resource.list({ page: 2, limit: 10 });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/memories?limit=10&page=2");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memories?limit=10&page=2",
+      );
     });
 
     it("adds sortBy and sortOrder params", async () => {
@@ -157,7 +169,10 @@ describe("MemoriesResource", () => {
 
       await resource.list({ userId: "user-123", teamId: undefined });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/memories?user_id=user-123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memories?user_id=user-123",
+      );
     });
 
     it("handles empty topics array", async () => {
@@ -251,7 +266,10 @@ describe("MemoriesResource", () => {
 
       await resource.get("mem-123", { dbId: "db-1" });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/memories/mem-123?db_id=db-1");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memories/mem-123?db_id=db-1",
+      );
     });
 
     it("adds table query param when provided", async () => {

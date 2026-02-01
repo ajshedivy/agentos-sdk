@@ -1,6 +1,6 @@
-import * as fs from 'fs';
-import type { ReadStream } from 'fs';
-import type { FileInput } from '../types/files';
+import * as fs from "node:fs";
+import type { ReadStream } from "node:fs";
+import type { FileInput } from "../types/files";
 
 /**
  * Normalize file input to a format suitable for FormData.
@@ -30,17 +30,17 @@ import type { FileInput } from '../types/files';
  */
 export function normalizeFileInput(
   input: FileInput,
-  filename?: string
+  filename?: string,
 ): Blob | ReadStream | File {
   // String path -> ReadStream (Node.js only)
-  if (typeof input === 'string') {
+  if (typeof input === "string") {
     // Check if fs module is available (Node.js environment)
-    if (typeof fs.createReadStream === 'function') {
+    if (typeof fs.createReadStream === "function") {
       return fs.createReadStream(input);
     }
     throw new Error(
-      'File paths are only supported in Node.js environments. ' +
-      'In browser environments, use File or Blob instead.'
+      "File paths are only supported in Node.js environments. " +
+        "In browser environments, use File or Blob instead.",
     );
   }
 
@@ -48,11 +48,13 @@ export function normalizeFileInput(
   if (Buffer.isBuffer(input)) {
     // Create Blob with optional filename via File constructor if available
     // Note: Buffer extends Uint8Array, safe to use in Blob/File constructors
-    if (filename && typeof File !== 'undefined') {
+    if (filename && typeof File !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
       return new File([input as any], filename);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
     return new Blob([input as any]);
   }
 

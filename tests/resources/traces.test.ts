@@ -70,7 +70,10 @@ describe("TracesResource", () => {
 
       await resource.list({ userId: "user-789" });
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/traces?user_id=user-789");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/traces?user_id=user-789",
+      );
     });
 
     it("adds agent_id query param when provided", async () => {

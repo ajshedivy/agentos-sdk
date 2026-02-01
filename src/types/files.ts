@@ -1,4 +1,4 @@
-import type { ReadStream } from 'fs';
+import type { ReadStream } from "node:fs";
 
 /**
  * Flexible file input type supporting multiple formats.

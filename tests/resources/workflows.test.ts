@@ -82,7 +82,10 @@ describe("WorkflowsResource", () => {
 
       await resource.get("workflow/special");
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/workflows/workflow%2Fspecial");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/workflows/workflow%2Fspecial",
+      );
     });
 
     it("URL-encodes spaces in workflow ID", async () => {
@@ -90,7 +93,10 @@ describe("WorkflowsResource", () => {
 
       await resource.get("my workflow");
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/workflows/my%20workflow");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/workflows/my%20workflow",
+      );
     });
 
     it("URL-encodes special characters in workflow ID", async () => {
@@ -98,7 +104,10 @@ describe("WorkflowsResource", () => {
 
       await resource.get("workflow@123");
 
-      expect(requestSpy).toHaveBeenCalledWith("GET", "/workflows/workflow%40123");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/workflows/workflow%40123",
+      );
     });
 
     it("propagates NotFoundError from client", async () => {
