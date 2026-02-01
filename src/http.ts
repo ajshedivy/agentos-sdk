@@ -85,17 +85,20 @@ export async function request<T>(
 ): Promise<T> {
   const { method = "GET", body, headers = {}, signal } = options;
 
+  // Don't set Content-Type for FormData - fetch auto-sets with boundary
+  const fetchHeaders: Record<string, string> = body instanceof FormData
+    ? { ...headers }
+    : { "Content-Type": "application/json", ...headers };
+
   const fetchOptions: globalThis.RequestInit = {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
+    headers: fetchHeaders,
     signal,
   };
 
   if (body !== undefined) {
-    fetchOptions.body = JSON.stringify(body);
+    // Pass FormData directly, stringify other body types
+    fetchOptions.body = body instanceof FormData ? body : JSON.stringify(body);
   }
 
   const response = await fetch(url, fetchOptions);
