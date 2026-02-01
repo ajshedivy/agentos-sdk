@@ -26,6 +26,39 @@ export type {
   StreamRunOptions,
 } from "./resources/agents";
 
+export { TeamsResource } from "./resources/teams";
+export type {
+  TeamRunOptions,
+  TeamStreamRunOptions,
+  TeamContinueOptions,
+} from "./resources/teams";
+
+export { WorkflowsResource } from "./resources/workflows";
+export type {
+  WorkflowRunOptions,
+  WorkflowStreamRunOptions,
+  WorkflowContinueOptions,
+} from "./resources/workflows";
+
+export { SessionsResource } from "./resources/sessions";
+export type {
+  ListSessionsOptions,
+  CreateSessionOptions,
+} from "./resources/sessions";
+
+export { MemoriesResource } from "./resources/memories";
+export type {
+  ListMemoriesOptions,
+  CreateMemoryOptions,
+  UpdateMemoryOptions,
+} from "./resources/memories";
+
+export { TracesResource } from "./resources/traces";
+export type { ListTracesOptions } from "./resources/traces";
+
+export { MetricsResource } from "./resources/metrics";
+export type { GetMetricsOptions } from "./resources/metrics";
+
 // Generated types (re-export useful types)
 export type { components, paths } from "./generated/types";
 
