@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentOSClient } from "../src/client";
 import { AuthenticationError } from "../src/errors";
+import { VERSION } from "../src/index";
 
 // Mock the http module
 vi.mock("../src/http", () => ({
@@ -34,7 +35,7 @@ describe("AgentOSClient", () => {
         maxRetries: 3,
       });
 
-      expect(client.version).toBe("0.1.0");
+      expect(client.version).toBe(VERSION);
     });
 
     it("should remove trailing slash from baseUrl", async () => {
@@ -108,7 +109,7 @@ describe("AgentOSClient", () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             "Content-Type": "application/json",
-            "User-Agent": "agentos-sdk/0.1.0",
+            "User-Agent": `agentos-sdk/${VERSION}`,
           }),
         }),
         expect.any(Number),
@@ -333,7 +334,7 @@ describe("AgentOSClient", () => {
             Authorization: "Bearer test-key",
             "X-Trace-Id": "abc123",
             "Content-Type": "application/json",
-            "User-Agent": "agentos-sdk/0.1.0",
+            "User-Agent": `agentos-sdk/${VERSION}`,
           }),
         }),
         3, // custom maxRetries
@@ -387,7 +388,7 @@ describe("AgentOSClient", () => {
         baseUrl: "https://api.example.com",
       });
 
-      expect(client.version).toBe("0.1.0");
+      expect(client.version).toBe(VERSION);
     });
 
     it("should include version in User-Agent header", async () => {
@@ -403,7 +404,7 @@ describe("AgentOSClient", () => {
         expect.any(String),
         expect.objectContaining({
           headers: expect.objectContaining({
-            "User-Agent": "agentos-sdk/0.1.0",
+            "User-Agent": `agentos-sdk/${VERSION}`,
           }),
         }),
         expect.any(Number),
@@ -524,7 +525,7 @@ describe("AgentOSClient", () => {
           headers: expect.objectContaining({
             Authorization: "Bearer test-key",
             "Content-Type": "application/json",
-            "User-Agent": "agentos-sdk/0.1.0",
+            "User-Agent": `agentos-sdk/${VERSION}`,
           }),
         }),
         2, // default maxRetries

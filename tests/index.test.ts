@@ -46,7 +46,10 @@ import type {
 
 describe("Package Exports", () => {
   it("should export VERSION", () => {
-    expect(VERSION).toBe("0.1.0");
+    expect(VERSION).toBeDefined();
+    expect(typeof VERSION).toBe("string");
+    // Verify semver format (X.Y.Z)
+    expect(VERSION).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
   it("should export AgentOSClient", () => {
@@ -111,7 +114,8 @@ describe("Package Exports", () => {
     const client = new AgentOSClient({
       baseUrl: "https://api.example.com",
     });
-    expect(client.version).toBe("0.1.0");
+    // Version should match exported VERSION constant
+    expect(client.version).toBe(VERSION);
   });
 
   it("should allow error class inheritance checks", () => {
