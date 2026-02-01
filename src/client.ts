@@ -30,7 +30,7 @@ import type {
  * ```
  */
 export class AgentOSClient {
-  readonly version = "0.1.0";
+  readonly version = "0.1.1";
   readonly agents: AgentsResource;
   readonly teams: TeamsResource;
   readonly workflows: WorkflowsResource;
