@@ -8,6 +8,11 @@ import { normalizeFileInput } from "../utils/files";
 type TeamResponse = components["schemas"]["TeamResponse"];
 
 /**
+ * Result of a non-streaming team run
+ */
+export type TeamRunResult = components["schemas"]["TeamRunSchema"];
+
+/**
  * Options for running a team
  */
 export interface TeamRunOptions {
@@ -144,7 +149,7 @@ export class TeamsResource {
    * });
    * ```
    */
-  async run(teamId: string, options: TeamRunOptions): Promise<unknown> {
+  async run(teamId: string, options: TeamRunOptions): Promise<TeamRunResult> {
     // Build FormData for multipart request
     const formData = new FormData();
     formData.append("message", options.message);
@@ -180,7 +185,7 @@ export class TeamsResource {
     }
 
     // Pass FormData as body, client.request handles Content-Type removal for FormData
-    return this.client.request<unknown>(
+    return this.client.request<TeamRunResult>(
       "POST",
       `/teams/${encodeURIComponent(teamId)}/runs`,
       { body: formData },

@@ -21,6 +21,7 @@ export type {
 // Resource classes
 export { AgentsResource } from "./resources/agents";
 export type {
+  AgentRunResult,
   ContinueOptions,
   RunOptions,
   StreamRunOptions,
@@ -28,16 +29,18 @@ export type {
 
 export { TeamsResource } from "./resources/teams";
 export type {
-  TeamRunOptions,
-  TeamStreamRunOptions,
   TeamContinueOptions,
+  TeamRunOptions,
+  TeamRunResult,
+  TeamStreamRunOptions,
 } from "./resources/teams";
 
 export { WorkflowsResource } from "./resources/workflows";
 export type {
-  WorkflowRunOptions,
-  WorkflowStreamRunOptions,
   WorkflowContinueOptions,
+  WorkflowRunOptions,
+  WorkflowRunResult,
+  WorkflowStreamRunOptions,
 } from "./resources/workflows";
 
 export { SessionsResource } from "./resources/sessions";

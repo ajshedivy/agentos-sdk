@@ -8,6 +8,11 @@ import { normalizeFileInput } from "../utils/files";
 type AgentResponse = components["schemas"]["AgentResponse"];
 
 /**
+ * Result of a non-streaming agent run
+ */
+export type AgentRunResult = components["schemas"]["RunSchema"];
+
+/**
  * Options for running an agent
  */
 export interface RunOptions {
@@ -144,7 +149,7 @@ export class AgentsResource {
    * });
    * ```
    */
-  async run(agentId: string, options: RunOptions): Promise<unknown> {
+  async run(agentId: string, options: RunOptions): Promise<AgentRunResult> {
     // Build FormData for multipart request
     const formData = new FormData();
     formData.append("message", options.message);
@@ -180,7 +185,7 @@ export class AgentsResource {
     }
 
     // Pass FormData as body, client.request handles Content-Type removal for FormData
-    return this.client.request<unknown>(
+    return this.client.request<AgentRunResult>(
       "POST",
       `/agents/${encodeURIComponent(agentId)}/runs`,
       { body: formData },

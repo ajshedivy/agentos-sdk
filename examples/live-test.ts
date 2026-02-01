@@ -177,7 +177,7 @@ async function main() {
       const result = await client.agents.run(agentId, {
         message: 'Quick test',
         sessionId: `test-session-${Date.now()}`,
-      }) as any;
+      });
 
       console.log('   ✓ Non-streaming run completed');
       console.log(`   Run ID: ${result.run_id || 'unknown'}`);

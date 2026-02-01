@@ -8,6 +8,11 @@ import { normalizeFileInput } from "../utils/files";
 type WorkflowResponse = components["schemas"]["WorkflowResponse"];
 
 /**
+ * Result of a non-streaming workflow run
+ */
+export type WorkflowRunResult = components["schemas"]["WorkflowRunSchema"];
+
+/**
  * Options for running a workflow
  */
 export interface WorkflowRunOptions {
@@ -144,7 +149,10 @@ export class WorkflowsResource {
    * });
    * ```
    */
-  async run(workflowId: string, options: WorkflowRunOptions): Promise<unknown> {
+  async run(
+    workflowId: string,
+    options: WorkflowRunOptions,
+  ): Promise<WorkflowRunResult> {
     // Build FormData for multipart request
     const formData = new FormData();
     formData.append("message", options.message);
@@ -180,7 +188,7 @@ export class WorkflowsResource {
     }
 
     // Pass FormData as body, client.request handles Content-Type removal for FormData
-    return this.client.request<unknown>(
+    return this.client.request<WorkflowRunResult>(
       "POST",
       `/workflows/${encodeURIComponent(workflowId)}/runs`,
       { body: formData },
