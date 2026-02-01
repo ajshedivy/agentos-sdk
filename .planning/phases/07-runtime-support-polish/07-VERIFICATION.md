@@ -44,7 +44,7 @@ score: 5/5 must-haves verified
 | tests/runtime/ | Node.js APIs | test assertions | ✓ WIRED | Tests verify fetch, FormData, ReadableStream, TextDecoderStream, Buffer.isBuffer, fs.createReadStream, AbortController, AbortSignal.timeout all exist and functional |
 | .github/workflows/ci.yml | package.json scripts | npm run commands | ✓ WIRED | CI runs npm run lint, npm run typecheck, npm run test:coverage, npm run validate - all scripts exist and pass |
 | .github/workflows/publish.yml | npm registry | npm publish | ✓ WIRED | Workflow runs npm publish --access public with NODE_AUTH_TOKEN from secrets, prepublishOnly hook runs validate |
-| README.md | package installation | npm install command | ✓ WIRED | README shows "npm install @ajshedivy/agentos-sdk" matching package.json name field |
+| README.md | package installation | npm install command | ✓ WIRED | README shows "npm install @worksofadam/agentos-sdk" matching package.json name field |
 
 ### Requirements Coverage
 

@@ -6,7 +6,7 @@ name: Publish to npm
 #
 # Prerequisites:
 # - NPM_TOKEN secret must be configured in repository settings
-# - Token must have publish permission for @ajshedivy scope
+# - Token must have publish permission for @worksofadam scope
 
 on:
   push:

@@ -1,6 +1,6 @@
-# @ajshedivy/agentos-sdk
+# @worksofadam/agentos-sdk
 
-[![npm version](https://img.shields.io/npm/v/@ajshedivy/agentos-sdk.svg)](https://www.npmjs.com/package/@ajshedivy/agentos-sdk)
+[![npm version](https://img.shields.io/npm/v/@worksofadam/agentos-sdk.svg)](https://www.npmjs.com/package/@worksofadam/agentos-sdk)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 
@@ -9,7 +9,7 @@ TypeScript SDK for the AgentOS HTTP API. Run agents, teams, and workflows with s
 ## Quick Start
 
 ```typescript
-import { AgentOSClient } from '@ajshedivy/agentos-sdk';
+import { AgentOSClient } from '@worksofadam/agentos-sdk';
 
 const client = new AgentOSClient({ apiKey: process.env.AGENTOS_API_KEY });
 const stream = await client.agents.runStream('agent-id', { message: 'Hello!' });
@@ -22,13 +22,13 @@ for await (const event of stream) {
 
 ```bash
 # npm
-npm install @ajshedivy/agentos-sdk
+npm install @worksofadam/agentos-sdk
 
 # yarn
-yarn add @ajshedivy/agentos-sdk
+yarn add @worksofadam/agentos-sdk
 
 # pnpm
-pnpm add @ajshedivy/agentos-sdk
+pnpm add @worksofadam/agentos-sdk
 ```
 
 ## Usage Examples
@@ -393,7 +393,7 @@ The SDK supports multiple file input formats for maximum flexibility:
 ### Supported File Types
 
 ```typescript
-import type { FileInput, Image, Audio, Video, FileType } from '@ajshedivy/agentos-sdk';
+import type { FileInput, Image, Audio, Video, FileType } from '@worksofadam/agentos-sdk';
 
 // FileInput accepts:
 // - string: File path (Node.js only - converted to ReadStream)
@@ -437,7 +437,7 @@ const result = await client.agents.run('agent-id', {
 For advanced use cases, use the `normalizeFileInput` utility:
 
 ```typescript
-import { normalizeFileInput } from '@ajshedivy/agentos-sdk';
+import { normalizeFileInput } from '@worksofadam/agentos-sdk';
 
 // Normalize any file input to FormData-compatible format
 const normalized = await normalizeFileInput('/path/to/file.pdf', 'document.pdf');
@@ -471,7 +471,7 @@ import {
   InternalServerError,
   RemoteServerUnavailableError,
   UnprocessableEntityError
-} from '@ajshedivy/agentos-sdk';
+} from '@worksofadam/agentos-sdk';
 
 try {
   const result = await client.agents.run('agent-id', {
@@ -518,7 +518,7 @@ import type {
   AgentRunEvent,
   components,
   paths
-} from '@ajshedivy/agentos-sdk';
+} from '@worksofadam/agentos-sdk';
 
 // All resource methods are fully typed
 const result = await client.agents.run('agent-id', {

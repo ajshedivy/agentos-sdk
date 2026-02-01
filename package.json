@@ -1,5 +1,5 @@
 {
-  "name": "@ajshedivy/agentos-sdk",
+  "name": "@worksofadam/agentos-sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for AgentOS HTTP API",
   "type": "module",
