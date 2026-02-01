@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** Developers can run agents, teams, and workflows with streaming responses in under 5 lines of code
-**Current focus:** Phase 6 - File Uploads & Knowledge
+**Current focus:** Phase 7 - Runtime Support & Polish
 
 ## Current Position
 
-Phase: 6 of 7 (File Uploads & Knowledge)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-01 - Completed 06-04-PLAN.md (Client Integration & Public API)
+Phase: 7 of 7 (Runtime Support & Polish)
+Plan: 2 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-01 - Completed 07-02-PLAN.md (Comprehensive SDK Documentation)
 
-Progress: [██████████████] ~82%
+Progress: [███████████████] ~86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
-- Average duration: ~2.3 min
-- Total execution time: ~1.3 hours
+- Total plans completed: 22
+- Average duration: ~2.2 min
+- Total execution time: ~1.4 hours
 
 **By Phase:**
 
@@ -33,9 +33,10 @@ Progress: [██████████████] ~82%
 | 04 | 3 | ~9 min | ~3.0 min |
 | 05 | 6 | ~13 min | ~2.2 min |
 | 06 | 3 | ~12 min | ~4.0 min |
+| 07 | 2 | ~4 min | ~2.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-06 (~2 min), 06-01 (~3 min), 06-02 (~5 min), 06-03 (~4 min), 06-04 (~3 min)
+- Last 5 plans: 06-02 (~5 min), 06-03 (~4 min), 06-04 (~3 min), 07-01 (~2 min), 07-02 (~2 min)
 - Trend: stable ~2-5 min average, excellent velocity maintained
 
 *Updated after each plan completion*
@@ -102,6 +103,10 @@ Recent decisions affecting current work:
 - 06-03: Local PaginatedResponse type definition (could be shared in future refactoring)
 - 06-04: normalizeFileInput utility exported from package root for advanced file handling scenarios
 - 06-04: Integration tests mock client.request method directly (not fetch) for FormData inspection
+- 07-02: README structure follows Python SDK reference pattern with focus on quick start and practical examples
+- 07-02: One focused example per resource concept (not exhaustive but representative)
+- 07-02: Runtime limitations documented in relevant sections (no prominent "Limitations" section)
+- 07-02: No browser examples in initial documentation (deferred to v2)
 
 ### Pending Todos
 
@@ -125,7 +130,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 06-04-PLAN.md (Client Integration & Public API)
+Stopped at: Completed 07-02-PLAN.md (Comprehensive SDK Documentation)
 Resume file: None
 
 ## Phase 2 Complete
