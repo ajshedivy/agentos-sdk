@@ -7,11 +7,17 @@ import {
   AuthenticationError,
   BadRequestError,
   InternalServerError,
+  MemoriesResource,
+  MetricsResource,
   NotFoundError,
   RateLimitError,
   RemoteServerUnavailableError,
+  SessionsResource,
+  TeamsResource,
+  TracesResource,
   UnprocessableEntityError,
   VERSION,
+  WorkflowsResource,
 } from "../src/index";
 import type {
   AgentRunEvent,
@@ -40,6 +46,30 @@ describe("Package Exports", () => {
   it("should export AgentsResource", () => {
     expect(AgentsResource).toBeDefined();
     expect(typeof AgentsResource).toBe("function");
+  });
+
+  it("exports TeamsResource", () => {
+    expect(TeamsResource).toBeDefined();
+  });
+
+  it("exports WorkflowsResource", () => {
+    expect(WorkflowsResource).toBeDefined();
+  });
+
+  it("exports SessionsResource", () => {
+    expect(SessionsResource).toBeDefined();
+  });
+
+  it("exports MemoriesResource", () => {
+    expect(MemoriesResource).toBeDefined();
+  });
+
+  it("exports TracesResource", () => {
+    expect(TracesResource).toBeDefined();
+  });
+
+  it("exports MetricsResource", () => {
+    expect(MetricsResource).toBeDefined();
   });
 
   it("should export generated types namespace", () => {

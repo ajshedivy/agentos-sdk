@@ -452,13 +452,59 @@ describe("AgentOSClient", () => {
     });
   });
 
-  describe("agents property", () => {
+  describe("resource namespaces", () => {
     it("exposes AgentsResource instance", () => {
       const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
       expect(client.agents).toBeDefined();
       expect(typeof client.agents.list).toBe("function");
       expect(typeof client.agents.get).toBe("function");
       expect(typeof client.agents.run).toBe("function");
+    });
+
+    it("exposes teams resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.teams).toBeDefined();
+      expect(typeof client.teams.list).toBe("function");
+      expect(typeof client.teams.get).toBe("function");
+      expect(typeof client.teams.run).toBe("function");
+    });
+
+    it("exposes workflows resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.workflows).toBeDefined();
+      expect(typeof client.workflows.list).toBe("function");
+      expect(typeof client.workflows.get).toBe("function");
+      expect(typeof client.workflows.run).toBe("function");
+    });
+
+    it("exposes sessions resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.sessions).toBeDefined();
+      expect(typeof client.sessions.list).toBe("function");
+      expect(typeof client.sessions.get).toBe("function");
+      expect(typeof client.sessions.create).toBe("function");
+    });
+
+    it("exposes memories resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.memories).toBeDefined();
+      expect(typeof client.memories.list).toBe("function");
+      expect(typeof client.memories.get).toBe("function");
+      expect(typeof client.memories.create).toBe("function");
+    });
+
+    it("exposes traces resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.traces).toBeDefined();
+      expect(typeof client.traces.list).toBe("function");
+      expect(typeof client.traces.get).toBe("function");
+    });
+
+    it("exposes metrics resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.metrics).toBeDefined();
+      expect(typeof client.metrics.get).toBe("function");
+      expect(typeof client.metrics.refresh).toBe("function");
     });
 
     it("agents resource uses client.request for API calls", async () => {
