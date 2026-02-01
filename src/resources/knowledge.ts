@@ -6,7 +6,7 @@ import { normalizeFileInput } from "../utils/files";
 // Extract types from generated schemas
 type ContentResponse = components["schemas"]["ContentResponseSchema"];
 type ContentStatusResponse = components["schemas"]["ContentStatusResponse"];
-type ConfigResponse = components["schemas"]["ConfigResponseSchema"];
+type ConfigResponse = components["schemas"]["ConfigResponse"];
 type VectorSearchResult = components["schemas"]["VectorSearchResult"];
 
 /**
