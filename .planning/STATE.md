@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 5 of 7 (Resource Expansion)
-Plan: 5 of 6 in current phase
-Status: In progress
-Last activity: 2026-01-31 - Completed 05-04-PLAN.md (MemoriesResource Implementation)
+Plan: 6 of 6 in current phase
+Status: Phase complete
+Last activity: 2026-01-31 - Completed 05-06-PLAN.md (Client Integration and Public API)
 
-Progress: [██████████░] ~68%
+Progress: [███████████] ~71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: ~2.2 min
-- Total execution time: ~0.9 hours
+- Total plans completed: 17
+- Average duration: ~2.1 min
+- Total execution time: ~0.95 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [██████████░] ~68%
 | 02 | 3 | ~8 min | ~2.7 min |
 | 03 | 3 | ~6 min | ~2.0 min |
 | 04 | 3 | ~9 min | ~3.0 min |
-| 05 | 5 | ~11 min | ~2.2 min |
+| 05 | 6 | ~13 min | ~2.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (~2 min), 05-02 (~2 min), 05-03 (~2 min), 05-05 (~2 min), 05-04 (~3 min)
+- Last 5 plans: 05-02 (~2 min), 05-03 (~2 min), 05-05 (~2 min), 05-04 (~3 min), 05-06 (~2 min)
 - Trend: stable ~2 min average, excellent velocity maintained
 
 *Updated after each plan completion*
@@ -85,6 +85,9 @@ Recent decisions affecting current work:
 - 05-04: Topics array passed as multiple query params (topics=a&topics=b) in URLSearchParams
 - 05-05: TracesResource and MetricsResource are read-only (no create/update/delete operations)
 - 05-05: Query params use snake_case for API compatibility (run_id, session_id, starting_date, ending_date)
+- 05-06: All resources initialized in constructor passing client instance
+- 05-06: Resource namespaces follow shallow pattern (client.teams not client.resources.teams)
+- 05-06: Complete option type exports for developer TypeScript experience
 
 ### Pending Todos
 
@@ -108,7 +111,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 05-04-PLAN.md (MemoriesResource Implementation)
+Stopped at: Completed 05-06-PLAN.md (Client Integration and Public API)
 Resume file: None
 
 ## Phase 2 Complete
@@ -203,3 +206,39 @@ Phase 4 (Streaming Support) complete!
 - continue() method with dual return type (AgentStream | result)
 
 **Ready for Phase 5:** Teams Resource implementation with streaming support
+
+## Phase 5 Complete
+
+Phase 5 (Resource Expansion) complete!
+
+**Plans completed:**
+- 05-01: TeamsResource Implementation (list, get, run, runStream, continue, cancel)
+- 05-02: WorkflowsResource Implementation (list, get, run, runStream, continue, cancel)
+- 05-03: SessionsResource Implementation (list, get, create, rename, delete, getRuns)
+- 05-04: MemoriesResource Implementation (list, get, create, update, delete)
+- 05-05: TracesResource and MetricsResource Implementation (read-only resources)
+- 05-06: Client Integration and Public API (all resources integrated)
+
+**Deliverables:**
+- 6 new resource classes (Teams, Workflows, Sessions, Memories, Traces, Metrics)
+- All resources integrated into AgentOSClient with shallow namespace pattern
+- Complete public API exports for all resource classes and option types
+- URLSearchParams pattern for query parameter building (prevents "undefined" in URLs)
+- FormData pattern for multipart requests with conditional field appending
+- PaginatedResponse support for list endpoints
+- JSON body pattern for Memory create/update operations
+- Read-only resource pattern for Traces and Metrics
+- 372 tests passing (117 new resource tests + 14 new integration tests)
+
+**Patterns established:**
+- Resource implementation pattern: extract types → implement methods → comprehensive tests
+- URLSearchParams for query params (only append defined values)
+- FormData for multipart requests (conditionally append optional fields)
+- JSON body with Content-Type header for structured data endpoints
+- PaginatedResponse type with data + meta for pagination support
+- Read-only resource pattern (no create/update/delete methods)
+- snake_case query params for API compatibility
+- Resource integration: import → declare property → initialize in constructor
+- Complete option type exports for developer TypeScript experience
+
+**Ready for Phase 6:** File upload support for AgentsResource with multipart/form-data handling
