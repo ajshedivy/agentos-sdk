@@ -6,6 +6,7 @@
  * Node.js environments.
  */
 
+import { File } from "node:buffer";
 import { createReadStream, readFile } from "node:fs";
 import { Readable } from "node:stream";
 import { describe, expect, it } from "vitest";
