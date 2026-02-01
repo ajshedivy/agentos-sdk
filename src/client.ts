@@ -1,5 +1,6 @@
 import { createErrorFromResponse } from "./errors";
 import { requestWithRetry } from "./http";
+import { VERSION } from "./index";
 import { AgentsResource } from "./resources/agents";
 import { KnowledgeResource } from "./resources/knowledge";
 import { MemoriesResource } from "./resources/memories";
@@ -30,7 +31,7 @@ import type {
  * ```
  */
 export class AgentOSClient {
-  readonly version = "0.1.1";
+  readonly version = VERSION;
   readonly agents: AgentsResource;
   readonly teams: TeamsResource;
   readonly workflows: WorkflowsResource;

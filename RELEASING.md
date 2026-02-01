@@ -12,16 +12,6 @@ Releases are automated via GitHub Actions. When you push a version tag (e.g., `v
 4. Validates the package (publint + attw)
 5. Publishes to npm
 
-## Prerequisites
-
-### NPM Token
-
-Ensure `NPM_TOKEN` is configured in GitHub repository secrets:
-
-1. Go to **Settings → Secrets and variables → Actions**
-2. Add secret named `NPM_TOKEN` with your npm access token
-3. Token needs `publish` permission for the `@worksofadam` scope
-
 ### Local Setup
 
 ```bash
@@ -62,11 +52,10 @@ npm version minor --no-git-tag-version
 npm version major --no-git-tag-version
 ```
 
-Also update the version in `src/client.ts`:
+Also update the version in `src/index.ts`:
 
 ```typescript
-export class AgentOSClient {
-  readonly version = "X.Y.Z";  // ← Update this
+export const VERSION = "0.1.1"; // Update to match package.json
 ```
 
 ### Step 3: Update Changelog (Optional)
