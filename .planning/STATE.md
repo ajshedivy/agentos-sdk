@@ -78,6 +78,9 @@ Recent decisions affecting current work:
 - 04-03: requestStream() sets Accept: text/event-stream header automatically
 - 04-03: continue() defaults to streaming (stream: true), supports opt-out with stream: false
 - 04-03: Resource methods create AbortController and pass to stream for user cancellation support
+- 05-01/02/03: Use URLSearchParams pattern to only append defined query parameters (prevents "undefined" in URLs)
+- 05-01/02/03: FormData pattern for POST requests with optional fields conditionally appended
+- 05-03: list() returns PaginatedResponse type with data + meta for pagination support
 
 ### Pending Todos
 
