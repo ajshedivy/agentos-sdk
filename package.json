@@ -28,7 +28,8 @@
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "validate": "npm run build && publint && attw --pack .",
-    "generate:types": "openapi-typescript ./openapi.json -o src/generated/types.ts"
+    "generate:types": "openapi-typescript ./openapi.json -o src/generated/types.ts",
+    "prepublishOnly": "npm run validate"
   },
   "engines": {
     "node": ">=18.0.0"
