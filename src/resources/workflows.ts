@@ -1,6 +1,8 @@
 import type { AgentOSClient } from "../client";
 import type { components } from "../generated/types";
 import { AgentStream } from "../streaming";
+import type { Image, Audio, Video, FileType } from "../types/files";
+import { normalizeFileInput } from "../utils/files";
 
 // Extract types from generated schemas
 type WorkflowResponse = components["schemas"]["WorkflowResponse"];
@@ -15,6 +17,14 @@ export interface WorkflowRunOptions {
   sessionId?: string;
   /** Optional user ID for user context */
   userId?: string;
+  /** Image files to include with the request */
+  images?: Image[];
+  /** Audio files to include with the request */
+  audio?: Audio[];
+  /** Video files to include with the request */
+  videos?: Video[];
+  /** Generic files to include with the request */
+  files?: FileType[];
   /** Streaming mode (only non-streaming supported in Phase 3) */
   stream?: false;
 }
@@ -29,6 +39,14 @@ export interface WorkflowStreamRunOptions {
   sessionId?: string;
   /** Optional user ID for user context */
   userId?: string;
+  /** Image files to include with the request */
+  images?: Image[];
+  /** Audio files to include with the request */
+  audio?: Audio[];
+  /** Video files to include with the request */
+  videos?: Video[];
+  /** Generic files to include with the request */
+  files?: FileType[];
 }
 
 /**
@@ -139,6 +157,28 @@ export class WorkflowsResource {
       formData.append("user_id", options.userId);
     }
 
+    // Append media files
+    if (options.images) {
+      for (const image of options.images) {
+        formData.append("images", normalizeFileInput(image));
+      }
+    }
+    if (options.audio) {
+      for (const audio of options.audio) {
+        formData.append("audio", normalizeFileInput(audio));
+      }
+    }
+    if (options.videos) {
+      for (const video of options.videos) {
+        formData.append("videos", normalizeFileInput(video));
+      }
+    }
+    if (options.files) {
+      for (const file of options.files) {
+        formData.append("files", normalizeFileInput(file));
+      }
+    }
+
     // Pass FormData as body, client.request handles Content-Type removal for FormData
     return this.client.request<unknown>(
       "POST",
@@ -183,6 +223,28 @@ export class WorkflowsResource {
     }
     if (options.userId) {
       formData.append("user_id", options.userId);
+    }
+
+    // Append media files
+    if (options.images) {
+      for (const image of options.images) {
+        formData.append("images", normalizeFileInput(image));
+      }
+    }
+    if (options.audio) {
+      for (const audio of options.audio) {
+        formData.append("audio", normalizeFileInput(audio));
+      }
+    }
+    if (options.videos) {
+      for (const video of options.videos) {
+        formData.append("videos", normalizeFileInput(video));
+      }
+    }
+    if (options.files) {
+      for (const file of options.files) {
+        formData.append("files", normalizeFileInput(file));
+      }
     }
 
     const controller = new AbortController();
