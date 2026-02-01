@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Type Generation & First Resource** - OpenAPI types with complete agents resource
 - [x] **Phase 4: Streaming Support** - SSE streaming with dual interfaces
 - [x] **Phase 5: Resource Expansion** - All remaining API resources
-- [ ] **Phase 6: File Uploads & Knowledge** - Multipart uploads with platform-specific handling
+- [x] **Phase 6: File Uploads & Knowledge** - Multipart uploads with platform-specific handling
 - [ ] **Phase 7: Runtime Support & Polish** - Node.js and browser validation
 
 ## Phase Details
@@ -139,10 +139,12 @@ Plans:
   2. SDK works in modern browsers (Chrome, Safari, Firefox) with fetch-based implementation
   3. Comprehensive test suite covers core functionality with mocks
   4. Package published to npm with proper dual-format configuration verified
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during planning
+- [ ] 07-01-PLAN.md — Install coverage tooling and add runtime compatibility tests
+- [ ] 07-02-PLAN.md — Create comprehensive README and browser usage example
+- [ ] 07-03-PLAN.md — Add publishing scripts, integration tests, and CI pipeline
 
 ## Progress
 
@@ -157,4 +159,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Streaming Support | 3/3 | Complete | 2026-01-31 |
 | 5. Resource Expansion | 6/6 | Complete | 2026-01-31 |
 | 6. File Uploads & Knowledge | 4/4 | Complete | 2026-01-31 |
-| 7. Runtime Support & Polish | 0/TBD | Not started | - |
+| 7. Runtime Support & Polish | 0/3 | Not started | - |
