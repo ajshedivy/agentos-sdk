@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   APIError,
   AgentOSClient,
@@ -7,6 +7,7 @@ import {
   AuthenticationError,
   BadRequestError,
   InternalServerError,
+  KnowledgeResource,
   MemoriesResource,
   MetricsResource,
   NotFoundError,
@@ -18,17 +19,27 @@ import {
   UnprocessableEntityError,
   VERSION,
   WorkflowsResource,
+  normalizeFileInput,
 } from "../src/index";
 import type {
   AgentRunEvent,
+  Audio,
   ContinueOptions,
+  FileInput,
+  FileType,
+  Image,
+  ListKnowledgeOptions,
   MemoryUpdateCompletedEvent,
   MemoryUpdateStartedEvent,
   RunCompletedEvent,
   RunContentEvent,
   RunOptions,
   RunStartedEvent,
+  SearchOptions,
   StreamRunOptions,
+  UpdateContentOptions,
+  UploadOptions,
+  Video,
   components,
   paths,
 } from "../src/index";
@@ -70,6 +81,10 @@ describe("Package Exports", () => {
 
   it("exports MetricsResource", () => {
     expect(MetricsResource).toBeDefined();
+  });
+
+  it("exports KnowledgeResource", () => {
+    expect(KnowledgeResource).toBeDefined();
   });
 
   it("should export generated types namespace", () => {
@@ -219,6 +234,172 @@ describe("Package Exports", () => {
       } else {
         throw new Error("Union discriminator failed");
       }
+    });
+  });
+
+  describe("Phase 6: File Uploads & Knowledge Integration", () => {
+    describe("client.knowledge namespace", () => {
+      it("provides knowledge resource via client", () => {
+        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+
+        expect(client.knowledge).toBeDefined();
+        expect(client.knowledge).toBeInstanceOf(KnowledgeResource);
+      });
+
+      it("exposes all knowledge methods", () => {
+        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+
+        expect(typeof client.knowledge.getConfig).toBe("function");
+        expect(typeof client.knowledge.list).toBe("function");
+        expect(typeof client.knowledge.upload).toBe("function");
+        expect(typeof client.knowledge.get).toBe("function");
+        expect(typeof client.knowledge.getStatus).toBe("function");
+        expect(typeof client.knowledge.update).toBe("function");
+        expect(typeof client.knowledge.delete).toBe("function");
+        expect(typeof client.knowledge.deleteAll).toBe("function");
+        expect(typeof client.knowledge.search).toBe("function");
+      });
+    });
+
+    describe("file type exports", () => {
+      it("exports file input type aliases", () => {
+        // Type-level tests - these just verify the types are exported and usable
+        const image: Image = Buffer.from("image");
+        const audio: Audio = Buffer.from("audio");
+        const video: Video = Buffer.from("video");
+        const file: FileType = Buffer.from("file");
+        const input: FileInput = Buffer.from("input");
+
+        expect(image).toBeDefined();
+        expect(audio).toBeDefined();
+        expect(video).toBeDefined();
+        expect(file).toBeDefined();
+        expect(input).toBeDefined();
+      });
+
+      it("exports normalizeFileInput utility", () => {
+        expect(typeof normalizeFileInput).toBe("function");
+
+        // Test basic usage
+        const buffer = Buffer.from("test");
+        const result = normalizeFileInput(buffer);
+        expect(result).toBeInstanceOf(Blob);
+      });
+    });
+
+    describe("knowledge option types", () => {
+      it("upload options type is usable", () => {
+        const options: UploadOptions = {
+          file: Buffer.from("content"),
+          name: "test.txt",
+          description: "Test file",
+          metadata: { key: "value" },
+          chunker: "RecursiveChunker",
+          chunkSize: 500,
+        };
+        expect(options.name).toBe("test.txt");
+      });
+
+      it("search options type is usable", () => {
+        const options: SearchOptions = {
+          dbId: "db-1",
+          searchType: "hybrid",
+          maxResults: 10,
+          filters: { category: "docs" },
+        };
+        expect(options.searchType).toBe("hybrid");
+      });
+
+      it("list options type is usable", () => {
+        const options: ListKnowledgeOptions = {
+          limit: 50,
+          page: 1,
+          sortBy: "created_at",
+          sortOrder: "desc",
+        };
+        expect(options.limit).toBe(50);
+      });
+
+      it("update options type is usable", () => {
+        const options: UpdateContentOptions = {
+          name: "updated.txt",
+          description: "Updated",
+          metadata: { version: "2" },
+        };
+        expect(options.name).toBe("updated.txt");
+      });
+    });
+
+    describe("media parameters in run methods", () => {
+      it("agents run accepts media arrays", async () => {
+        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const requestSpy = vi.fn().mockResolvedValue({ content: "response" });
+        // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
+        (client as any).request = requestSpy;
+
+        // Verify types accept media parameters
+        await client.agents.run("agent-1", {
+          message: "Process this",
+          images: [Buffer.from("img")],
+          audio: [Buffer.from("aud")],
+          videos: [Buffer.from("vid")],
+          files: [Buffer.from("file")],
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+          "POST",
+          "/agents/agent-1/runs",
+          expect.objectContaining({ body: expect.any(FormData) }),
+        );
+
+        const formData = requestSpy.mock.calls[0][2].body as FormData;
+        expect(formData.getAll("images")).toHaveLength(1);
+        expect(formData.getAll("audio")).toHaveLength(1);
+        expect(formData.getAll("videos")).toHaveLength(1);
+        expect(formData.getAll("files")).toHaveLength(1);
+      });
+
+      it("teams run accepts media arrays", async () => {
+        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const requestSpy = vi.fn().mockResolvedValue({ content: "response" });
+        // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
+        (client as any).request = requestSpy;
+
+        await client.teams.run("team-1", {
+          message: "Process this",
+          images: [Buffer.from("img")],
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+          "POST",
+          "/teams/team-1/runs",
+          expect.objectContaining({ body: expect.any(FormData) }),
+        );
+
+        const formData = requestSpy.mock.calls[0][2].body as FormData;
+        expect(formData.getAll("images")).toHaveLength(1);
+      });
+
+      it("workflows run accepts media arrays", async () => {
+        const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+        const requestSpy = vi.fn().mockResolvedValue({ content: "response" });
+        // biome-ignore lint/suspicious/noExplicitAny: Need to mock public request method for testing
+        (client as any).request = requestSpy;
+
+        await client.workflows.run("workflow-1", {
+          message: "Process this",
+          images: [Buffer.from("img")],
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+          "POST",
+          "/workflows/workflow-1/runs",
+          expect.objectContaining({ body: expect.any(FormData) }),
+        );
+
+        const formData = requestSpy.mock.calls[0][2].body as FormData;
+        expect(formData.getAll("images")).toHaveLength(1);
+      });
     });
   });
 });
