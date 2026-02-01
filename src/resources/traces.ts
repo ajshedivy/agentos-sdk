@@ -2,7 +2,6 @@ import type { AgentOSClient } from "../client";
 import type { components } from "../generated/types";
 
 // Extract types from generated schemas
-type TraceSummary = components["schemas"]["TraceSummary"];
 type TraceDetail = components["schemas"]["TraceDetail"];
 type PaginatedResponse_TraceSummary_ =
   components["schemas"]["PaginatedResponse_TraceSummary_"];

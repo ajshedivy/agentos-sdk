@@ -1,6 +1,12 @@
 import { createErrorFromResponse } from "./errors";
 import { requestWithRetry } from "./http";
 import { AgentsResource } from "./resources/agents";
+import { TeamsResource } from "./resources/teams";
+import { WorkflowsResource } from "./resources/workflows";
+import { SessionsResource } from "./resources/sessions";
+import { MemoriesResource } from "./resources/memories";
+import { TracesResource } from "./resources/traces";
+import { MetricsResource } from "./resources/metrics";
 import type {
   AgentOSClientOptions,
   HealthStatus,
@@ -25,6 +31,12 @@ import type {
 export class AgentOSClient {
   readonly version = "0.1.0";
   readonly agents: AgentsResource;
+  readonly teams: TeamsResource;
+  readonly workflows: WorkflowsResource;
+  readonly sessions: SessionsResource;
+  readonly memories: MemoriesResource;
+  readonly traces: TracesResource;
+  readonly metrics: MetricsResource;
 
   private readonly baseUrl: string;
   private readonly apiKey?: string;
@@ -50,6 +62,12 @@ export class AgentOSClient {
 
     // Initialize resource namespaces - pass client instance
     this.agents = new AgentsResource(this);
+    this.teams = new TeamsResource(this);
+    this.workflows = new WorkflowsResource(this);
+    this.sessions = new SessionsResource(this);
+    this.memories = new MemoriesResource(this);
+    this.traces = new TracesResource(this);
+    this.metrics = new MetricsResource(this);
   }
 
   /**
