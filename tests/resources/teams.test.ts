@@ -488,4 +488,116 @@ describe("TeamsResource", () => {
       );
     });
   });
+
+  describe("run() with media files", () => {
+    it("appends images to FormData", async () => {
+      requestSpy.mockResolvedValueOnce({ content: "response" });
+      const imageBuffer = Buffer.from("fake-image-data");
+
+      await resource.run("team-1", {
+        message: "Describe this image",
+        images: [imageBuffer],
+      });
+
+      const callArgs = requestSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("message")).toBe("Describe this image");
+      const images = formData.getAll("images");
+      expect(images.length).toBe(1);
+    });
+
+    it("appends multiple files of each type", async () => {
+      requestSpy.mockResolvedValueOnce({ content: "response" });
+      const buffer1 = Buffer.from("image-1");
+      const buffer2 = Buffer.from("image-2");
+      const audioBuffer = Buffer.from("audio-data");
+
+      await resource.run("team-1", {
+        message: "Process these",
+        images: [buffer1, buffer2],
+        audio: [audioBuffer],
+      });
+
+      const callArgs = requestSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.getAll("images").length).toBe(2);
+      expect(formData.getAll("audio").length).toBe(1);
+    });
+
+    it("handles all media types together", async () => {
+      requestSpy.mockResolvedValueOnce({ content: "response" });
+      const imageBuffer = Buffer.from("image");
+      const audioBuffer = Buffer.from("audio");
+      const videoBuffer = Buffer.from("video");
+      const fileBuffer = Buffer.from("file");
+
+      await resource.run("team-1", {
+        message: "Process all media",
+        images: [imageBuffer],
+        audio: [audioBuffer],
+        videos: [videoBuffer],
+        files: [fileBuffer],
+      });
+
+      const callArgs = requestSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.getAll("images").length).toBe(1);
+      expect(formData.getAll("audio").length).toBe(1);
+      expect(formData.getAll("videos").length).toBe(1);
+      expect(formData.getAll("files").length).toBe(1);
+    });
+
+    it("works without any media files", async () => {
+      requestSpy.mockResolvedValueOnce({ content: "response" });
+
+      await resource.run("team-1", {
+        message: "Just text",
+      });
+
+      const callArgs = requestSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("message")).toBe("Just text");
+      expect(formData.getAll("images").length).toBe(0);
+      expect(formData.getAll("audio").length).toBe(0);
+      expect(formData.getAll("videos").length).toBe(0);
+      expect(formData.getAll("files").length).toBe(0);
+    });
+  });
+
+  describe("runStream() with media files", () => {
+    it("appends images to FormData in streaming mode", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+      const imageBuffer = Buffer.from("fake-image-data");
+
+      await resource.runStream("team-1", {
+        message: "Describe this image",
+        images: [imageBuffer],
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("message")).toBe("Describe this image");
+      const images = formData.getAll("images");
+      expect(images.length).toBe(1);
+    });
+
+    it("handles all media types in streaming mode", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+      const imageBuffer = Buffer.from("image");
+      const audioBuffer = Buffer.from("audio");
+
+      await resource.runStream("team-1", {
+        message: "Process these",
+        images: [imageBuffer],
+        audio: [audioBuffer],
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.getAll("images").length).toBe(1);
+      expect(formData.getAll("audio").length).toBe(1);
+    });
+  });
 });
