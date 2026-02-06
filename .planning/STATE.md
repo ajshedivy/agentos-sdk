@@ -126,7 +126,7 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 001 | Create sample script for live SDK testing | 2026-02-01 | 711c367 | [001-create-sample-script-for-live-sdk-testin](./quick/001-create-sample-script-for-live-sdk-testin/) |
 | 002 | Create teams test script and rename live test | 2026-02-01 | 4945b2e | [002-create-teams-test-script-and-rename-live](./quick/002-create-teams-test-script-and-rename-live/) |
-| 003 | SDK Streaming Event Types | 2026-02-06 | 876b329 | [003-sdk-streaming-event-types](./quick/003-sdk-streaming-event-types/) |
+| 003 | SDK Streaming Event Types | 2026-02-06 | 8d2fc41 | [003-sdk-streaming-event-types](./quick/003-sdk-streaming-event-types/) |
 
 ### Blockers/Concerns
 
