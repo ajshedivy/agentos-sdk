@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type {
-  AgentRunEvent,
+  StreamEvent,
   RunCompletedEvent,
   RunContentEvent,
   RunStartedEvent,
@@ -92,7 +92,7 @@ describe("AgentStream", () => {
       const controller = new AbortController();
       const stream = AgentStream.fromSSEResponse(response, controller);
 
-      const collected: AgentRunEvent[] = [];
+      const collected: StreamEvent[] = [];
       for await (const event of stream) {
         collected.push(event);
       }
@@ -110,7 +110,7 @@ describe("AgentStream", () => {
       const stream = AgentStream.fromSSEResponse(response, controller);
 
       // First iteration consumes the stream
-      const collected: AgentRunEvent[] = [];
+      const collected: StreamEvent[] = [];
       for await (const event of stream) {
         collected.push(event);
       }
@@ -130,7 +130,7 @@ describe("AgentStream", () => {
       const controller = new AbortController();
       const stream = AgentStream.fromSSEResponse(response, controller);
 
-      const collected: AgentRunEvent[] = [];
+      const collected: StreamEvent[] = [];
       for await (const event of stream) {
         collected.push(event);
       }
@@ -325,7 +325,7 @@ describe("AgentStream", () => {
       const controller = new AbortController();
       const stream = AgentStream.fromSSEResponse(response, controller);
 
-      const collected: AgentRunEvent[] = [];
+      const collected: StreamEvent[] = [];
 
       for await (const event of stream) {
         collected.push(event);
@@ -351,7 +351,7 @@ describe("AgentStream", () => {
       expect(stream).toBeInstanceOf(AgentStream);
       expect(stream.controller).toBe(controller);
 
-      const collected: AgentRunEvent[] = [];
+      const collected: StreamEvent[] = [];
       for await (const event of stream) {
         collected.push(event);
       }
@@ -369,6 +369,39 @@ describe("AgentStream", () => {
           // Should not execute
         }
       }).rejects.toThrow("Response body is null");
+    });
+  });
+
+  describe("String-based event handler", () => {
+    it("accepts string event type for unknown events", async () => {
+      // Create a stream with a custom event type not in the RunEventType union
+      const customEvents = [
+        {
+          event: "CustomEvent",
+          data: {
+            created_at: 1000,
+            run_id: "run-1",
+            custom_field: "custom_value",
+          },
+        },
+      ];
+
+      const response = createMockSSEResponse(customEvents);
+      const controller = new AbortController();
+      const stream = AgentStream.fromSSEResponse(response, controller);
+
+      const receivedEvents: StreamEvent[] = [];
+
+      // Use string literal for custom event type (catch-all overload)
+      await stream
+        .on("CustomEvent", (event) => {
+          receivedEvents.push(event);
+        })
+        .start();
+
+      expect(receivedEvents).toHaveLength(1);
+      expect(receivedEvents[0].event).toBe("CustomEvent");
+      expect((receivedEvents[0] as any).custom_field).toBe("custom_value");
     });
   });
 });

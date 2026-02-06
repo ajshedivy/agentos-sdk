@@ -23,42 +23,42 @@ export type BaseEvent = StreamEvent;
  */
 export const RunEventType = {
   // Core lifecycle
-  RunStarted: 'RunStarted',
-  RunContent: 'RunContent',
-  RunCompleted: 'RunCompleted',
-  RunError: 'RunError',
-  RunOutput: 'RunOutput',
-  RunCancelled: 'RunCancelled',
-  RunPaused: 'RunPaused',
-  RunContinued: 'RunContinued',
+  RunStarted: "RunStarted",
+  RunContent: "RunContent",
+  RunCompleted: "RunCompleted",
+  RunError: "RunError",
+  RunOutput: "RunOutput",
+  RunCancelled: "RunCancelled",
+  RunPaused: "RunPaused",
+  RunContinued: "RunContinued",
 
   // Tool calls
-  ToolCallStarted: 'ToolCallStarted',
-  ToolCallCompleted: 'ToolCallCompleted',
+  ToolCallStarted: "ToolCallStarted",
+  ToolCallCompleted: "ToolCallCompleted",
 
   // Reasoning
-  ReasoningStarted: 'ReasoningStarted',
-  ReasoningStep: 'ReasoningStep',
-  ReasoningCompleted: 'ReasoningCompleted',
+  ReasoningStarted: "ReasoningStarted",
+  ReasoningStep: "ReasoningStep",
+  ReasoningCompleted: "ReasoningCompleted",
 
   // Memory
-  UpdatingMemory: 'UpdatingMemory',
-  MemoryUpdateStarted: 'MemoryUpdateStarted',
-  MemoryUpdateCompleted: 'MemoryUpdateCompleted',
+  UpdatingMemory: "UpdatingMemory",
+  MemoryUpdateStarted: "MemoryUpdateStarted",
+  MemoryUpdateCompleted: "MemoryUpdateCompleted",
 
   // Team variants
-  TeamRunStarted: 'TeamRunStarted',
-  TeamRunContent: 'TeamRunContent',
-  TeamRunCompleted: 'TeamRunCompleted',
-  TeamRunError: 'TeamRunError',
-  TeamRunCancelled: 'TeamRunCancelled',
-  TeamToolCallStarted: 'TeamToolCallStarted',
-  TeamToolCallCompleted: 'TeamToolCallCompleted',
-  TeamReasoningStarted: 'TeamReasoningStarted',
-  TeamReasoningStep: 'TeamReasoningStep',
-  TeamReasoningCompleted: 'TeamReasoningCompleted',
-  TeamMemoryUpdateStarted: 'TeamMemoryUpdateStarted',
-  TeamMemoryUpdateCompleted: 'TeamMemoryUpdateCompleted',
+  TeamRunStarted: "TeamRunStarted",
+  TeamRunContent: "TeamRunContent",
+  TeamRunCompleted: "TeamRunCompleted",
+  TeamRunError: "TeamRunError",
+  TeamRunCancelled: "TeamRunCancelled",
+  TeamToolCallStarted: "TeamToolCallStarted",
+  TeamToolCallCompleted: "TeamToolCallCompleted",
+  TeamReasoningStarted: "TeamReasoningStarted",
+  TeamReasoningStep: "TeamReasoningStep",
+  TeamReasoningCompleted: "TeamReasoningCompleted",
+  TeamMemoryUpdateStarted: "TeamMemoryUpdateStarted",
+  TeamMemoryUpdateCompleted: "TeamMemoryUpdateCompleted",
 } as const;
 
 // Supporting data types
@@ -230,7 +230,7 @@ export interface RunResponseFields {
  * @public
  */
 export interface RunStartedEvent extends StreamEvent {
-  event: 'RunStarted';
+  event: "RunStarted";
   session_id: string;
   agent_id: string;
   run_id: string;
@@ -242,7 +242,7 @@ export interface RunStartedEvent extends StreamEvent {
  * @public
  */
 export interface RunContentEvent extends StreamEvent {
-  event: 'RunContent';
+  event: "RunContent";
   content: string | object;
   content_type: string;
   tool?: ToolCallData;
@@ -260,7 +260,7 @@ export interface RunContentEvent extends StreamEvent {
  * @public
  */
 export interface RunCompletedEvent extends StreamEvent {
-  event: 'RunCompleted';
+  event: "RunCompleted";
   content: string | object;
   content_type: string;
   session_id: string;
@@ -280,7 +280,7 @@ export interface RunCompletedEvent extends StreamEvent {
  * @public
  */
 export interface RunErrorEvent extends StreamEvent {
-  event: 'RunError';
+  event: "RunError";
   content: string;
 }
 
@@ -290,7 +290,7 @@ export interface RunErrorEvent extends StreamEvent {
  * @public
  */
 export interface RunOutputEvent extends StreamEvent {
-  event: 'RunOutput';
+  event: "RunOutput";
   content?: string | object;
 }
 
@@ -300,7 +300,7 @@ export interface RunOutputEvent extends StreamEvent {
  * @public
  */
 export interface RunCancelledEvent extends StreamEvent {
-  event: 'RunCancelled';
+  event: "RunCancelled";
 }
 
 /**
@@ -309,7 +309,7 @@ export interface RunCancelledEvent extends StreamEvent {
  * @public
  */
 export interface RunPausedEvent extends StreamEvent {
-  event: 'RunPaused';
+  event: "RunPaused";
 }
 
 /**
@@ -318,7 +318,7 @@ export interface RunPausedEvent extends StreamEvent {
  * @public
  */
 export interface RunContinuedEvent extends StreamEvent {
-  event: 'RunContinued';
+  event: "RunContinued";
 }
 
 // Event interfaces - Tool calls
@@ -329,7 +329,7 @@ export interface RunContinuedEvent extends StreamEvent {
  * @public
  */
 export interface ToolCallStartedEvent extends StreamEvent {
-  event: 'ToolCallStarted';
+  event: "ToolCallStarted";
   tool: ToolCallData;
 }
 
@@ -339,7 +339,7 @@ export interface ToolCallStartedEvent extends StreamEvent {
  * @public
  */
 export interface ToolCallCompletedEvent extends StreamEvent {
-  event: 'ToolCallCompleted';
+  event: "ToolCallCompleted";
   tool: ToolCallData;
 }
 
@@ -351,7 +351,7 @@ export interface ToolCallCompletedEvent extends StreamEvent {
  * @public
  */
 export interface ReasoningStartedEvent extends StreamEvent {
-  event: 'ReasoningStarted';
+  event: "ReasoningStarted";
   session_id?: string;
 }
 
@@ -361,7 +361,7 @@ export interface ReasoningStartedEvent extends StreamEvent {
  * @public
  */
 export interface ReasoningStepEvent extends StreamEvent {
-  event: 'ReasoningStep';
+  event: "ReasoningStep";
   extra_data?: ExtraData;
 }
 
@@ -371,7 +371,7 @@ export interface ReasoningStepEvent extends StreamEvent {
  * @public
  */
 export interface ReasoningCompletedEvent extends StreamEvent {
-  event: 'ReasoningCompleted';
+  event: "ReasoningCompleted";
   extra_data?: ExtraData;
 }
 
@@ -383,7 +383,7 @@ export interface ReasoningCompletedEvent extends StreamEvent {
  * @public
  */
 export interface UpdatingMemoryEvent extends StreamEvent {
-  event: 'UpdatingMemory';
+  event: "UpdatingMemory";
 }
 
 /**
@@ -392,7 +392,7 @@ export interface UpdatingMemoryEvent extends StreamEvent {
  * @public
  */
 export interface MemoryUpdateStartedEvent extends StreamEvent {
-  event: 'MemoryUpdateStarted';
+  event: "MemoryUpdateStarted";
 }
 
 /**
@@ -401,7 +401,7 @@ export interface MemoryUpdateStartedEvent extends StreamEvent {
  * @public
  */
 export interface MemoryUpdateCompletedEvent extends StreamEvent {
-  event: 'MemoryUpdateCompleted';
+  event: "MemoryUpdateCompleted";
 }
 
 // Event interfaces - Team variants
@@ -412,7 +412,7 @@ export interface MemoryUpdateCompletedEvent extends StreamEvent {
  * @public
  */
 export interface TeamRunStartedEvent extends StreamEvent {
-  event: 'TeamRunStarted';
+  event: "TeamRunStarted";
   session_id: string;
 }
 
@@ -422,7 +422,7 @@ export interface TeamRunStartedEvent extends StreamEvent {
  * @public
  */
 export interface TeamRunContentEvent extends StreamEvent {
-  event: 'TeamRunContent';
+  event: "TeamRunContent";
   content: string | object;
   content_type: string;
   tool?: ToolCallData;
@@ -440,7 +440,7 @@ export interface TeamRunContentEvent extends StreamEvent {
  * @public
  */
 export interface TeamRunCompletedEvent extends StreamEvent {
-  event: 'TeamRunCompleted';
+  event: "TeamRunCompleted";
   content: string | object;
   content_type: string;
   tool?: ToolCallData;
@@ -458,7 +458,7 @@ export interface TeamRunCompletedEvent extends StreamEvent {
  * @public
  */
 export interface TeamRunErrorEvent extends StreamEvent {
-  event: 'TeamRunError';
+  event: "TeamRunError";
   content: string;
 }
 
@@ -468,7 +468,7 @@ export interface TeamRunErrorEvent extends StreamEvent {
  * @public
  */
 export interface TeamRunCancelledEvent extends StreamEvent {
-  event: 'TeamRunCancelled';
+  event: "TeamRunCancelled";
 }
 
 /**
@@ -477,7 +477,7 @@ export interface TeamRunCancelledEvent extends StreamEvent {
  * @public
  */
 export interface TeamToolCallStartedEvent extends StreamEvent {
-  event: 'TeamToolCallStarted';
+  event: "TeamToolCallStarted";
   tool: ToolCallData;
 }
 
@@ -487,7 +487,7 @@ export interface TeamToolCallStartedEvent extends StreamEvent {
  * @public
  */
 export interface TeamToolCallCompletedEvent extends StreamEvent {
-  event: 'TeamToolCallCompleted';
+  event: "TeamToolCallCompleted";
   tool: ToolCallData;
 }
 
@@ -497,7 +497,7 @@ export interface TeamToolCallCompletedEvent extends StreamEvent {
  * @public
  */
 export interface TeamReasoningStartedEvent extends StreamEvent {
-  event: 'TeamReasoningStarted';
+  event: "TeamReasoningStarted";
   session_id?: string;
 }
 
@@ -507,7 +507,7 @@ export interface TeamReasoningStartedEvent extends StreamEvent {
  * @public
  */
 export interface TeamReasoningStepEvent extends StreamEvent {
-  event: 'TeamReasoningStep';
+  event: "TeamReasoningStep";
   extra_data?: ExtraData;
 }
 
@@ -517,7 +517,7 @@ export interface TeamReasoningStepEvent extends StreamEvent {
  * @public
  */
 export interface TeamReasoningCompletedEvent extends StreamEvent {
-  event: 'TeamReasoningCompleted';
+  event: "TeamReasoningCompleted";
   extra_data?: ExtraData;
 }
 
@@ -527,7 +527,7 @@ export interface TeamReasoningCompletedEvent extends StreamEvent {
  * @public
  */
 export interface TeamMemoryUpdateStartedEvent extends StreamEvent {
-  event: 'TeamMemoryUpdateStarted';
+  event: "TeamMemoryUpdateStarted";
 }
 
 /**
@@ -536,7 +536,7 @@ export interface TeamMemoryUpdateStartedEvent extends StreamEvent {
  * @public
  */
 export interface TeamMemoryUpdateCompletedEvent extends StreamEvent {
-  event: 'TeamMemoryUpdateCompleted';
+  event: "TeamMemoryUpdateCompleted";
 }
 
 /**

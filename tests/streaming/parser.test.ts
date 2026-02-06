@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AgentRunEvent } from "../../src/streaming/events";
+import type { StreamEvent } from "../../src/streaming/events";
 import { parseSSEResponse } from "../../src/streaming/parser";
 
 /**
@@ -54,7 +54,7 @@ describe("parseSSEResponse", () => {
     const controller = new AbortController();
     const parser = parseSSEResponse(response, controller);
 
-    const events: AgentRunEvent[] = [];
+    const events: StreamEvent[] = [];
     for await (const event of parser) {
       events.push(event);
     }
@@ -122,7 +122,7 @@ describe("parseSSEResponse", () => {
     const controller = new AbortController();
     const parser = parseSSEResponse(response, controller);
 
-    const events: AgentRunEvent[] = [];
+    const events: StreamEvent[] = [];
     for await (const event of parser) {
       events.push(event);
     }
@@ -163,7 +163,7 @@ describe("parseSSEResponse", () => {
     const controller = new AbortController();
     const parser = parseSSEResponse(response, controller);
 
-    const events: AgentRunEvent[] = [];
+    const events: StreamEvent[] = [];
     let count = 0;
 
     for await (const event of parser) {
@@ -216,7 +216,7 @@ describe("parseSSEResponse", () => {
     const controller = new AbortController();
     const parser = parseSSEResponse(response, controller);
 
-    const events: AgentRunEvent[] = [];
+    const events: StreamEvent[] = [];
     for await (const event of parser) {
       events.push(event);
     }
@@ -299,7 +299,7 @@ describe("parseSSEResponse", () => {
     const controller = new AbortController();
     const parser = parseSSEResponse(response, controller);
 
-    const events: AgentRunEvent[] = [];
+    const events: StreamEvent[] = [];
     for await (const event of parser) {
       events.push(event);
     }
