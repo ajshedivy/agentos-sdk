@@ -5,7 +5,7 @@
  */
 
 // Version
-export const VERSION = "0.1.2";
+export const VERSION = "0.2.0";
 
 // Client
 export { AgentOSClient } from "./client";
@@ -86,15 +86,53 @@ export {
 } from "./errors";
 
 // Streaming
-export { AgentStream } from "./streaming";
+export { AgentStream, RunEventType } from "./streaming";
 export type {
-  AgentRunEvent,
+  StreamEvent,
   BaseEvent,
-  MemoryUpdateCompletedEvent,
-  MemoryUpdateStartedEvent,
-  RunCompletedEvent,
-  RunContentEvent,
+  AgentRunEvent,
+  // All 28 event interfaces
   RunStartedEvent,
+  RunContentEvent,
+  RunCompletedEvent,
+  RunErrorEvent,
+  RunOutputEvent,
+  RunCancelledEvent,
+  RunPausedEvent,
+  RunContinuedEvent,
+  ToolCallStartedEvent,
+  ToolCallCompletedEvent,
+  ReasoningStartedEvent,
+  ReasoningStepEvent,
+  ReasoningCompletedEvent,
+  UpdatingMemoryEvent,
+  MemoryUpdateStartedEvent,
+  MemoryUpdateCompletedEvent,
+  TeamRunStartedEvent,
+  TeamRunContentEvent,
+  TeamRunCompletedEvent,
+  TeamRunErrorEvent,
+  TeamRunCancelledEvent,
+  TeamToolCallStartedEvent,
+  TeamToolCallCompletedEvent,
+  TeamReasoningStartedEvent,
+  TeamReasoningStepEvent,
+  TeamReasoningCompletedEvent,
+  TeamMemoryUpdateStartedEvent,
+  TeamMemoryUpdateCompletedEvent,
+  // Supporting types
+  ToolCallData,
+  ReasoningStep,
+  ExtraData,
+  ImageData,
+  VideoData,
+  AudioData,
+  ResponseAudio,
+  RunMetrics,
+  ReasoningMessage,
+  ReferenceData,
+  Reference,
+  RunResponseFields,
 } from "./streaming";
 
 // File input types (Phase 6)

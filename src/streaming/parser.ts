@@ -1,8 +1,8 @@
 import { EventSourceParserStream } from "eventsource-parser/stream";
-import type { AgentRunEvent } from "./events";
+import type { StreamEvent } from "./events";
 
 /**
- * Parse SSE response body into typed AgentRunEvent objects.
+ * Parse SSE response body into typed StreamEvent objects.
  *
  * Uses eventsource-parser for spec-compliant SSE parsing that handles:
  * - Chunked responses that split mid-message
@@ -11,14 +11,14 @@ import type { AgentRunEvent } from "./events";
  *
  * @param response - Fetch Response with SSE body
  * @param controller - AbortController for cancellation
- * @yields Typed AgentRunEvent objects
+ * @yields Typed StreamEvent objects
  *
  * @internal
  */
 export async function* parseSSEResponse(
   response: Response,
   controller: AbortController,
-): AsyncGenerator<AgentRunEvent> {
+): AsyncGenerator<StreamEvent> {
   if (!response.body) {
     throw new Error("Response body is null");
   }
@@ -40,7 +40,7 @@ export async function* parseSSEResponse(
       yield {
         event: event.event ?? "message",
         ...data,
-      } as AgentRunEvent;
+      } as StreamEvent;
     }
   } finally {
     // Ensure controller is aborted on completion/error

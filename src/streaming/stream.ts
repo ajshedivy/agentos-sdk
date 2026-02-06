@@ -1,4 +1,34 @@
-import type { AgentRunEvent } from "./events";
+import type {
+  StreamEvent,
+  RunStartedEvent,
+  RunContentEvent,
+  RunCompletedEvent,
+  RunErrorEvent,
+  RunOutputEvent,
+  RunCancelledEvent,
+  RunPausedEvent,
+  RunContinuedEvent,
+  ToolCallStartedEvent,
+  ToolCallCompletedEvent,
+  ReasoningStartedEvent,
+  ReasoningStepEvent,
+  ReasoningCompletedEvent,
+  UpdatingMemoryEvent,
+  MemoryUpdateStartedEvent,
+  MemoryUpdateCompletedEvent,
+  TeamRunStartedEvent,
+  TeamRunContentEvent,
+  TeamRunCompletedEvent,
+  TeamRunErrorEvent,
+  TeamRunCancelledEvent,
+  TeamToolCallStartedEvent,
+  TeamToolCallCompletedEvent,
+  TeamReasoningStartedEvent,
+  TeamReasoningStepEvent,
+  TeamReasoningCompletedEvent,
+  TeamMemoryUpdateStartedEvent,
+  TeamMemoryUpdateCompletedEvent,
+} from "./events";
 import { parseSSEResponse } from "./parser";
 
 /**
@@ -29,16 +59,16 @@ import { parseSSEResponse } from "./parser";
  *
  * @public
  */
-export class AgentStream implements AsyncIterable<AgentRunEvent> {
+export class AgentStream implements AsyncIterable<StreamEvent> {
   readonly controller: AbortController;
   private consumed = false;
-  private listeners = new Map<string, Set<(event: AgentRunEvent) => void>>();
+  private listeners = new Map<string, Set<(event: StreamEvent) => void>>();
 
   /**
    * @internal Use AgentStream.fromSSEResponse() to create instances
    */
   constructor(
-    private iteratorFn: () => AsyncGenerator<AgentRunEvent>,
+    private iteratorFn: () => AsyncGenerator<StreamEvent>,
     controller: AbortController,
   ) {
     this.controller = controller;
@@ -69,7 +99,7 @@ export class AgentStream implements AsyncIterable<AgentRunEvent> {
    *
    * @public
    */
-  [Symbol.asyncIterator](): AsyncIterator<AgentRunEvent> {
+  [Symbol.asyncIterator](): AsyncIterator<StreamEvent> {
     if (this.consumed) {
       throw new Error(
         "Stream has already been consumed. " +
@@ -89,16 +119,42 @@ export class AgentStream implements AsyncIterable<AgentRunEvent> {
    *
    * @public
    */
-  on<K extends AgentRunEvent["event"]>(
-    eventType: K,
-    handler: (event: Extract<AgentRunEvent, { event: K }>) => void,
-  ): this {
+  on(eventType: "RunStarted", handler: (event: RunStartedEvent) => void): this;
+  on(eventType: "RunContent", handler: (event: RunContentEvent) => void): this;
+  on(eventType: "RunCompleted", handler: (event: RunCompletedEvent) => void): this;
+  on(eventType: "RunError", handler: (event: RunErrorEvent) => void): this;
+  on(eventType: "RunOutput", handler: (event: RunOutputEvent) => void): this;
+  on(eventType: "RunCancelled", handler: (event: RunCancelledEvent) => void): this;
+  on(eventType: "RunPaused", handler: (event: RunPausedEvent) => void): this;
+  on(eventType: "RunContinued", handler: (event: RunContinuedEvent) => void): this;
+  on(eventType: "ToolCallStarted", handler: (event: ToolCallStartedEvent) => void): this;
+  on(eventType: "ToolCallCompleted", handler: (event: ToolCallCompletedEvent) => void): this;
+  on(eventType: "ReasoningStarted", handler: (event: ReasoningStartedEvent) => void): this;
+  on(eventType: "ReasoningStep", handler: (event: ReasoningStepEvent) => void): this;
+  on(eventType: "ReasoningCompleted", handler: (event: ReasoningCompletedEvent) => void): this;
+  on(eventType: "UpdatingMemory", handler: (event: UpdatingMemoryEvent) => void): this;
+  on(eventType: "MemoryUpdateStarted", handler: (event: MemoryUpdateStartedEvent) => void): this;
+  on(eventType: "MemoryUpdateCompleted", handler: (event: MemoryUpdateCompletedEvent) => void): this;
+  on(eventType: "TeamRunStarted", handler: (event: TeamRunStartedEvent) => void): this;
+  on(eventType: "TeamRunContent", handler: (event: TeamRunContentEvent) => void): this;
+  on(eventType: "TeamRunCompleted", handler: (event: TeamRunCompletedEvent) => void): this;
+  on(eventType: "TeamRunError", handler: (event: TeamRunErrorEvent) => void): this;
+  on(eventType: "TeamRunCancelled", handler: (event: TeamRunCancelledEvent) => void): this;
+  on(eventType: "TeamToolCallStarted", handler: (event: TeamToolCallStartedEvent) => void): this;
+  on(eventType: "TeamToolCallCompleted", handler: (event: TeamToolCallCompletedEvent) => void): this;
+  on(eventType: "TeamReasoningStarted", handler: (event: TeamReasoningStartedEvent) => void): this;
+  on(eventType: "TeamReasoningStep", handler: (event: TeamReasoningStepEvent) => void): this;
+  on(eventType: "TeamReasoningCompleted", handler: (event: TeamReasoningCompletedEvent) => void): this;
+  on(eventType: "TeamMemoryUpdateStarted", handler: (event: TeamMemoryUpdateStartedEvent) => void): this;
+  on(eventType: "TeamMemoryUpdateCompleted", handler: (event: TeamMemoryUpdateCompletedEvent) => void): this;
+  on(eventType: string, handler: (event: StreamEvent) => void): this;
+  on(eventType: string, handler: (event: any) => void): this {
     let handlers = this.listeners.get(eventType);
     if (!handlers) {
       handlers = new Set();
       this.listeners.set(eventType, handlers);
     }
-    handlers.add(handler as (event: AgentRunEvent) => void);
+    handlers.add(handler as (event: StreamEvent) => void);
     return this;
   }
 
@@ -139,7 +195,7 @@ export class AgentStream implements AsyncIterable<AgentRunEvent> {
    *
    * @internal
    */
-  private emit(event: AgentRunEvent): void {
+  private emit(event: StreamEvent): void {
     const handlers = this.listeners.get(event.event);
     if (handlers) {
       for (const handler of handlers) {
