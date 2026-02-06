@@ -111,9 +111,9 @@ async function main() {
               break;
 
             case 'RunContent':
-              contentReceived += event.content;
+              contentReceived += String(event.content ?? '');
               // Log content without newline for streaming effect
-              process.stdout.write(event.content);
+              process.stdout.write(String(event.content ?? ''));
               break;
 
             case 'RunCompleted':
