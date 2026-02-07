@@ -6,6 +6,27 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-07
+
+### Added
+
+- Comprehensive event interfaces for agent, team, and workflow streaming
+  - `AgentRunCreatedEvent`, `AgentRunResponseEvent`, `AgentRunToolCallEvent`, and 26 more agent event types
+  - `TeamRunCreatedEvent`, `TeamRunResponseEvent`, and 22 more team event types
+  - `WorkflowRunCreatedEvent`, `WorkflowRunResponseEvent`, and 15 more workflow event types
+  - `AllRunEvents` union type and `EventMap` for type-safe `.on()` handlers
+  - Base event types: `BaseAgentRunEvent`, `BaseTeamRunEvent`, `BaseWorkflowRunEvent`
+  - Supporting types: `Metrics`, `ToolCallData`, `ModelInfo`, `ReasoningStep`
+
+### Changed
+
+- Refactored streaming events from single file to modular `src/streaming/events/` directory
+- Updated streaming infrastructure to use new `StreamEvent` type system
+- Updated agent test scripts to use `RunEventType` constants instead of raw strings
+- Deprecated `RunMetrics` in favor of expanded `Metrics` type (includes audio/cache/reasoning tokens)
+
+## [0.2.0] - 2026-02-05
+
 ### Added
 
 - Complete 28-event type system with `StreamEvent` base class for all streaming events
@@ -90,7 +111,9 @@ Initial release of the AgentOS TypeScript SDK.
 - `prepublishOnly` validation hook
 - Node.js 18+ runtime compatibility
 
-[Unreleased]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/ajshedivy/agentos-sdk/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/ajshedivy/agentos-sdk/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ajshedivy/agentos-sdk/releases/tag/v0.1.0
