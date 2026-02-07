@@ -1,34 +1,4 @@
-import type {
-  MemoryUpdateCompletedEvent,
-  MemoryUpdateStartedEvent,
-  ReasoningCompletedEvent,
-  ReasoningStartedEvent,
-  ReasoningStepEvent,
-  RunCancelledEvent,
-  RunCompletedEvent,
-  RunContentEvent,
-  RunContinuedEvent,
-  RunErrorEvent,
-  RunOutputEvent,
-  RunPausedEvent,
-  RunStartedEvent,
-  StreamEvent,
-  TeamMemoryUpdateCompletedEvent,
-  TeamMemoryUpdateStartedEvent,
-  TeamReasoningCompletedEvent,
-  TeamReasoningStartedEvent,
-  TeamReasoningStepEvent,
-  TeamRunCancelledEvent,
-  TeamRunCompletedEvent,
-  TeamRunContentEvent,
-  TeamRunErrorEvent,
-  TeamRunStartedEvent,
-  TeamToolCallCompletedEvent,
-  TeamToolCallStartedEvent,
-  ToolCallCompletedEvent,
-  ToolCallStartedEvent,
-  UpdatingMemoryEvent,
-} from "./events";
+import type { EventMap, StreamEvent } from "./events";
 import { parseSSEResponse } from "./parser";
 
 /**
@@ -119,102 +89,9 @@ export class AgentStream implements AsyncIterable<StreamEvent> {
    *
    * @public
    */
-  on(eventType: "RunStarted", handler: (event: RunStartedEvent) => void): this;
-  on(eventType: "RunContent", handler: (event: RunContentEvent) => void): this;
-  on(
-    eventType: "RunCompleted",
-    handler: (event: RunCompletedEvent) => void,
-  ): this;
-  on(eventType: "RunError", handler: (event: RunErrorEvent) => void): this;
-  on(eventType: "RunOutput", handler: (event: RunOutputEvent) => void): this;
-  on(
-    eventType: "RunCancelled",
-    handler: (event: RunCancelledEvent) => void,
-  ): this;
-  on(eventType: "RunPaused", handler: (event: RunPausedEvent) => void): this;
-  on(
-    eventType: "RunContinued",
-    handler: (event: RunContinuedEvent) => void,
-  ): this;
-  on(
-    eventType: "ToolCallStarted",
-    handler: (event: ToolCallStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "ToolCallCompleted",
-    handler: (event: ToolCallCompletedEvent) => void,
-  ): this;
-  on(
-    eventType: "ReasoningStarted",
-    handler: (event: ReasoningStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "ReasoningStep",
-    handler: (event: ReasoningStepEvent) => void,
-  ): this;
-  on(
-    eventType: "ReasoningCompleted",
-    handler: (event: ReasoningCompletedEvent) => void,
-  ): this;
-  on(
-    eventType: "UpdatingMemory",
-    handler: (event: UpdatingMemoryEvent) => void,
-  ): this;
-  on(
-    eventType: "MemoryUpdateStarted",
-    handler: (event: MemoryUpdateStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "MemoryUpdateCompleted",
-    handler: (event: MemoryUpdateCompletedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamRunStarted",
-    handler: (event: TeamRunStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamRunContent",
-    handler: (event: TeamRunContentEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamRunCompleted",
-    handler: (event: TeamRunCompletedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamRunError",
-    handler: (event: TeamRunErrorEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamRunCancelled",
-    handler: (event: TeamRunCancelledEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamToolCallStarted",
-    handler: (event: TeamToolCallStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamToolCallCompleted",
-    handler: (event: TeamToolCallCompletedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamReasoningStarted",
-    handler: (event: TeamReasoningStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamReasoningStep",
-    handler: (event: TeamReasoningStepEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamReasoningCompleted",
-    handler: (event: TeamReasoningCompletedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamMemoryUpdateStarted",
-    handler: (event: TeamMemoryUpdateStartedEvent) => void,
-  ): this;
-  on(
-    eventType: "TeamMemoryUpdateCompleted",
-    handler: (event: TeamMemoryUpdateCompletedEvent) => void,
+  on<T extends keyof EventMap>(
+    eventType: T,
+    handler: (event: EventMap[T]) => void,
   ): this;
   on(eventType: string, handler: (event: StreamEvent) => void): this;
   // biome-ignore lint/suspicious/noExplicitAny: Implementation signature for overloaded method

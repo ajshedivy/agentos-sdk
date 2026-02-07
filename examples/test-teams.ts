@@ -12,7 +12,7 @@
  *   - At least one team configured (optional for full test)
  */
 
-import { AgentOSClient, APIError, NotFoundError, InternalServerError } from '../dist/index.js';
+import { AgentOSClient, APIError, NotFoundError, InternalServerError, TeamEventType } from '../dist/index.js';
 
 async function main() {
   console.log('=== AgentOS SDK Teams Test ===\n');
@@ -105,27 +105,27 @@ async function main() {
       try {
         for await (const event of stream) {
           switch (event.event) {
-            case 'RunStarted':
+            case TeamEventType.TeamRunStarted:
               runId = event.run_id;
               console.log(`   ✓ Run started: ${runId}`);
               break;
 
-            case 'RunContent':
+            case TeamEventType.TeamRunContent:
               contentReceived += String(event.content ?? '');
               // Log content without newline for streaming effect
               process.stdout.write(String(event.content ?? ''));
               break;
 
-            case 'RunCompleted':
+            case TeamEventType.TeamRunCompleted:
               console.log('\n   ✓ Run completed');
               console.log(`   Metrics:`, JSON.stringify(event.metrics, null, 2));
               break;
 
-            case 'MemoryUpdateStarted':
+            case TeamEventType.TeamMemoryUpdateStarted:
               console.log('   → Memory update started');
               break;
 
-            case 'MemoryUpdateCompleted':
+            case TeamEventType.TeamMemoryUpdateCompleted:
               console.log('   ✓ Memory update completed');
               break;
           }

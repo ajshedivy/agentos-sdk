@@ -374,10 +374,9 @@ describe("AgentStream", () => {
 
   describe("String-based event handler", () => {
     it("accepts string event type for unknown events", async () => {
-      // Create a stream with a custom event type not in the RunEventType union
       const customEvents = [
         {
-          event: "CustomEvent",
+          event: "SomeUnknownEvent",
           data: {
             created_at: 1000,
             run_id: "run-1",
@@ -392,16 +391,157 @@ describe("AgentStream", () => {
 
       const receivedEvents: StreamEvent[] = [];
 
-      // Use string literal for custom event type (catch-all overload)
+      // String fallback overload for truly unknown events
       await stream
-        .on("CustomEvent", (event) => {
+        .on("SomeUnknownEvent", (event) => {
           receivedEvents.push(event);
         })
         .start();
 
       expect(receivedEvents).toHaveLength(1);
-      expect(receivedEvents[0].event).toBe("CustomEvent");
+      expect(receivedEvents[0].event).toBe("SomeUnknownEvent");
       expect((receivedEvents[0] as any).custom_field).toBe("custom_value");
+    });
+  });
+
+  describe("New event type handlers", () => {
+    it("handles workflow events via .on()", async () => {
+      const workflowEvents = [
+        {
+          event: "WorkflowStarted",
+          data: {
+            created_at: 1000,
+            workflow_id: "wf-1",
+            workflow_name: "data-pipeline",
+          },
+        },
+        {
+          event: "StepStarted",
+          data: {
+            created_at: 1001,
+            step_name: "extract",
+            step_index: 0,
+          },
+        },
+        {
+          event: "StepCompleted",
+          data: {
+            created_at: 1002,
+            step_name: "extract",
+            step_index: 0,
+            content: "extracted data",
+          },
+        },
+        {
+          event: "WorkflowCompleted",
+          data: {
+            created_at: 1003,
+            workflow_id: "wf-1",
+          },
+        },
+      ];
+
+      const response = createMockSSEResponse(workflowEvents);
+      const controller = new AbortController();
+      const stream = AgentStream.fromSSEResponse(response, controller);
+
+      let workflowStarted = false;
+      let workflowCompleted = false;
+      const stepNames: string[] = [];
+
+      await stream
+        .on("WorkflowStarted", (e) => {
+          workflowStarted = true;
+          expect(e.workflow_id).toBe("wf-1");
+        })
+        .on("StepStarted", (e) => {
+          stepNames.push(e.step_name ?? "");
+        })
+        .on("WorkflowCompleted", () => {
+          workflowCompleted = true;
+        })
+        .start();
+
+      expect(workflowStarted).toBe(true);
+      expect(workflowCompleted).toBe(true);
+      expect(stepNames).toEqual(["extract"]);
+    });
+
+    it("handles hook events via .on()", async () => {
+      const hookEvents = [
+        {
+          event: "PreHookStarted",
+          data: {
+            created_at: 1000,
+            pre_hook_name: "validate_input",
+          },
+        },
+        {
+          event: "PreHookCompleted",
+          data: {
+            created_at: 1001,
+            pre_hook_name: "validate_input",
+          },
+        },
+        {
+          event: "PostHookStarted",
+          data: {
+            created_at: 1002,
+            post_hook_name: "log_output",
+          },
+        },
+        {
+          event: "PostHookCompleted",
+          data: {
+            created_at: 1003,
+            post_hook_name: "log_output",
+          },
+        },
+      ];
+
+      const response = createMockSSEResponse(hookEvents);
+      const controller = new AbortController();
+      const stream = AgentStream.fromSSEResponse(response, controller);
+
+      const hookNames: string[] = [];
+
+      await stream
+        .on("PreHookStarted", (e) => {
+          hookNames.push(`pre:${e.pre_hook_name}`);
+        })
+        .on("PostHookCompleted", (e) => {
+          hookNames.push(`post:${e.post_hook_name}`);
+        })
+        .start();
+
+      expect(hookNames).toEqual(["pre:validate_input", "post:log_output"]);
+    });
+
+    it("handles CustomEvent via typed .on()", async () => {
+      const customEvents = [
+        {
+          event: "CustomEvent",
+          data: {
+            created_at: 1000,
+            run_id: "run-1",
+          },
+        },
+      ];
+
+      const response = createMockSSEResponse(customEvents);
+      const controller = new AbortController();
+      const stream = AgentStream.fromSSEResponse(response, controller);
+
+      let received = false;
+
+      await stream
+        .on("CustomEvent", (e) => {
+          received = true;
+          expect(e.event).toBe("CustomEvent");
+        })
+        .start();
+
+      expect(received).toBe(true);
     });
   });
 });

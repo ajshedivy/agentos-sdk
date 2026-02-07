@@ -12,7 +12,7 @@
  *   - At least one agent configured (optional for full test)
  */
 
-import { AgentOSClient, APIError, NotFoundError, InternalServerError, RunEventType} from '../dist/index.js';
+import { AgentOSClient, APIError, NotFoundError, InternalServerError, AgentEventType} from '../dist/index.js';
 
 async function main() {
   console.log('=== AgentOS SDK Agents Test ===\n');
@@ -20,7 +20,7 @@ async function main() {
   // Initialize client (no API key needed for local development)
   console.log('1. Initializing client...');
   const client = new AgentOSClient({
-    baseUrl: 'http://localhost:7777',
+    baseUrl: 'http://localhost:8000',
     timeout: 30000,
   });
   console.log('   ✓ Client initialized\n');
@@ -105,27 +105,27 @@ async function main() {
       try {
         for await (const event of stream) {
           switch (event.event) {
-            case RunEventType.RunStarted:
+            case AgentEventType.RunStarted:
               runId = event.run_id;
               console.log(`   ✓ Run started: ${runId}`);
               break;
 
-            case RunEventType.RunContent:
+            case AgentEventType.RunContent:
               contentReceived += String(event.content ?? '');
               // Log content without newline for streaming effect
               process.stdout.write(String(event.content ?? ''));
               break;
 
-            case RunEventType.RunCompleted:
+            case AgentEventType.RunCompleted:
               console.log('\n   ✓ Run completed');
               console.log(`   Metrics:`, JSON.stringify(event.metrics, null, 2));
               break;
 
-            case RunEventType.MemoryUpdateStarted:
+            case AgentEventType.MemoryUpdateStarted:
               console.log('   → Memory update started');
               break;
 
-            case RunEventType.MemoryUpdateCompleted:
+            case AgentEventType.MemoryUpdateCompleted:
               console.log('   ✓ Memory update completed');
               break;
           }
@@ -182,7 +182,14 @@ async function main() {
       console.log('   ✓ Non-streaming run completed');
       console.log(`   Run ID: ${result.run_id || 'unknown'}`);
       // Server returns 'content' field (not 'response')
+      console.log(result);
       const content = result.content;
+      const events = result.events;
+      if (events) {
+        console.log(`   Events: ${events.length} event(s) returned`);
+        const eventTypes = events.map(e => e.event).join(', ');
+        console.log(`   Event types: ${eventTypes}`);
+      }
       if (content) {
         console.log(`   Content: ${typeof content === 'string' ? content.slice(0, 100) : JSON.stringify(content)?.slice(0, 100)}${String(content).length > 100 ? '...' : ''}`);
         console.log(`   Content length: ${String(content).length} characters`);
