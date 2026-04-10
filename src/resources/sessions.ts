@@ -45,6 +45,44 @@ export interface CreateSessionOptions {
 }
 
 /**
+ * Options for updating a session
+ */
+export interface UpdateSessionOptions {
+  /** Session type filter */
+  type?: string;
+  /** User ID */
+  userId?: string;
+  /** Database ID */
+  dbId?: string;
+  /** Table name */
+  table?: string;
+  /** New session name */
+  sessionName?: string;
+  /** Session state (JSON serializable) */
+  sessionState?: Record<string, unknown>;
+  /** Session metadata (JSON serializable) */
+  metadata?: Record<string, unknown>;
+  /** Session summary */
+  summary?: string;
+}
+
+/**
+ * Options for deleting all sessions
+ */
+export interface DeleteAllSessionsOptions {
+  /** Session IDs to delete */
+  sessionIds: string[];
+  /** Session types (must match length of sessionIds) */
+  sessionTypes: string[];
+  /** User ID */
+  userId?: string;
+  /** Database ID */
+  dbId?: string;
+  /** Table name */
+  table?: string;
+}
+
+/**
  * Resource class for session operations
  *
  * Provides methods to:
@@ -268,6 +306,132 @@ export class SessionsResource {
     return this.client.request<unknown[]>(
       "GET",
       `/sessions/${encodeURIComponent(sessionId)}/runs`,
+    );
+  }
+
+  /**
+   * Update a session
+   *
+   * @param sessionId - The unique identifier for the session
+   * @param options - Update options including optional query params and body fields
+   * @returns Updated session details
+   *
+   * @example
+   * ```typescript
+   * const updated = await client.sessions.update('session-123', {
+   *   sessionName: 'Renamed Session',
+   *   metadata: { key: 'value' },
+   * });
+   * ```
+   */
+  async update(
+    sessionId: string,
+    options?: UpdateSessionOptions,
+  ): Promise<SessionSchema> {
+    const params = new URLSearchParams();
+
+    if (options?.type !== undefined) {
+      params.append("type", options.type);
+    }
+    if (options?.userId !== undefined) {
+      params.append("user_id", options.userId);
+    }
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    if (options?.table !== undefined) {
+      params.append("table", options.table);
+    }
+
+    // Build JSON body with only provided fields
+    const body: Record<string, unknown> = {};
+
+    if (options?.sessionName !== undefined) {
+      body.session_name = options.sessionName;
+    }
+    if (options?.sessionState !== undefined) {
+      body.session_state = options.sessionState;
+    }
+    if (options?.metadata !== undefined) {
+      body.metadata = options.metadata;
+    }
+    if (options?.summary !== undefined) {
+      body.summary = options.summary;
+    }
+
+    const queryString = params.toString();
+    const path = queryString
+      ? `/sessions/${encodeURIComponent(sessionId)}?${queryString}`
+      : `/sessions/${encodeURIComponent(sessionId)}`;
+
+    return this.client.request<SessionSchema>("PATCH", path, {
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  /**
+   * Delete all sessions matching the given IDs and types
+   *
+   * @param options - Session IDs, types, and optional query params
+   * @returns void
+   *
+   * @example
+   * ```typescript
+   * await client.sessions.deleteAll({
+   *   sessionIds: ['session-1', 'session-2'],
+   *   sessionTypes: ['agent', 'agent'],
+   * });
+   * ```
+   */
+  async deleteAll(options: DeleteAllSessionsOptions): Promise<void> {
+    const params = new URLSearchParams();
+
+    if (options.userId !== undefined) {
+      params.append("user_id", options.userId);
+    }
+    if (options.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    if (options.table !== undefined) {
+      params.append("table", options.table);
+    }
+
+    const body = {
+      session_ids: options.sessionIds,
+      session_types: options.sessionTypes,
+    };
+
+    const queryString = params.toString();
+    const path = queryString ? `/sessions?${queryString}` : "/sessions";
+
+    await this.client.request<void>("DELETE", path, {
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  /**
+   * Get a specific run for a session
+   *
+   * @param sessionId - The unique identifier for the session
+   * @param runId - The unique identifier for the run
+   * @returns Run details
+   *
+   * @example
+   * ```typescript
+   * const run = await client.sessions.getRun('session-123', 'run-456');
+   * console.log(run);
+   * ```
+   */
+  async getRun(sessionId: string, runId: string): Promise<unknown> {
+    return this.client.request<unknown>(
+      "GET",
+      `/sessions/${encodeURIComponent(sessionId)}/runs/${encodeURIComponent(runId)}`,
     );
   }
 }

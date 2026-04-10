@@ -216,4 +216,99 @@ describe("TracesResource", () => {
       await expect(resource.get("trace-123")).rejects.toThrow("Not found");
     });
   });
+
+  describe("getStats()", () => {
+    it("calls GET /trace_session_stats with no params", async () => {
+      const mockResponse = { data: [] };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      const result = await resource.getStats();
+
+      expect(result).toEqual(mockResponse);
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/trace_session_stats");
+    });
+
+    it("adds query params when provided", async () => {
+      requestSpy.mockResolvedValueOnce({ data: [] });
+
+      await resource.getStats({
+        userId: "user-1",
+        agentId: "agent-1",
+        page: 1,
+        limit: 10,
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/trace_session_stats?user_id=user-1&agent_id=agent-1&page=1&limit=10",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+      await expect(resource.getStats()).rejects.toThrow("fail");
+    });
+  });
+
+  describe("search()", () => {
+    it("calls POST /traces/search with JSON body", async () => {
+      const mockResponse = { data: [] };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      const result = await resource.search({
+        filter: { status: "completed" },
+        groupBy: "run",
+        page: 1,
+        limit: 20,
+      });
+
+      expect(result).toEqual(mockResponse);
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/traces/search", {
+        body: JSON.stringify({
+          filter: { status: "completed" },
+          group_by: "run",
+          page: 1,
+          limit: 20,
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    it("adds db_id as query param", async () => {
+      requestSpy.mockResolvedValueOnce({ data: [] });
+
+      await resource.search({ dbId: "db-1" });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/traces/search?db_id=db-1",
+        {
+          body: JSON.stringify({}),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+      await expect(resource.search({})).rejects.toThrow("fail");
+    });
+  });
+
+  describe("getFilterSchema()", () => {
+    it("calls GET /traces/filter-schema", async () => {
+      const mockSchema = { fields: [] };
+      requestSpy.mockResolvedValueOnce(mockSchema);
+
+      const result = await resource.getFilterSchema();
+
+      expect(result).toEqual(mockSchema);
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/traces/filter-schema");
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+      await expect(resource.getFilterSchema()).rejects.toThrow("fail");
+    });
+  });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@worksofadam/agentos-sdk",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "TypeScript SDK for AgentOS HTTP API",
   "type": "module",
   "main": "./dist/index.cjs",

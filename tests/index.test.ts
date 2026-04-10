@@ -4,15 +4,23 @@ import {
   AgentOSClient,
   AgentStream,
   AgentsResource,
+  ApprovalsResource,
+  AuthResource,
   AuthenticationError,
   BadRequestError,
+  ComponentsResource,
+  DatabaseResource,
+  EvalsResource,
   InternalServerError,
   KnowledgeResource,
   MemoriesResource,
   MetricsResource,
+  ModelsResource,
   NotFoundError,
   RateLimitError,
+  RegistryResource,
   RemoteServerUnavailableError,
+  SchedulesResource,
   SessionsResource,
   TeamsResource,
   TracesResource,
@@ -25,20 +33,53 @@ import type {
   AgentRunEvent,
   Audio,
   ContinueOptions,
+  CountApprovalsOptions,
+  CreateComponentOptions,
+  CreateConfigOptions,
+  CreateConnectionOptions,
+  CreateEvalOptions,
+  CreateKeyOptions,
+  CreateScheduleOptions,
+  DeleteAllMemoriesOptions,
+  DeleteAllSessionsOptions,
+  DeleteEvalsOptions,
   FileInput,
   FileType,
+  GetMemoryStatsOptions,
+  GetTopicsOptions,
+  GetTraceStatsOptions,
   Image,
+  ListAgentRunsOptions,
+  ListApprovalsOptions,
+  ListComponentsOptions,
+  ListEvalsOptions,
   ListKnowledgeOptions,
+  ListRegistryOptions,
+  ListSchedulesOptions,
+  ListSourceFilesOptions,
+  ListSourcesOptions,
+  ListTeamRunsOptions,
   MemoryUpdateCompletedEvent,
   MemoryUpdateStartedEvent,
+  MigrateOptions,
+  OptimizeMemoriesOptions,
+  ResolveApprovalOptions,
   RunCompletedEvent,
   RunContentEvent,
   RunOptions,
   RunStartedEvent,
   SearchOptions,
+  SearchTracesOptions,
   StreamRunOptions,
+  UpdateComponentOptions,
+  UpdateConfigOptions,
+  UpdateConnectionOptions,
   UpdateContentOptions,
+  UpdateEvalOptions,
+  UpdateScheduleOptions,
+  UpdateSessionOptions,
   UploadOptions,
+  UploadRemoteOptions,
   Video,
   components,
   paths,
@@ -50,6 +91,7 @@ describe("Package Exports", () => {
     expect(typeof VERSION).toBe("string");
     // Verify semver format (X.Y.Z)
     expect(VERSION).toMatch(/^\d+\.\d+\.\d+$/);
+    expect(VERSION).toBe("0.4.0");
   });
 
   it("should export AgentOSClient", () => {
@@ -238,6 +280,155 @@ describe("Package Exports", () => {
       } else {
         throw new Error("Union discriminator failed");
       }
+    });
+  });
+
+  describe("new resource class exports", () => {
+    it("exports ApprovalsResource", () => {
+      expect(ApprovalsResource).toBeDefined();
+      expect(typeof ApprovalsResource).toBe("function");
+    });
+
+    it("exports AuthResource", () => {
+      expect(AuthResource).toBeDefined();
+      expect(typeof AuthResource).toBe("function");
+    });
+
+    it("exports ComponentsResource", () => {
+      expect(ComponentsResource).toBeDefined();
+      expect(typeof ComponentsResource).toBe("function");
+    });
+
+    it("exports DatabaseResource", () => {
+      expect(DatabaseResource).toBeDefined();
+      expect(typeof DatabaseResource).toBe("function");
+    });
+
+    it("exports EvalsResource", () => {
+      expect(EvalsResource).toBeDefined();
+      expect(typeof EvalsResource).toBe("function");
+    });
+
+    it("exports ModelsResource", () => {
+      expect(ModelsResource).toBeDefined();
+      expect(typeof ModelsResource).toBe("function");
+    });
+
+    it("exports RegistryResource", () => {
+      expect(RegistryResource).toBeDefined();
+      expect(typeof RegistryResource).toBe("function");
+    });
+
+    it("exports SchedulesResource", () => {
+      expect(SchedulesResource).toBeDefined();
+      expect(typeof SchedulesResource).toBe("function");
+    });
+  });
+
+  describe("new type exports", () => {
+    it("exports approval option types", () => {
+      const countOpts: CountApprovalsOptions = {};
+      const listOpts: ListApprovalsOptions = {};
+      const resolveOpts: ResolveApprovalOptions = { resolution: "approved" };
+      expect(countOpts).toBeDefined();
+      expect(listOpts).toBeDefined();
+      expect(resolveOpts.resolution).toBe("approved");
+    });
+
+    it("exports auth option types", () => {
+      const createConn: CreateConnectionOptions = { provider: "github" } as CreateConnectionOptions;
+      const createKey: CreateKeyOptions = { name: "test-key" } as CreateKeyOptions;
+      const updateConn: UpdateConnectionOptions = {} as UpdateConnectionOptions;
+      expect(createConn).toBeDefined();
+      expect(createKey).toBeDefined();
+      expect(updateConn).toBeDefined();
+    });
+
+    it("exports component option types", () => {
+      const createComp: CreateComponentOptions = {} as CreateComponentOptions;
+      const createConfig: CreateConfigOptions = {} as CreateConfigOptions;
+      const listComps: ListComponentsOptions = {};
+      const updateComp: UpdateComponentOptions = {} as UpdateComponentOptions;
+      const updateConfig: UpdateConfigOptions = {} as UpdateConfigOptions;
+      expect(createComp).toBeDefined();
+      expect(createConfig).toBeDefined();
+      expect(listComps).toBeDefined();
+      expect(updateComp).toBeDefined();
+      expect(updateConfig).toBeDefined();
+    });
+
+    it("exports database option types", () => {
+      const migrateOpts: MigrateOptions = {} as MigrateOptions;
+      expect(migrateOpts).toBeDefined();
+    });
+
+    it("exports eval option types", () => {
+      const createEval: CreateEvalOptions = {} as CreateEvalOptions;
+      const deleteEvals: DeleteEvalsOptions = {} as DeleteEvalsOptions;
+      const listEvals: ListEvalsOptions = {};
+      const updateEval: UpdateEvalOptions = {} as UpdateEvalOptions;
+      expect(createEval).toBeDefined();
+      expect(deleteEvals).toBeDefined();
+      expect(listEvals).toBeDefined();
+      expect(updateEval).toBeDefined();
+    });
+
+    it("exports knowledge source option types", () => {
+      const listSourceFiles: ListSourceFilesOptions = {} as ListSourceFilesOptions;
+      const listSources: ListSourcesOptions = {} as ListSourcesOptions;
+      const uploadRemote: UploadRemoteOptions = {} as UploadRemoteOptions;
+      expect(listSourceFiles).toBeDefined();
+      expect(listSources).toBeDefined();
+      expect(uploadRemote).toBeDefined();
+    });
+
+    it("exports memory option types", () => {
+      const deleteAll: DeleteAllMemoriesOptions = {} as DeleteAllMemoriesOptions;
+      const getStats: GetMemoryStatsOptions = {} as GetMemoryStatsOptions;
+      const getTopics: GetTopicsOptions = {} as GetTopicsOptions;
+      const optimize: OptimizeMemoriesOptions = {} as OptimizeMemoriesOptions;
+      expect(deleteAll).toBeDefined();
+      expect(getStats).toBeDefined();
+      expect(getTopics).toBeDefined();
+      expect(optimize).toBeDefined();
+    });
+
+    it("exports registry option types", () => {
+      const listRegistry: ListRegistryOptions = {};
+      expect(listRegistry).toBeDefined();
+    });
+
+    it("exports schedule option types", () => {
+      const createSchedule: CreateScheduleOptions = {} as CreateScheduleOptions;
+      const listSchedules: ListSchedulesOptions = {};
+      const updateSchedule: UpdateScheduleOptions = {} as UpdateScheduleOptions;
+      expect(createSchedule).toBeDefined();
+      expect(listSchedules).toBeDefined();
+      expect(updateSchedule).toBeDefined();
+    });
+
+    it("exports session option types", () => {
+      const deleteAll: DeleteAllSessionsOptions = {} as DeleteAllSessionsOptions;
+      const updateSession: UpdateSessionOptions = {} as UpdateSessionOptions;
+      expect(deleteAll).toBeDefined();
+      expect(updateSession).toBeDefined();
+    });
+
+    it("exports team run option types", () => {
+      const listTeamRuns: ListTeamRunsOptions = {} as ListTeamRunsOptions;
+      expect(listTeamRuns).toBeDefined();
+    });
+
+    it("exports trace option types", () => {
+      const getTraceStats: GetTraceStatsOptions = {} as GetTraceStatsOptions;
+      const searchTraces: SearchTracesOptions = {} as SearchTracesOptions;
+      expect(getTraceStats).toBeDefined();
+      expect(searchTraces).toBeDefined();
+    });
+
+    it("exports agent run option types", () => {
+      const listAgentRuns: ListAgentRunsOptions = {} as ListAgentRunsOptions;
+      expect(listAgentRuns).toBeDefined();
     });
   });
 

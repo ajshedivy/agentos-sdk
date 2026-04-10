@@ -600,4 +600,100 @@ describe("AgentsResource", () => {
       expect(formData.getAll("audio").length).toBe(1);
     });
   });
+
+  describe("listRuns()", () => {
+    it("calls GET /agents/{id}/runs with session_id query param", async () => {
+      const mockRuns = [{ run_id: "run-1" }, { run_id: "run-2" }];
+      requestSpy.mockResolvedValueOnce(mockRuns);
+
+      const result = await resource.listRuns("agent-1", "session-123");
+
+      expect(result).toEqual(mockRuns);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/agents/agent-1/runs?session_id=session-123",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("includes status filter when provided", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listRuns("agent-1", "session-123", {
+        status: "completed",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/agents/agent-1/runs?session_id=session-123&status=completed",
+      );
+    });
+
+    it("returns the response from client.request", async () => {
+      const mockRuns = [{ run_id: "run-1", status: "completed" }];
+      requestSpy.mockResolvedValueOnce(mockRuns);
+
+      const result = await resource.listRuns("agent-1", "session-123");
+
+      expect(result).toEqual(mockRuns);
+    });
+
+    it("URL-encodes agentId", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listRuns("agent/special", "session-123");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/agents/agent%2Fspecial/runs?session_id=session-123",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.listRuns("agent-1", "session-123"),
+      ).rejects.toThrow("fail");
+    });
+  });
+
+  describe("getRun()", () => {
+    it("calls GET /agents/{agentId}/runs/{runId} with session_id query param", async () => {
+      const mockRun = { run_id: "run-1", status: "completed" };
+      requestSpy.mockResolvedValueOnce(mockRun);
+
+      const result = await resource.getRun(
+        "agent-1",
+        "run-1",
+        "session-123",
+      );
+
+      expect(result).toEqual(mockRun);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/agents/agent-1/runs/run-1?session_id=session-123",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("URL-encodes agentId and runId", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.getRun("agent/special", "run/123", "session-1");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/agents/agent%2Fspecial/runs/run%2F123?session_id=session-1",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.getRun("agent-1", "run-1", "session-123"),
+      ).rejects.toThrow("fail");
+    });
+  });
 });

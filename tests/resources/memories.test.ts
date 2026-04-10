@@ -655,4 +655,202 @@ describe("MemoriesResource", () => {
       expect(requestSpy).toHaveBeenCalledWith("DELETE", "/memories/mem-123");
     });
   });
+
+  describe("deleteAll()", () => {
+    it("sends DELETE /memories with JSON body containing memory_ids", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.deleteAll({
+        memoryIds: ["mem-1", "mem-2"],
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/memories", {
+        body: JSON.stringify({ memory_ids: ["mem-1", "mem-2"] }),
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    it("includes user_id in body when provided", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.deleteAll({
+        memoryIds: ["mem-1"],
+        userId: "user-123",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/memories", {
+        body: JSON.stringify({
+          memory_ids: ["mem-1"],
+          user_id: "user-123",
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    it("includes query params when provided", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.deleteAll({
+        memoryIds: ["mem-1"],
+        dbId: "db-1",
+        table: "custom_memories",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "DELETE",
+        "/memories?db_id=db-1&table=custom_memories",
+        {
+          body: JSON.stringify({ memory_ids: ["mem-1"] }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.deleteAll({ memoryIds: ["mem-1"] }),
+      ).rejects.toThrow("fail");
+    });
+  });
+
+  describe("getTopics()", () => {
+    it("calls GET /memory_topics with no params when options empty", async () => {
+      const mockTopics = ["preferences", "technical"];
+      requestSpy.mockResolvedValueOnce(mockTopics);
+
+      const result = await resource.getTopics();
+
+      expect(result).toEqual(mockTopics);
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/memory_topics");
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("includes optional query params", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.getTopics({
+        userId: "user-123",
+        dbId: "db-1",
+        table: "custom_memories",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/memory_topics?user_id=user-123&db_id=db-1&table=custom_memories",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(resource.getTopics()).rejects.toThrow("fail");
+    });
+  });
+
+  describe("getStats()", () => {
+    it("calls GET /user_memory_stats with no params when options empty", async () => {
+      const mockStats = { total: 42 };
+      requestSpy.mockResolvedValueOnce(mockStats);
+
+      const result = await resource.getStats();
+
+      expect(result).toEqual(mockStats);
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/user_memory_stats");
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("includes optional query params", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.getStats({
+        userId: "user-123",
+        limit: 10,
+        page: 2,
+        dbId: "db-1",
+        table: "custom_memories",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/user_memory_stats?user_id=user-123&limit=10&page=2&db_id=db-1&table=custom_memories",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(resource.getStats()).rejects.toThrow("fail");
+    });
+  });
+
+  describe("optimize()", () => {
+    it("sends POST /optimize-memories with JSON body", async () => {
+      const mockResult = { optimized: true };
+      requestSpy.mockResolvedValueOnce(mockResult);
+
+      const result = await resource.optimize({ userId: "user-123" });
+
+      expect(result).toEqual(mockResult);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/optimize-memories",
+        {
+          body: JSON.stringify({ user_id: "user-123" }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("includes model and apply in body when provided", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.optimize({
+        userId: "user-123",
+        model: "gpt-4",
+        apply: true,
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/optimize-memories",
+        {
+          body: JSON.stringify({
+            user_id: "user-123",
+            model: "gpt-4",
+            apply: true,
+          }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("includes query params when provided", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.optimize({
+        userId: "user-123",
+        dbId: "db-1",
+        table: "custom_memories",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/optimize-memories?db_id=db-1&table=custom_memories",
+        {
+          body: JSON.stringify({ user_id: "user-123" }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.optimize({ userId: "user-123" }),
+      ).rejects.toThrow("fail");
+    });
+  });
 });

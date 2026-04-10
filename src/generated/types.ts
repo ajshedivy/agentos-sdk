@@ -4,9079 +4,13457 @@
  */
 
 export interface paths {
-  "/health": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Me
+         * @description Return metadata about the currently authenticated API key.
+         */
+        get: operations["get_me_auth_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Health Check
-     * @description Check the health status of the AgentOS API. Returns a simple status indicator.
-     */
-    get: operations["health_check"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/config": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Keys
+         * @description List all API keys (metadata only — no secrets).
+         */
+        get: operations["list_keys_auth_keys_get"];
+        put?: never;
+        /**
+         * Create Key
+         * @description Create a new API key.
+         *
+         *     The plaintext key is returned **once** in the response.
+         *     Store it securely — it cannot be retrieved again.
+         */
+        post: operations["create_key_auth_keys_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get OS Configuration
-     * @description Retrieve the complete configuration of the AgentOS instance, including:
-     *
-     *     - Available models and databases
-     *     - Registered agents, teams, and workflows
-     *     - Chat, session, memory, knowledge, and evaluation configurations
-     *     - Available interfaces and their routes
-     */
-    get: operations["get_config"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/models": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/keys/{key_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Key
+         * @description Get a single API key's metadata.
+         */
+        get: operations["get_key_auth_keys__key_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Revoke Key
+         * @description Revoke an API key immediately.
+         */
+        delete: operations["revoke_key_auth_keys__key_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Available Models
-     * @description Retrieve a list of all unique models currently used by agents and teams in this OS instance. This includes the model ID and provider information for each model.
-     */
-    get: operations["get_models"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/agents/{agent_id}/runs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/keys/{key_id}/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rotate Key
+         * @description Rotate an API key: revoke the old one and create a new one with the same name and scopes.
+         *
+         *     The new plaintext key is returned **once**.
+         */
+        post: operations["rotate_key_auth_keys__key_id__rotate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Create Agent Run
-     * @description Execute an agent with a message and optional media files. Supports both streaming and non-streaming responses.
-     *
-     *     **Features:**
-     *     - Text message input with optional session management
-     *     - Multi-media support: images (PNG, JPEG, WebP), audio (WAV, MP3), video (MP4, WebM, etc.)
-     *     - Document processing: PDF, CSV, DOCX, TXT, JSON
-     *     - Real-time streaming responses with Server-Sent Events (SSE)
-     *     - User and session context preservation
-     *
-     *     **Streaming Response:**
-     *     When `stream=true`, returns SSE events with `event` and `data` fields.
-     */
-    post: operations["create_agent_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/agents/{agent_id}/runs/{run_id}/cancel": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/connections/admin/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Connections
+         * @description List all connections across all API keys (admin only).
+         */
+        get: operations["list_all_connections_auth_connections_admin_all_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Cancel Agent Run
-     * @description Cancel a currently executing agent run. This will attempt to stop the agent's execution gracefully.
-     *
-     *     **Note:** Cancellation may not be immediate for all operations.
-     */
-    post: operations["cancel_agent_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/agents/{agent_id}/runs/{run_id}/continue": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/connections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Connections
+         * @description List all connections for the authenticated API key.
+         */
+        get: operations["list_connections_auth_connections_get"];
+        put?: never;
+        /**
+         * Create Connection
+         * @description Register a new IBM i system connection.
+         */
+        post: operations["create_connection_auth_connections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Continue Agent Run
-     * @description Continue a paused or incomplete agent run with updated tool results.
-     *
-     *     **Use Cases:**
-     *     - Resume execution after tool approval/rejection
-     *     - Provide manual tool execution results
-     *
-     *     **Tools Parameter:**
-     *     JSON string containing array of tool execution objects with results.
-     */
-    post: operations["continue_agent_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/agents": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/connections/{connection_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Connection
+         * @description Get a single connection by ID.
+         */
+        get: operations["get_connection_auth_connections__connection_id__get"];
+        /**
+         * Update Connection
+         * @description Update a connection's settings or credentials.
+         */
+        put: operations["update_connection_auth_connections__connection_id__put"];
+        post?: never;
+        /**
+         * Delete Connection
+         * @description Delete a connection and invalidate its cached token.
+         */
+        delete: operations["delete_connection_auth_connections__connection_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List All Agents
-     * @description Retrieve a comprehensive list of all agents configured in this OS instance.
-     *
-     *     **Returns:**
-     *     - Agent metadata (ID, name, description)
-     *     - Model configuration and capabilities
-     *     - Available tools and their configurations
-     *     - Session, knowledge, memory, and reasoning settings
-     *     - Only meaningful (non-default) configurations are included
-     */
-    get: operations["get_agents"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/agents/{agent_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/connections/{connection_id}/default": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Default Connection
+         * @description Set a connection as the default for the authenticated API key.
+         */
+        put: operations["set_default_connection_auth_connections__connection_id__default_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Agent Details
-     * @description Retrieve detailed configuration and capabilities of a specific agent.
-     *
-     *     **Returns comprehensive agent information including:**
-     *     - Model configuration and provider details
-     *     - Complete tool inventory and configurations
-     *     - Session management settings
-     *     - Knowledge base and memory configurations
-     *     - Reasoning capabilities and settings
-     *     - System prompts and response formatting options
-     */
-    get: operations["get_agent"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{team_id}/runs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/auth/connections/{connection_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Connection
+         * @description Test a connection by attempting MCP server authentication.
+         */
+        post: operations["test_connection_auth_connections__connection_id__test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Create Team Run
-     * @description Execute a team collaboration with multiple agents working together on a task.
-     *
-     *     **Features:**
-     *     - Text message input with optional session management
-     *     - Multi-media support: images (PNG, JPEG, WebP), audio (WAV, MP3), video (MP4, WebM, etc.)
-     *     - Document processing: PDF, CSV, DOCX, TXT, JSON
-     *     - Real-time streaming responses with Server-Sent Events (SSE)
-     *     - User and session context preservation
-     *
-     *     **Streaming Response:**
-     *     When `stream=true`, returns SSE events with `event` and `data` fields.
-     */
-    post: operations["create_team_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{team_id}/runs/{run_id}/cancel": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Health Check
+         * @description Check the health status of the AgentOS API. Returns a simple status indicator.
+         */
+        get: operations["health_check"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Cancel Team Run
-     * @description Cancel a currently executing team run. This will attempt to stop the team's execution gracefully.
-     *
-     *     **Note:** Cancellation may not be immediate for all operations.
-     */
-    post: operations["cancel_team_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get OS Configuration
+         * @description Retrieve the complete configuration of the AgentOS instance, including:
+         *
+         *     - Available models and databases
+         *     - Registered agents, teams, and workflows
+         *     - Chat, session, memory, knowledge, and evaluation configurations
+         *     - Available interfaces and their routes
+         */
+        get: operations["get_config"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List All Teams
-     * @description Retrieve a comprehensive list of all teams configured in this OS instance.
-     *
-     *     **Returns team information including:**
-     *     - Team metadata (ID, name, description, execution mode)
-     *     - Model configuration for team coordination
-     *     - Team member roster with roles and capabilities
-     *     - Knowledge sharing and memory configurations
-     */
-    get: operations["get_teams"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/teams/{team_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Available Models
+         * @description Retrieve a list of all unique models currently used by agents and teams in this OS instance. This includes the model ID and provider information for each model.
+         */
+        get: operations["get_models"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Team Details
-     * @description Retrieve detailed configuration and member information for a specific team.
-     */
-    get: operations["get_team"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/workflows": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/agents/{agent_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Agent Runs
+         * @description List runs for an agent within a session, optionally filtered by status.
+         *
+         *     Useful for monitoring background runs and viewing run history.
+         */
+        get: operations["list_agent_runs"];
+        put?: never;
+        /**
+         * Create Agent Run
+         * @description Execute an agent with a message and optional media files. Supports both streaming and non-streaming responses.
+         *
+         *     **Features:**
+         *     - Text message input with optional session management
+         *     - Multi-media support: images (PNG, JPEG, WebP), audio (WAV, MP3), video (MP4, WebM, etc.)
+         *     - Document processing: PDF, CSV, DOCX, TXT, JSON
+         *     - Real-time streaming responses with Server-Sent Events (SSE)
+         *     - User and session context preservation
+         *
+         *     **Streaming Response:**
+         *     When `stream=true`, returns SSE events with `event` and `data` fields.
+         */
+        post: operations["create_agent_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List All Workflows
-     * @description Retrieve a comprehensive list of all workflows configured in this OS instance.
-     *
-     *     **Return Information:**
-     *     - Workflow metadata (ID, name, description)
-     *     - Input schema requirements
-     *     - Step sequence and execution flow
-     *     - Associated agents and teams
-     */
-    get: operations["get_workflows"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/workflows/{workflow_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/agents/{agent_id}/runs/{run_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Agent Run
+         * @description Cancel a currently executing agent run. This will attempt to stop the agent's execution gracefully.
+         *
+         *     **Note:** Cancellation may not be immediate for all operations.
+         */
+        post: operations["cancel_agent_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Workflow Details
-     * @description Retrieve detailed configuration and step information for a specific workflow.
-     */
-    get: operations["get_workflow"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/workflows/{workflow_id}/runs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/agents/{agent_id}/runs/{run_id}/continue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Continue Agent Run
+         * @description Continue a paused or incomplete agent run with updated tool results.
+         *
+         *     **Use Cases:**
+         *     - Resume execution after tool approval/rejection
+         *     - Provide manual tool execution results
+         *     - Resume after admin approval (tools can be empty; resolution fetched from DB)
+         *
+         *     **Tools Parameter:**
+         *     JSON string containing array of tool execution objects with results.
+         *     Can be empty when an admin-required approval has been resolved.
+         */
+        post: operations["continue_agent_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Execute Workflow
-     * @description Execute a workflow with the provided input data. Workflows can run in streaming or batch mode.
-     *
-     *     **Execution Modes:**
-     *     - **Streaming (`stream=true`)**: Real-time step-by-step execution updates via SSE
-     *     - **Non-Streaming (`stream=false`)**: Complete workflow execution with final result
-     *
-     *     **Workflow Execution Process:**
-     *     1. Input validation against workflow schema
-     *     2. Sequential or parallel step execution based on workflow design
-     *     3. Data flow between steps with transformation
-     *     4. Error handling and automatic retries where configured
-     *     5. Final result compilation and response
-     *
-     *     **Session Management:**
-     *     Workflows support session continuity for stateful execution across multiple runs.
-     */
-    post: operations["create_workflow_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/workflows/{workflow_id}/runs/{run_id}/cancel": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/agents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Agents
+         * @description Retrieve a comprehensive list of all agents configured in this OS instance.
+         *
+         *     **Returns:**
+         *     - Agent metadata (ID, name, description)
+         *     - Model configuration and capabilities
+         *     - Available tools and their configurations
+         *     - Session, knowledge, memory, and reasoning settings
+         *     - Only meaningful (non-default) configurations are included
+         */
+        get: operations["get_agents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Cancel Workflow Run
-     * @description Cancel a currently executing workflow run, stopping all active steps and cleanup.
-     *     **Note:** Complex workflows with multiple parallel steps may take time to fully cancel.
-     */
-    post: operations["cancel_workflow_run"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/sessions": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/agents/{agent_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Agent Details
+         * @description Retrieve detailed configuration and capabilities of a specific agent.
+         *
+         *     **Returns comprehensive agent information including:**
+         *     - Model configuration and provider details
+         *     - Complete tool inventory and configurations
+         *     - Session management settings
+         *     - Knowledge base and memory configurations
+         *     - Reasoning capabilities and settings
+         *     - System prompts and response formatting options
+         */
+        get: operations["get_agent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List Sessions
-     * @description Retrieve paginated list of sessions with filtering and sorting options. Supports filtering by session type (agent, team, workflow), component, user, and name. Sessions represent conversation histories and execution contexts.
-     */
-    get: operations["get_sessions"];
-    put?: never;
-    /**
-     * Create New Session
-     * @description Create a new empty session with optional configuration. Useful for pre-creating sessions with specific session_state, metadata, or other properties before running any agent/team/workflow interactions. The session can later be used by providing its session_id in run requests.
-     */
-    post: operations["create_session"];
-    /**
-     * Delete Multiple Sessions
-     * @description Delete multiple sessions by their IDs in a single operation. This action cannot be undone and will permanently remove all specified sessions and their runs.
-     */
-    delete: operations["delete_sessions"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/sessions/{session_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/agents/{agent_id}/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Agent Run
+         * @description Retrieve the status and output of an agent run. Use this to poll for background run completion.
+         *
+         *     Requires the `session_id` that was returned when the run was created.
+         */
+        get: operations["get_agent_run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Session by ID
-     * @description Retrieve detailed information about a specific session including metadata, configuration, and run history. Response schema varies based on session type (agent, team, or workflow).
-     */
-    get: operations["get_session_by_id"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete Session
-     * @description Permanently delete a specific session and all its associated runs. This action cannot be undone and will remove all conversation history.
-     */
-    delete: operations["delete_session"];
-    options?: never;
-    head?: never;
-    /**
-     * Update Session
-     * @description Update session properties such as session_name, session_state, metadata, or summary. Use this endpoint to modify the session name, update state, add metadata, or update the session summary.
-     */
-    patch: operations["update_session"];
-    trace?: never;
-  };
-  "/sessions/{session_id}/runs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/teams/{team_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Team Runs
+         * @description List runs for a team within a session, optionally filtered by status.
+         *
+         *     Useful for monitoring background runs and viewing run history.
+         */
+        get: operations["list_team_runs"];
+        put?: never;
+        /**
+         * Create Team Run
+         * @description Execute a team collaboration with multiple agents working together on a task.
+         *
+         *     **Features:**
+         *     - Text message input with optional session management
+         *     - Multi-media support: images (PNG, JPEG, WebP), audio (WAV, MP3), video (MP4, WebM, etc.)
+         *     - Document processing: PDF, CSV, DOCX, TXT, JSON
+         *     - Real-time streaming responses with Server-Sent Events (SSE)
+         *     - User and session context preservation
+         *
+         *     **Streaming Response:**
+         *     When `stream=true`, returns SSE events with `event` and `data` fields.
+         */
+        post: operations["create_team_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Session Runs
-     * @description Retrieve all runs (executions) for a specific session with optional timestamp filtering. Runs represent individual interactions or executions within a session. Response schema varies based on session type.
-     */
-    get: operations["get_session_runs"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/sessions/{session_id}/runs/{run_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/teams/{team_id}/runs/{run_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Team Run
+         * @description Cancel a currently executing team run. This will attempt to stop the team's execution gracefully.
+         *
+         *     **Note:** Cancellation may not be immediate for all operations.
+         */
+        post: operations["cancel_team_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Run by ID
-     * @description Retrieve a specific run by its ID from a session. Response schema varies based on the run type (agent run, team run, or workflow run).
-     */
-    get: operations["get_session_run"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/sessions/{session_id}/rename": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/teams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Teams
+         * @description Retrieve a comprehensive list of all teams configured in this OS instance.
+         *
+         *     **Returns team information including:**
+         *     - Team metadata (ID, name, description, execution mode)
+         *     - Model configuration for team coordination
+         *     - Team member roster with roles and capabilities
+         *     - Knowledge sharing and memory configurations
+         */
+        get: operations["get_teams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Rename Session
-     * @description Update the name of an existing session. Useful for organizing and categorizing sessions with meaningful names for better identification and management.
-     */
-    post: operations["rename_session"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/memories": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/teams/{team_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Team Details
+         * @description Retrieve detailed configuration and member information for a specific team.
+         */
+        get: operations["get_team"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List Memories
-     * @description Retrieve paginated list of user memories with filtering and search capabilities. Filter by user, agent, team, topics, or search within memory content.
-     */
-    get: operations["get_memories"];
-    put?: never;
-    /**
-     * Create Memory
-     * @description Create a new user memory with content and associated topics. Memories are used to store contextual information for users across conversations.
-     */
-    post: operations["create_memory"];
-    /**
-     * Delete Multiple Memories
-     * @description Delete multiple user memories by their IDs in a single operation. This action cannot be undone and all specified memories will be permanently removed.
-     */
-    delete: operations["delete_memories"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/memories/{memory_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/teams/{team_id}/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Team Run
+         * @description Retrieve the status and output of a team run. Use this to poll for background run completion.
+         *
+         *     Requires the `session_id` that was returned when the run was created.
+         */
+        get: operations["get_team_run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Memory by ID
-     * @description Retrieve detailed information about a specific user memory by its ID.
-     */
-    get: operations["get_memory"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete Memory
-     * @description Permanently delete a specific user memory. This action cannot be undone.
-     */
-    delete: operations["delete_memory"];
-    options?: never;
-    head?: never;
-    /**
-     * Update Memory
-     * @description Update an existing user memory's content and topics. Replaces the entire memory content and topic list with the provided values.
-     */
-    patch: operations["update_memory"];
-    trace?: never;
-  };
-  "/memory_topics": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/workflows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Workflows
+         * @description Retrieve a comprehensive list of all workflows configured in this OS instance.
+         *
+         *     **Return Information:**
+         *     - Workflow metadata (ID, name, description)
+         *     - Input schema requirements
+         *     - Step sequence and execution flow
+         *     - Associated agents and teams
+         */
+        get: operations["get_workflows"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Memory Topics
-     * @description Retrieve all unique topics associated with memories in the system. Useful for filtering and categorizing memories by topic.
-     */
-    get: operations["get_memory_topics"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/user_memory_stats": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/workflows/{workflow_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Workflow Details
+         * @description Retrieve detailed configuration and step information for a specific workflow.
+         */
+        get: operations["get_workflow"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get User Memory Statistics
-     * @description Retrieve paginated statistics about memory usage by user. Provides insights into user engagement and memory distribution across users.
-     */
-    get: operations["get_user_memory_stats"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/optimize-memories": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/workflows/{workflow_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Execute Workflow
+         * @description Execute a workflow with the provided input data. Workflows can run in streaming or batch mode.
+         *
+         *     **Execution Modes:**
+         *     - **Streaming (`stream=true`)**: Real-time step-by-step execution updates via SSE
+         *     - **Non-Streaming (`stream=false`)**: Complete workflow execution with final result
+         *
+         *     **Workflow Execution Process:**
+         *     1. Input validation against workflow schema
+         *     2. Sequential or parallel step execution based on workflow design
+         *     3. Data flow between steps with transformation
+         *     4. Error handling and automatic retries where configured
+         *     5. Final result compilation and response
+         *
+         *     **Session Management:**
+         *     Workflows support session continuity for stateful execution across multiple runs.
+         */
+        post: operations["create_workflow_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Optimize User Memories
-     * @description Optimize all memories for a given user using the default summarize strategy. This operation combines all memories into a single comprehensive summary, achieving maximum token reduction while preserving all key information. To use a custom model, specify the model parameter in 'provider:model_id' format (e.g., 'openai:gpt-4o-mini', 'anthropic:claude-3-5-sonnet-20241022'). If not specified, uses MemoryManager's default model (gpt-4o). Set apply=false to preview optimization results without saving to database.
-     */
-    post: operations["optimize_memories"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/eval-runs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/workflows/{workflow_id}/runs/{run_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Workflow Run
+         * @description Cancel a currently executing workflow run, stopping all active steps and cleanup.
+         *     **Note:** Complex workflows with multiple parallel steps may take time to fully cancel.
+         */
+        post: operations["cancel_workflow_run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List Evaluation Runs
-     * @description Retrieve paginated evaluation runs with filtering and sorting options. Filter by agent, team, workflow, model, or evaluation type.
-     */
-    get: operations["get_eval_runs"];
-    put?: never;
-    /**
-     * Execute Evaluation
-     * @description Run evaluation tests on agents or teams. Supports accuracy, agent-as-judge, performance, and reliability evaluations. Requires either agent_id or team_id, but not both.
-     */
-    post: operations["run_eval"];
-    /**
-     * Delete Evaluation Runs
-     * @description Delete multiple evaluation runs by their IDs. This action cannot be undone.
-     */
-    delete: operations["delete_eval_runs"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/eval-runs/{eval_run_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/workflows/{workflow_id}/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Workflow Run
+         * @description Retrieve the status and output of a workflow run. Use this to poll for run completion.
+         *
+         *     Requires the `session_id` that was returned when the run was created.
+         */
+        get: operations["get_workflow_run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Evaluation Run
-     * @description Retrieve detailed results and metrics for a specific evaluation run.
-     */
-    get: operations["get_eval_run"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update Evaluation Run
-     * @description Update the name or other properties of an existing evaluation run.
-     */
-    patch: operations["update_eval_run"];
-    trace?: never;
-  };
-  "/metrics": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sessions
+         * @description Retrieve paginated list of sessions with filtering and sorting options. Supports filtering by session type (agent, team, workflow), component, user, and name. Sessions represent conversation histories and execution contexts.
+         */
+        get: operations["get_sessions"];
+        put?: never;
+        /**
+         * Create New Session
+         * @description Create a new empty session with optional configuration. Useful for pre-creating sessions with specific session_state, metadata, or other properties before running any agent/team/workflow interactions. The session can later be used by providing its session_id in run requests.
+         */
+        post: operations["create_session"];
+        /**
+         * Delete Multiple Sessions
+         * @description Delete multiple sessions by their IDs in a single operation. This action cannot be undone and will permanently remove all specified sessions and their runs.
+         */
+        delete: operations["delete_sessions"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get AgentOS Metrics
-     * @description Retrieve AgentOS metrics and analytics data for a specified date range. If no date range is specified, returns all available metrics.
-     */
-    get: operations["get_metrics"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/metrics/refresh": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Session by ID
+         * @description Retrieve detailed information about a specific session including metadata, configuration, and run history. Response schema varies based on session type (agent, team, or workflow).
+         */
+        get: operations["get_session_by_id"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Session
+         * @description Permanently delete a specific session and all its associated runs. This action cannot be undone and will remove all conversation history.
+         */
+        delete: operations["delete_session"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Session
+         * @description Update session properties such as session_name, session_state, metadata, or summary. Use this endpoint to modify the session name, update state, add metadata, or update the session summary.
+         */
+        patch: operations["update_session"];
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Refresh Metrics
-     * @description Manually trigger recalculation of system metrics from raw data. This operation analyzes system activity logs and regenerates aggregated metrics. Useful for ensuring metrics are up-to-date or after system maintenance.
-     */
-    post: operations["refresh_metrics"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/knowledge/content": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/sessions/{session_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Session Runs
+         * @description Retrieve all runs (executions) for a specific session with optional timestamp filtering. Runs represent individual interactions or executions within a session. Response schema varies based on session type.
+         */
+        get: operations["get_session_runs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List Content
-     * @description Retrieve paginated list of all content in the knowledge base with filtering and sorting options. Filter by status, content type, or metadata properties.
-     */
-    get: operations["get_content"];
-    put?: never;
-    /**
-     * Upload Content
-     * @description Upload content to the knowledge base. Supports file uploads, text content, or URLs. Content is processed asynchronously in the background. Supports custom readers and chunking strategies.
-     */
-    post: operations["upload_content"];
-    /**
-     * Delete All Content
-     * @description Permanently remove all content from the knowledge base. This is a destructive operation that cannot be undone. Use with extreme caution.
-     */
-    delete: operations["delete_all_content"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/knowledge/remote-content": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/sessions/{session_id}/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Run by ID
+         * @description Retrieve a specific run by its ID from a session. Response schema varies based on the run type (agent run, team run, or workflow run).
+         */
+        get: operations["get_session_run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Upload Remote Content
-     * @description Upload content from a remote source (S3, GCS, SharePoint, GitHub) to the knowledge base. Content is processed asynchronously in the background. Use the /knowledge/config endpoint to see available remote content sources.
-     */
-    post: operations["upload_remote_content"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/knowledge/content/{content_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/sessions/{session_id}/rename": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rename Session
+         * @description Update the name of an existing session. Useful for organizing and categorizing sessions with meaningful names for better identification and management.
+         */
+        post: operations["rename_session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Content by ID
-     * @description Retrieve detailed information about a specific content item including processing status and metadata.
-     */
-    get: operations["get_content_by_id"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete Content by ID
-     * @description Permanently remove a specific content item from the knowledge base. This action cannot be undone.
-     */
-    delete: operations["delete_content_by_id"];
-    options?: never;
-    head?: never;
-    /**
-     * Update Content
-     * @description Update content properties such as name, description, metadata, or processing configuration. Allows modification of existing content without re-uploading.
-     */
-    patch: operations["update_content"];
-    trace?: never;
-  };
-  "/knowledge/content/{content_id}/status": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/memories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Memories
+         * @description Retrieve paginated list of user memories with filtering and search capabilities. Filter by user, agent, team, topics, or search within memory content.
+         */
+        get: operations["get_memories"];
+        put?: never;
+        /**
+         * Create Memory
+         * @description Create a new user memory with content and associated topics. Memories are used to store contextual information for users across conversations.
+         */
+        post: operations["create_memory"];
+        /**
+         * Delete Multiple Memories
+         * @description Delete multiple user memories by their IDs in a single operation. This action cannot be undone and all specified memories will be permanently removed.
+         */
+        delete: operations["delete_memories"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Content Status
-     * @description Retrieve the current processing status of a content item. Useful for monitoring asynchronous content processing progress and identifying any processing errors.
-     */
-    get: operations["get_content_status"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/knowledge/search": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/memories/{memory_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Memory by ID
+         * @description Retrieve detailed information about a specific user memory by its ID.
+         */
+        get: operations["get_memory"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Memory
+         * @description Permanently delete a specific user memory. This action cannot be undone.
+         */
+        delete: operations["delete_memory"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Memory
+         * @description Update an existing user memory's content and topics. Replaces the entire memory content and topic list with the provided values.
+         */
+        patch: operations["update_memory"];
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Search Knowledge
-     * @description Search the knowledge base for relevant documents using query, filters and search type.
-     */
-    post: operations["search_knowledge"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/knowledge/config": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/memory_topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Memory Topics
+         * @description Retrieve all unique topics associated with memories in the system. Useful for filtering and categorizing memories by topic.
+         */
+        get: operations["get_memory_topics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Config
-     * @description Retrieve available readers, chunkers, and configuration options for content processing. This endpoint provides metadata about supported file types, processing strategies, and filters.
-     */
-    get: operations["get_knowledge_config"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/traces": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/user_memory_stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Memory Statistics
+         * @description Retrieve paginated statistics about memory usage by user. Provides insights into user engagement and memory distribution across users.
+         */
+        get: operations["get_user_memory_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * List Traces
-     * @description Retrieve a paginated list of execution traces with optional filtering.
-     *
-     *     **Traces provide observability into:**
-     *     - Agent execution flows
-     *     - Model invocations and token usage
-     *     - Tool calls and their results
-     *     - Errors and performance bottlenecks
-     *
-     *     **Filtering Options:**
-     *     - By run, session, user, or agent ID
-     *     - By status (OK, ERROR)
-     *     - By time range
-     *
-     *     **Pagination:**
-     *     - Use `page` (1-indexed) and `limit` parameters
-     *     - Response includes pagination metadata (total_pages, total_count, etc.)
-     *
-     *     **Response Format:**
-     *     Returns summary information for each trace. Use GET `/traces/{trace_id}` for detailed hierarchy.
-     */
-    get: operations["get_traces"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/traces/{trace_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/optimize-memories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Optimize User Memories
+         * @description Optimize all memories for a given user using the default summarize strategy. This operation combines all memories into a single comprehensive summary, achieving maximum token reduction while preserving all key information. To use a custom model, specify the model parameter in 'provider:model_id' format (e.g., 'openai:gpt-4o-mini', 'anthropic:claude-3-5-sonnet-20241022'). If not specified, uses MemoryManager's default model (gpt-4o). Set apply=false to preview optimization results without saving to database.
+         */
+        post: operations["optimize_memories"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Trace or Span Detail
-     * @description Retrieve detailed trace information with hierarchical span tree, or a specific span within the trace.
-     *
-     *     **Without span_id parameter:**
-     *     Returns the full trace with hierarchical span tree:
-     *     - Trace metadata (ID, status, duration, context)
-     *     - Hierarchical tree of all spans
-     *     - Each span includes timing, status, and type-specific metadata
-     *
-     *     **With span_id parameter:**
-     *     Returns details for a specific span within the trace:
-     *     - Span metadata (ID, name, type, timing)
-     *     - Status and error information
-     *     - Type-specific attributes (model, tokens, tool params, etc.)
-     *
-     *     **Span Hierarchy (full trace):**
-     *     The `tree` field contains root spans, each with potential `children`.
-     *     This recursive structure represents the execution flow:
-     *     ```
-     *     Agent.run (root)
-     *       ├─ LLM.invoke
-     *       ├─ Tool.execute
-     *       │   └─ LLM.invoke (nested)
-     *       └─ LLM.invoke
-     *     ```
-     *
-     *     **Span Types:**
-     *     - `AGENT`: Agent execution with input/output
-     *     - `LLM`: Model invocations with tokens and prompts
-     *     - `TOOL`: Tool calls with parameters and results
-     */
-    get: operations["get_trace"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/trace_session_stats": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/eval-runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Evaluation Runs
+         * @description Retrieve paginated evaluation runs with filtering and sorting options. Filter by agent, team, workflow, model, or evaluation type.
+         */
+        get: operations["get_eval_runs"];
+        put?: never;
+        /**
+         * Execute Evaluation
+         * @description Run evaluation tests on agents or teams. Supports accuracy, agent-as-judge, performance, and reliability evaluations. Requires either agent_id or team_id, but not both.
+         */
+        post: operations["run_eval"];
+        /**
+         * Delete Evaluation Runs
+         * @description Delete multiple evaluation runs by their IDs. This action cannot be undone.
+         */
+        delete: operations["delete_eval_runs"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get Trace Statistics by Session
-     * @description Retrieve aggregated trace statistics grouped by session ID with pagination.
-     *
-     *     **Provides insights into:**
-     *     - Total traces per session
-     *     - First and last trace timestamps per session
-     *     - Associated user and agent information
-     *
-     *     **Filtering Options:**
-     *     - By user ID
-     *     - By agent ID
-     *
-     *     **Use Cases:**
-     *     - Monitor session-level activity
-     *     - Track conversation flows
-     *     - Identify high-activity sessions
-     *     - Analyze user engagement patterns
-     */
-    get: operations["get_trace_stats"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/databases/all/migrate": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/eval-runs/{eval_run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Evaluation Run
+         * @description Retrieve detailed results and metrics for a specific evaluation run.
+         */
+        get: operations["get_eval_run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Evaluation Run
+         * @description Update the name or other properties of an existing evaluation run.
+         */
+        patch: operations["update_eval_run"];
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Migrate All Databases
-     * @description Migrate all database schemas to the given target version. If a target version is not provided, all databases will be migrated to the latest version.
-     */
-    post: operations["migrate_all_databases"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/databases/{db_id}/migrate": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get AgentOS Metrics
+         * @description Retrieve AgentOS metrics and analytics data for a specified date range. If no date range is specified, returns all available metrics.
+         */
+        get: operations["get_metrics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Migrate Database
-     * @description Migrate the given database schema to the given target version. If a target version is not provided, the database will be migrated to the latest version.
-     */
-    post: operations["migrate_database"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/metrics/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh Metrics
+         * @description Manually trigger recalculation of system metrics from raw data. This operation analyzes system activity logs and regenerates aggregated metrics. Useful for ensuring metrics are up-to-date or after system maintenance.
+         */
+        post: operations["refresh_metrics"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Content
+         * @description Retrieve paginated list of all content in the knowledge base with filtering and sorting options. Filter by status, content type, or metadata properties.
+         */
+        get: operations["get_content"];
+        put?: never;
+        /**
+         * Upload Content
+         * @description Upload content to the knowledge base. Supports file uploads, text content, or URLs. Content is processed asynchronously in the background. Supports custom readers and chunking strategies.
+         */
+        post: operations["upload_content"];
+        /**
+         * Delete All Content
+         * @description Permanently remove all content from the knowledge base. This is a destructive operation that cannot be undone. Use with extreme caution.
+         */
+        delete: operations["delete_all_content"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/remote-content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Remote Content
+         * @description Upload content from a remote source (S3, GCS, SharePoint, GitHub) to the knowledge base. Content is processed asynchronously in the background.
+         */
+        post: operations["upload_remote_content"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/content/{content_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Content by ID
+         * @description Retrieve detailed information about a specific content item including processing status and metadata.
+         */
+        get: operations["get_content_by_id"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Content by ID
+         * @description Permanently remove a specific content item from the knowledge base. This action cannot be undone.
+         */
+        delete: operations["delete_content_by_id"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Content
+         * @description Update content properties such as name, description, metadata, or processing configuration. Allows modification of existing content without re-uploading.
+         */
+        patch: operations["update_content"];
+        trace?: never;
+    };
+    "/knowledge/content/{content_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Content Status
+         * @description Retrieve the current processing status of a content item. Useful for monitoring asynchronous content processing progress and identifying any processing errors.
+         */
+        get: operations["get_content_status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Search Knowledge
+         * @description Search the knowledge base for relevant documents using query, filters and search type.
+         */
+        post: operations["search_knowledge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Config
+         * @description Retrieve available readers, chunkers, and configuration options for content processing. This endpoint provides metadata about supported file types, processing strategies, and filters.
+         */
+        get: operations["get_knowledge_config"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/{knowledge_id}/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Content Sources
+         * @description List all registered content sources (S3, GCS, SharePoint, GitHub) for the knowledge base.
+         */
+        get: operations["list_content_sources"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/{knowledge_id}/sources/{source_id}/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Files in Source
+         * @description List available files and folders in a specific content source. Supports pagination and folder navigation.
+         */
+        get: operations["list_source_files"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/traces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Traces
+         * @description Retrieve a paginated list of execution traces with optional filtering.
+         *
+         *     **Traces provide observability into:**
+         *     - Agent execution flows
+         *     - Model invocations and token usage
+         *     - Tool calls and their results
+         *     - Errors and performance bottlenecks
+         *
+         *     **Filtering Options:**
+         *     - By run, session, user, or agent ID
+         *     - By status (OK, ERROR)
+         *     - By time range
+         *
+         *     **Pagination:**
+         *     - Use `page` (1-indexed) and `limit` parameters
+         *     - Response includes pagination metadata (total_pages, total_count, etc.)
+         *
+         *     **Response Format:**
+         *     Returns summary information for each trace. Use GET `/traces/{trace_id}` for detailed hierarchy.
+         */
+        get: operations["get_traces"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/traces/filter-schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trace Filter Schema
+         * @description Returns the available filterable fields, their types, valid operators, and enum values.
+         *
+         *     The frontend uses this to dynamically build the filter bar UI:
+         *     - Field dropdown populated from `fields[].key`
+         *     - Operator dropdown changes per field type
+         *     - Value input shows autocomplete for enum fields (e.g., status)
+         *     - Logical operators (AND, OR) for combining clauses
+         */
+        get: operations["get_traces_filter_schema"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/traces/{trace_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trace or Span Detail
+         * @description Retrieve detailed trace information with hierarchical span tree, or a specific span within the trace.
+         *
+         *     **Without span_id parameter:**
+         *     Returns the full trace with hierarchical span tree:
+         *     - Trace metadata (ID, status, duration, context)
+         *     - Hierarchical tree of all spans
+         *     - Each span includes timing, status, and type-specific metadata
+         *
+         *     **With span_id parameter:**
+         *     Returns details for a specific span within the trace:
+         *     - Span metadata (ID, name, type, timing)
+         *     - Status and error information
+         *     - Type-specific attributes (model, tokens, tool params, etc.)
+         *
+         *     **Span Hierarchy (full trace):**
+         *     The `tree` field contains root spans, each with potential `children`.
+         *     This recursive structure represents the execution flow:
+         *     ```
+         *     Agent.run (root)
+         *       ├─ LLM.invoke
+         *       ├─ Tool.execute
+         *       │   └─ LLM.invoke (nested)
+         *       └─ LLM.invoke
+         *     ```
+         *
+         *     **Span Types:**
+         *     - `AGENT`: Agent execution with input/output
+         *     - `LLM`: Model invocations with tokens and prompts
+         *     - `TOOL`: Tool calls with parameters and results
+         */
+        get: operations["get_trace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trace_session_stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trace Statistics by Session
+         * @description Retrieve aggregated trace statistics grouped by session ID with pagination.
+         *
+         *     **Provides insights into:**
+         *     - Total traces per session
+         *     - First and last trace timestamps per session
+         *     - Associated user and agent information
+         *
+         *     **Filtering Options:**
+         *     - By user ID
+         *     - By agent ID
+         *
+         *     **Use Cases:**
+         *     - Monitor session-level activity
+         *     - Track conversation flows
+         *     - Identify high-activity sessions
+         *     - Analyze user engagement patterns
+         */
+        get: operations["get_trace_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/traces/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Search Traces with Advanced Filters
+         * @description Search traces using the FilterExpr DSL for complex, composable queries.
+         *
+         *     **Group By Mode:**
+         *     - `run` (default): Returns `PaginatedResponse[TraceDetail]` with full span trees
+         *     - `session`: Returns `PaginatedResponse[TraceSessionStats]` with aggregated session stats
+         *
+         *     **Supported Operators:**
+         *     - Comparison: `EQ`, `NEQ`, `GT`, `GTE`, `LT`, `LTE`
+         *     - Inclusion: `IN`
+         *     - String matching: `CONTAINS` (case-insensitive substring), `STARTSWITH` (prefix)
+         *     - Logical: `AND`, `OR`, `NOT`
+         *
+         *     **Filterable Fields:**
+         *     trace_id, name, status, start_time, end_time, duration_ms, run_id, session_id, user_id, agent_id, team_id, workflow_id, created_at
+         *
+         *     **Example Request Body (runs):**
+         *     ```json
+         *     {
+         *       "filter": {"op": "EQ", "key": "status", "value": "OK"},
+         *       "group_by": "run",
+         *       "page": 1,
+         *       "limit": 20
+         *     }
+         *     ```
+         *
+         *     **Example Request Body (sessions):**
+         *     ```json
+         *     {
+         *       "filter": {"op": "CONTAINS", "key": "agent_id", "value": "stock"},
+         *       "group_by": "session",
+         *       "page": 1,
+         *       "limit": 20
+         *     }
+         *     ```
+         */
+        post: operations["search_traces"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/databases/all/migrate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Migrate All Databases
+         * @description Migrate all database schemas to the given target version. If a target version is not provided, all databases will be migrated to the latest version.
+         */
+        post: operations["migrate_all_databases"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/databases/{db_id}/migrate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Migrate Database
+         * @description Migrate the given database schema to the given target version. If a target version is not provided, the database will be migrated to the latest version.
+         */
+        post: operations["migrate_database"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/components": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Components
+         * @description Retrieve a paginated list of components with optional filtering by type.
+         */
+        get: operations["list_components"];
+        put?: never;
+        /**
+         * Create Component
+         * @description Create a new component (agent, team, or workflow) with initial config.
+         */
+        post: operations["create_component"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/components/{component_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Component
+         * @description Retrieve a component by ID.
+         */
+        get: operations["get_component"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Component
+         * @description Delete a component by ID.
+         */
+        delete: operations["delete_component"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Component
+         * @description Partially update a component by ID.
+         */
+        patch: operations["update_component"];
+        trace?: never;
+    };
+    "/components/{component_id}/configs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Configs
+         * @description List all configs for a component.
+         */
+        get: operations["list_configs"];
+        put?: never;
+        /**
+         * Create Config Version
+         * @description Create a new config version for a component.
+         */
+        post: operations["create_config"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/components/{component_id}/configs/{version}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Config Version
+         * @description Get a specific config version by number.
+         */
+        get: operations["get_config_version"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Config Version
+         * @description Delete a specific draft config version. Cannot delete published or current configs.
+         */
+        delete: operations["delete_config"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Draft Config
+         * @description Update an existing draft config. Cannot update published configs.
+         */
+        patch: operations["update_config"];
+        trace?: never;
+    };
+    "/components/{component_id}/configs/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Current Config
+         * @description Get the current config version for a component.
+         */
+        get: operations["get_current_config"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/components/{component_id}/configs/{version}/set-current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Current Config Version
+         * @description Set a published config version as current (for rollback).
+         */
+        post: operations["set_current_config"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Schedules */
+        get: operations["list_schedules_schedules_get"];
+        put?: never;
+        /** Create Schedule */
+        post: operations["create_schedule_schedules_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/{schedule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Schedule */
+        get: operations["get_schedule_schedules__schedule_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Schedule */
+        delete: operations["delete_schedule_schedules__schedule_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Schedule */
+        patch: operations["update_schedule_schedules__schedule_id__patch"];
+        trace?: never;
+    };
+    "/schedules/{schedule_id}/enable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enable Schedule */
+        post: operations["enable_schedule_schedules__schedule_id__enable_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/{schedule_id}/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Disable Schedule */
+        post: operations["disable_schedule_schedules__schedule_id__disable_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/{schedule_id}/trigger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Trigger Schedule */
+        post: operations["trigger_schedule_schedules__schedule_id__trigger_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/{schedule_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Schedule Runs */
+        get: operations["list_schedule_runs_schedules__schedule_id__runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/{schedule_id}/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Schedule Run */
+        get: operations["get_schedule_run_schedules__schedule_id__runs__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Approvals */
+        get: operations["list_approvals_approvals_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Approval Count */
+        get: operations["get_approval_count_approvals_count_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{approval_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Approval Status */
+        get: operations["get_approval_status_approvals__approval_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{approval_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Approval */
+        get: operations["get_approval_approvals__approval_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Approval */
+        delete: operations["delete_approval_approvals__approval_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/approvals/{approval_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve Approval */
+        post: operations["resolve_approval_approvals__approval_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/registry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Registry
+         * @description List all resources in the registry with optional filtering.
+         */
+        get: operations["list_registry"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    /** AgentResponse */
-    AgentResponse: {
-      /** Id */
-      id?: string | null;
-      /** Name */
-      name?: string | null;
-      /** Db Id */
-      db_id?: string | null;
-      /** Description */
-      description?: string | null;
-      /** Role */
-      role?: string | null;
-      model?: components["schemas"]["ModelResponse"] | null;
-      /** Tools */
-      tools?: {
-        [key: string]: unknown;
-      } | null;
-      /** Sessions */
-      sessions?: {
-        [key: string]: unknown;
-      } | null;
-      /** Knowledge */
-      knowledge?: {
-        [key: string]: unknown;
-      } | null;
-      /** Memory */
-      memory?: {
-        [key: string]: unknown;
-      } | null;
-      /** Reasoning */
-      reasoning?: {
-        [key: string]: unknown;
-      } | null;
-      /** Default Tools */
-      default_tools?: {
-        [key: string]: unknown;
-      } | null;
-      /** System Message */
-      system_message?: {
-        [key: string]: unknown;
-      } | null;
-      /** Extra Messages */
-      extra_messages?: {
-        [key: string]: unknown;
-      } | null;
-      /** Response Settings */
-      response_settings?: {
-        [key: string]: unknown;
-      } | null;
-      /** Introduction */
-      introduction?: string | null;
-      /** Streaming */
-      streaming?: {
-        [key: string]: unknown;
-      } | null;
-      /** Metadata */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /** Input Schema */
-      input_schema?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /** AgentSessionDetailSchema */
-    AgentSessionDetailSchema: {
-      /**
-       * User Id
-       * @description User ID associated with the session
-       */
-      user_id?: string | null;
-      /**
-       * Agent Session Id
-       * @description Unique agent session identifier
-       */
-      agent_session_id: string;
-      /**
-       * Session Id
-       * @description Session identifier
-       */
-      session_id: string;
-      /**
-       * Session Name
-       * @description Human-readable session name
-       */
-      session_name: string;
-      /**
-       * Session Summary
-       * @description Summary of session interactions
-       */
-      session_summary?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Session State
-       * @description Current state of the session
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Agent Id
-       * @description Agent ID used in this session
-       */
-      agent_id?: string | null;
-      /**
-       * Total Tokens
-       * @description Total tokens used in this session
-       */
-      total_tokens?: number | null;
-      /**
-       * Agent Data
-       * @description Agent-specific data
-       */
-      agent_data?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metrics
-       * @description Session metrics
-       */
-      metrics?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metadata
-       * @description Additional metadata
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Chat History
-       * @description Complete chat history
-       */
-      chat_history?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Created At
-       * @description Session creation timestamp
-       */
-      created_at?: string | null;
-      /**
-       * Updated At
-       * @description Last update timestamp
-       */
-      updated_at?: string | null;
-    };
-    /** AgentSummaryResponse */
-    AgentSummaryResponse: {
-      /**
-       * Id
-       * @description Unique identifier for the agent
-       */
-      id?: string | null;
-      /**
-       * Name
-       * @description Name of the agent
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the agent
-       */
-      description?: string | null;
-      /**
-       * Db Id
-       * @description Database identifier
-       */
-      db_id?: string | null;
-    };
-    /**
-     * BadRequestResponse
-     * @example {
-     *       "detail": "Bad request",
-     *       "error_code": "BAD_REQUEST"
-     *     }
-     */
-    BadRequestResponse: {
-      /**
-       * Detail
-       * @description Error detail message
-       */
-      detail: string;
-      /**
-       * Error Code
-       * @description Error code for categorization
-       */
-      error_code?: string | null;
-    };
-    /** Body_continue_agent_run */
-    Body_continue_agent_run: {
-      /** Tools */
-      tools: string;
-      /** Session Id */
-      session_id?: string | null;
-      /** User Id */
-      user_id?: string | null;
-      /**
-       * Stream
-       * @default true
-       */
-      stream: boolean;
-    };
-    /** Body_create_agent_run */
-    Body_create_agent_run: {
-      /** Message */
-      message: string;
-      /**
-       * Stream
-       * @default true
-       */
-      stream: boolean;
-      /** Session Id */
-      session_id?: string | null;
-      /** User Id */
-      user_id?: string | null;
-      /** Files */
-      files?: string[] | null;
-      /** Version */
-      version?: string | null;
-    };
-    /** Body_create_team_run */
-    Body_create_team_run: {
-      /** Message */
-      message: string;
-      /**
-       * Stream
-       * @default true
-       */
-      stream: boolean;
-      /**
-       * Monitor
-       * @default true
-       */
-      monitor: boolean;
-      /** Session Id */
-      session_id?: string | null;
-      /** User Id */
-      user_id?: string | null;
-      /** Files */
-      files?: string[] | null;
-      /** Version */
-      version?: number | null;
-    };
-    /** Body_create_workflow_run */
-    Body_create_workflow_run: {
-      /** Message */
-      message: string;
-      /**
-       * Stream
-       * @default true
-       */
-      stream: boolean;
-      /** Session Id */
-      session_id?: string | null;
-      /** User Id */
-      user_id?: string | null;
-      /** Version */
-      version?: number | null;
-    };
-    /** Body_rename_session */
-    Body_rename_session: {
-      /**
-       * Session Name
-       * @description New name for the session
-       */
-      session_name: string;
-    };
-    /** Body_update_content */
-    Body_update_content: {
-      /**
-       * Name
-       * @description Content name
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Content description
-       */
-      description?: string | null;
-      /**
-       * Metadata
-       * @description Content metadata as JSON string
-       */
-      metadata?: string | null;
-      /**
-       * Reader Id
-       * @description ID of the reader to use for processing
-       */
-      reader_id?: string | null;
-    };
-    /** Body_upload_content */
-    Body_upload_content: {
-      /**
-       * Name
-       * @description Content name (auto-generated from file/URL if not provided)
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Content description for context
-       */
-      description?: string | null;
-      /**
-       * Url
-       * @description URL to fetch content from (JSON array or single URL string)
-       */
-      url?: string | null;
-      /**
-       * Metadata
-       * @description JSON metadata object for additional content properties
-       */
-      metadata?: string | null;
-      /**
-       * File
-       * @description File to upload for processing
-       */
-      file?: string | null;
-      /**
-       * Text Content
-       * @description Raw text content to process
-       */
-      text_content?: string | null;
-      /**
-       * Reader Id
-       * @description ID of the reader to use for content processing
-       */
-      reader_id?: string | null;
-      /**
-       * Chunker
-       * @description Chunking strategy to apply during processing
-       */
-      chunker?: string | null;
-      /**
-       * Chunk Size
-       * @description Chunk size to use for processing
-       */
-      chunk_size?: number | null;
-      /**
-       * Chunk Overlap
-       * @description Chunk overlap to use for processing
-       */
-      chunk_overlap?: number | null;
-    };
-    /** Body_upload_remote_content */
-    Body_upload_remote_content: {
-      /**
-       * Config Id
-       * @description ID of the configured remote content source (from /knowledge/config)
-       */
-      config_id: string;
-      /**
-       * Path
-       * @description Path to file or folder in the remote source
-       */
-      path: string;
-      /**
-       * Name
-       * @description Content name (auto-generated if not provided)
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Content description
-       */
-      description?: string | null;
-      /**
-       * Metadata
-       * @description JSON metadata object
-       */
-      metadata?: string | null;
-      /**
-       * Reader Id
-       * @description ID of the reader to use for processing
-       */
-      reader_id?: string | null;
-      /**
-       * Chunker
-       * @description Chunking strategy to apply
-       */
-      chunker?: string | null;
-      /**
-       * Chunk Size
-       * @description Chunk size for processing
-       */
-      chunk_size?: number | null;
-      /**
-       * Chunk Overlap
-       * @description Chunk overlap for processing
-       */
-      chunk_overlap?: number | null;
-    };
-    /**
-     * ChatConfig
-     * @description Configuration for the Chat page of the AgentOS
-     */
-    ChatConfig: {
-      /** Quick Prompts */
-      quick_prompts: {
-        [key: string]: string[];
-      };
-    };
-    /** ChunkerSchema */
-    ChunkerSchema: {
-      /** Key */
-      key: string;
-      /** Name */
-      name?: string | null;
-      /** Description */
-      description?: string | null;
-      /** Metadata */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /**
-     * ConfigResponse
-     * @description Response schema for the general config endpoint
-     */
-    ConfigResponse: {
-      /**
-       * Os Id
-       * @description Unique identifier for the OS instance
-       */
-      os_id: string;
-      /**
-       * Name
-       * @description Name of the OS instance
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the OS instance
-       */
-      description?: string | null;
-      /**
-       * Available Models
-       * @description List of available models
-       */
-      available_models?: string[] | null;
-      /**
-       * Os Database
-       * @description ID of the database used for the OS instance
-       */
-      os_database?: string | null;
-      /**
-       * Databases
-       * @description List of database IDs used by the components of the OS instance
-       */
-      databases: string[];
-      /** @description Chat configuration */
-      chat?: components["schemas"]["ChatConfig"] | null;
-      /** @description Session configuration */
-      session?: components["schemas"]["SessionConfig"] | null;
-      /** @description Metrics configuration */
-      metrics?: components["schemas"]["MetricsConfig"] | null;
-      /** @description Memory configuration */
-      memory?: components["schemas"]["MemoryConfig"] | null;
-      /** @description Knowledge configuration */
-      knowledge?: components["schemas"]["KnowledgeConfig"] | null;
-      /** @description Evaluations configuration */
-      evals?: components["schemas"]["EvalsConfig"] | null;
-      /** @description Traces configuration */
-      traces?: components["schemas"]["TracesConfig"] | null;
-      /**
-       * Agents
-       * @description List of registered agents
-       */
-      agents: components["schemas"]["AgentSummaryResponse"][];
-      /**
-       * Teams
-       * @description List of registered teams
-       */
-      teams: components["schemas"]["TeamSummaryResponse"][];
-      /**
-       * Workflows
-       * @description List of registered workflows
-       */
-      workflows: components["schemas"]["WorkflowSummaryResponse"][];
-      /**
-       * Interfaces
-       * @description List of available interfaces
-       */
-      interfaces: components["schemas"]["InterfaceResponse"][];
-    };
-    /** ConfigResponseSchema */
-    ConfigResponseSchema: {
-      /**
-       * Readers
-       * @description Available content readers
-       */
-      readers?: {
-        [key: string]: components["schemas"]["ReaderSchema"];
-      } | null;
-      /**
-       * Readersfortype
-       * @description Mapping of content types to reader IDs
-       */
-      readersForType?: {
-        [key: string]: string[];
-      } | null;
-      /**
-       * Chunkers
-       * @description Available chunking strategies
-       */
-      chunkers?: {
-        [key: string]: components["schemas"]["ChunkerSchema"];
-      } | null;
-      /**
-       * Filters
-       * @description Available filter tags
-       */
-      filters?: string[] | null;
-      /**
-       * Vector Dbs
-       * @description Configured vector databases
-       */
-      vector_dbs?: components["schemas"]["VectorDbSchema"][] | null;
-      /**
-       * Remote Content Sources
-       * @description Configured remote content sources (S3, GCS, SharePoint, GitHub)
-       */
-      remote_content_sources?:
-        | components["schemas"]["RemoteContentSourceSchema"][]
-        | null;
-    };
-    /** ContentResponseSchema */
-    ContentResponseSchema: {
-      /**
-       * Id
-       * @description Unique identifier for the content
-       */
-      id: string;
-      /**
-       * Name
-       * @description Name of the content
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the content
-       */
-      description?: string | null;
-      /**
-       * Type
-       * @description MIME type of the content
-       */
-      type?: string | null;
-      /**
-       * Size
-       * @description Size of the content in bytes
-       */
-      size?: string | null;
-      /**
-       * Linked To
-       * @description ID of related content if linked
-       */
-      linked_to?: string | null;
-      /**
-       * Metadata
-       * @description Additional metadata as key-value pairs
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Access Count
-       * @description Number of times content has been accessed
-       */
-      access_count?: number | null;
-      /** @description Processing status of the content */
-      status?: components["schemas"]["ContentStatus"] | null;
-      /**
-       * Status Message
-       * @description Status message or error details
-       */
-      status_message?: string | null;
-      /**
-       * Created At
-       * @description Timestamp when content was created
-       */
-      created_at?: string | null;
-      /**
-       * Updated At
-       * @description Timestamp when content was last updated
-       */
-      updated_at?: string | null;
-    };
-    /**
-     * ContentStatus
-     * @description Enumeration of possible content processing statuses.
-     * @enum {string}
-     */
-    ContentStatus: "processing" | "completed" | "failed";
-    /**
-     * ContentStatusResponse
-     * @description Response model for content status endpoint.
-     */
-    ContentStatusResponse: {
-      /** @description Current processing status of the content */
-      status: components["schemas"]["ContentStatus"];
-      /**
-       * Status Message
-       * @description Status message or error details
-       * @default
-       */
-      status_message: string;
-    };
-    /** CreateSessionRequest */
-    CreateSessionRequest: {
-      /**
-       * Session Id
-       * @description Optional session ID (generated if not provided)
-       */
-      session_id?: string | null;
-      /**
-       * Session Name
-       * @description Name for the session
-       */
-      session_name?: string | null;
-      /**
-       * Session State
-       * @description Initial session state
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metadata
-       * @description Additional metadata
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * User Id
-       * @description User ID associated with the session
-       */
-      user_id?: string | null;
-      /**
-       * Agent Id
-       * @description Agent ID if this is an agent session
-       */
-      agent_id?: string | null;
-      /**
-       * Team Id
-       * @description Team ID if this is a team session
-       */
-      team_id?: string | null;
-      /**
-       * Workflow Id
-       * @description Workflow ID if this is a workflow session
-       */
-      workflow_id?: string | null;
-    };
-    /** DatabaseConfig[EvalsDomainConfig] */
-    DatabaseConfig_EvalsDomainConfig_: {
-      /** Db Id */
-      db_id: string;
-      domain_config?: components["schemas"]["EvalsDomainConfig"] | null;
-      /** Tables */
-      tables?: string[] | null;
-    };
-    /** DatabaseConfig[KnowledgeDomainConfig] */
-    DatabaseConfig_KnowledgeDomainConfig_: {
-      /** Db Id */
-      db_id: string;
-      domain_config?: components["schemas"]["KnowledgeDomainConfig"] | null;
-      /** Tables */
-      tables?: string[] | null;
-    };
-    /** DatabaseConfig[MemoryDomainConfig] */
-    DatabaseConfig_MemoryDomainConfig_: {
-      /** Db Id */
-      db_id: string;
-      domain_config?: components["schemas"]["MemoryDomainConfig"] | null;
-      /** Tables */
-      tables?: string[] | null;
-    };
-    /** DatabaseConfig[MetricsDomainConfig] */
-    DatabaseConfig_MetricsDomainConfig_: {
-      /** Db Id */
-      db_id: string;
-      domain_config?: components["schemas"]["MetricsDomainConfig"] | null;
-      /** Tables */
-      tables?: string[] | null;
-    };
-    /** DatabaseConfig[SessionDomainConfig] */
-    DatabaseConfig_SessionDomainConfig_: {
-      /** Db Id */
-      db_id: string;
-      domain_config?: components["schemas"]["SessionDomainConfig"] | null;
-      /** Tables */
-      tables?: string[] | null;
-    };
-    /** DatabaseConfig[TracesDomainConfig] */
-    DatabaseConfig_TracesDomainConfig_: {
-      /** Db Id */
-      db_id: string;
-      domain_config?: components["schemas"]["TracesDomainConfig"] | null;
-      /** Tables */
-      tables?: string[] | null;
-    };
-    /**
-     * DayAggregatedMetrics
-     * @description Aggregated metrics for a given day
-     */
-    DayAggregatedMetrics: {
-      /**
-       * Id
-       * @description Unique identifier for the metrics record
-       */
-      id: string;
-      /**
-       * Agent Runs Count
-       * @description Total number of agent runs
-       */
-      agent_runs_count: number;
-      /**
-       * Agent Sessions Count
-       * @description Total number of agent sessions
-       */
-      agent_sessions_count: number;
-      /**
-       * Team Runs Count
-       * @description Total number of team runs
-       */
-      team_runs_count: number;
-      /**
-       * Team Sessions Count
-       * @description Total number of team sessions
-       */
-      team_sessions_count: number;
-      /**
-       * Workflow Runs Count
-       * @description Total number of workflow runs
-       */
-      workflow_runs_count: number;
-      /**
-       * Workflow Sessions Count
-       * @description Total number of workflow sessions
-       */
-      workflow_sessions_count: number;
-      /**
-       * Users Count
-       * @description Total number of unique users
-       */
-      users_count: number;
-      /**
-       * Token Metrics
-       * @description Token usage metrics (input, output, cached, etc.)
-       */
-      token_metrics: {
-        [key: string]: unknown;
-      };
-      /**
-       * Model Metrics
-       * @description Metrics grouped by model (model_id, provider, count)
-       */
-      model_metrics: {
-        [key: string]: unknown;
-      }[];
-      /**
-       * Date
-       * Format: date-time
-       * @description Date for which these metrics are aggregated
-       */
-      date: string;
-      /**
-       * Created At
-       * Format: date-time
-       * @description Timestamp when metrics were created
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       * @description Timestamp when metrics were last updated
-       */
-      updated_at: string;
-    };
-    /** DeleteEvalRunsRequest */
-    DeleteEvalRunsRequest: {
-      /**
-       * Eval Run Ids
-       * @description List of evaluation run IDs to delete
-       */
-      eval_run_ids: string[];
-    };
-    /** DeleteMemoriesRequest */
-    DeleteMemoriesRequest: {
-      /**
-       * Memory Ids
-       * @description List of memory IDs to delete
-       */
-      memory_ids: string[];
-      /**
-       * User Id
-       * @description User ID to filter memories for deletion
-       */
-      user_id?: string | null;
-    };
-    /** DeleteSessionRequest */
-    DeleteSessionRequest: {
-      /**
-       * Session Ids
-       * @description List of session IDs to delete
-       */
-      session_ids: string[];
-      /**
-       * Session Types
-       * @description Types of sessions to delete
-       */
-      session_types: components["schemas"]["SessionType"][];
-    };
-    /**
-     * EvalFilterType
-     * @enum {string}
-     */
-    EvalFilterType: "agent" | "team" | "workflow";
-    /** EvalRunInput */
-    EvalRunInput: {
-      /**
-       * Agent Id
-       * @description Agent ID to evaluate
-       */
-      agent_id?: string | null;
-      /**
-       * Team Id
-       * @description Team ID to evaluate
-       */
-      team_id?: string | null;
-      /**
-       * Model Id
-       * @description Model ID to use for evaluation
-       */
-      model_id?: string | null;
-      /**
-       * Model Provider
-       * @description Model provider name
-       */
-      model_provider?: string | null;
-      /** @description Type of evaluation to run (accuracy, performance, or reliability) */
-      eval_type: components["schemas"]["EvalType"];
-      /**
-       * Input
-       * @description Input text/query for the evaluation
-       */
-      input: string;
-      /**
-       * Additional Guidelines
-       * @description Additional guidelines for the evaluation
-       */
-      additional_guidelines?: string | null;
-      /**
-       * Additional Context
-       * @description Additional context for the evaluation
-       */
-      additional_context?: string | null;
-      /**
-       * Num Iterations
-       * @description Number of times to run the evaluation
-       * @default 1
-       */
-      num_iterations: number;
-      /**
-       * Name
-       * @description Name for this evaluation run
-       */
-      name?: string | null;
-      /**
-       * Expected Output
-       * @description Expected output for accuracy evaluation
-       */
-      expected_output?: string | null;
-      /**
-       * Criteria
-       * @description Evaluation criteria for agent-as-judge evaluation
-       */
-      criteria?: string | null;
-      /**
-       * Scoring Strategy
-       * @description Scoring strategy: 'numeric' (1-10 with threshold) or 'binary' (PASS/FAIL)
-       * @default binary
-       */
-      scoring_strategy: ("numeric" | "binary") | null;
-      /**
-       * Threshold
-       * @description Score threshold for pass/fail (1-10), only used with numeric scoring
-       * @default 7
-       */
-      threshold: number | null;
-      /**
-       * Warmup Runs
-       * @description Number of warmup runs before measuring performance
-       * @default 0
-       */
-      warmup_runs: number;
-      /**
-       * Expected Tool Calls
-       * @description Expected tool calls for reliability evaluation
-       */
-      expected_tool_calls?: string[] | null;
-    };
-    /** EvalSchema */
-    EvalSchema: {
-      /**
-       * Id
-       * @description Unique identifier for the evaluation run
-       */
-      id: string;
-      /**
-       * Agent Id
-       * @description Agent ID that was evaluated
-       */
-      agent_id?: string | null;
-      /**
-       * Model Id
-       * @description Model ID used in evaluation
-       */
-      model_id?: string | null;
-      /**
-       * Model Provider
-       * @description Model provider name
-       */
-      model_provider?: string | null;
-      /**
-       * Team Id
-       * @description Team ID that was evaluated
-       */
-      team_id?: string | null;
-      /**
-       * Workflow Id
-       * @description Workflow ID that was evaluated
-       */
-      workflow_id?: string | null;
-      /**
-       * Name
-       * @description Name of the evaluation run
-       */
-      name?: string | null;
-      /**
-       * Evaluated Component Name
-       * @description Name of the evaluated component
-       */
-      evaluated_component_name?: string | null;
-      /** @description Type of evaluation (accuracy, performance, or reliability) */
-      eval_type: components["schemas"]["EvalType"];
-      /**
-       * Eval Data
-       * @description Evaluation results and metrics
-       */
-      eval_data: {
-        [key: string]: unknown;
-      };
-      /**
-       * Eval Input
-       * @description Input parameters used for the evaluation
-       */
-      eval_input?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Created At
-       * @description Timestamp when evaluation was created
-       */
-      created_at?: string | null;
-      /**
-       * Updated At
-       * @description Timestamp when evaluation was last updated
-       */
-      updated_at?: string | null;
-    };
-    /**
-     * EvalType
-     * @enum {string}
-     */
-    EvalType: "accuracy" | "agent_as_judge" | "performance" | "reliability";
-    /**
-     * EvalsConfig
-     * @description Configuration for the Evals domain of the AgentOS
-     */
-    EvalsConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Available Models */
-      available_models?: string[] | null;
-      /** Dbs */
-      dbs?: components["schemas"]["DatabaseConfig_EvalsDomainConfig_"][] | null;
-    };
-    /**
-     * EvalsDomainConfig
-     * @description Configuration for the Evals domain of the AgentOS
-     */
-    EvalsDomainConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Available Models */
-      available_models?: string[] | null;
-    };
-    /**
-     * HealthResponse
-     * @example {
-     *       "instantiated_at": "2025-06-10T12:00:00Z",
-     *       "status": "ok"
-     *     }
-     */
-    HealthResponse: {
-      /**
-       * Status
-       * @description Health status of the service
-       */
-      status: string;
-      /**
-       * Instantiated At
-       * Format: date-time
-       * @description Timestamp when service was instantiated
-       */
-      instantiated_at: string;
-    };
-    /** InterfaceResponse */
-    InterfaceResponse: {
-      /**
-       * Type
-       * @description Type of the interface
-       */
-      type: string;
-      /**
-       * Version
-       * @description Version of the interface
-       */
-      version: string;
-      /**
-       * Route
-       * @description API route path
-       */
-      route: string;
-    };
-    /**
-     * InternalServerErrorResponse
-     * @example {
-     *       "detail": "Internal server error",
-     *       "error_code": "INTERNAL_SERVER_ERROR"
-     *     }
-     */
-    InternalServerErrorResponse: {
-      /**
-       * Detail
-       * @description Error detail message
-       */
-      detail: string;
-      /**
-       * Error Code
-       * @description Error code for categorization
-       */
-      error_code?: string | null;
-    };
-    /**
-     * KnowledgeConfig
-     * @description Configuration for the Knowledge domain of the AgentOS
-     */
-    KnowledgeConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Dbs */
-      dbs?:
-        | components["schemas"]["DatabaseConfig_KnowledgeDomainConfig_"][]
-        | null;
-    };
-    /**
-     * KnowledgeDomainConfig
-     * @description Configuration for the Knowledge domain of the AgentOS
-     */
-    KnowledgeDomainConfig: {
-      /** Display Name */
-      display_name?: string | null;
-    };
-    /**
-     * MemoryConfig
-     * @description Configuration for the Memory domain of the AgentOS
-     */
-    MemoryConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Dbs */
-      dbs?:
-        | components["schemas"]["DatabaseConfig_MemoryDomainConfig_"][]
-        | null;
-    };
-    /**
-     * MemoryDomainConfig
-     * @description Configuration for the Memory domain of the AgentOS
-     */
-    MemoryDomainConfig: {
-      /** Display Name */
-      display_name?: string | null;
-    };
-    /**
-     * Meta
-     * @description Inline metadata schema for pagination.
-     */
-    Meta: {
-      /**
-       * Limit
-       * @description Number of results per page
-       * @default 20
-       */
-      limit: number;
-      /**
-       * Page
-       * @description Page number
-       * @default 1
-       */
-      page: number;
-    };
-    /**
-     * MetricsConfig
-     * @description Configuration for the Metrics domain of the AgentOS
-     */
-    MetricsConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Dbs */
-      dbs?:
-        | components["schemas"]["DatabaseConfig_MetricsDomainConfig_"][]
-        | null;
-    };
-    /**
-     * MetricsDomainConfig
-     * @description Configuration for the Metrics domain of the AgentOS
-     */
-    MetricsDomainConfig: {
-      /** Display Name */
-      display_name?: string | null;
-    };
-    /** MetricsResponse */
-    MetricsResponse: {
-      /**
-       * Metrics
-       * @description List of daily aggregated metrics
-       */
-      metrics: components["schemas"]["DayAggregatedMetrics"][];
-      /**
-       * Updated At
-       * @description Timestamp of the most recent metrics update
-       */
-      updated_at?: string | null;
-    };
-    /** Model */
-    Model: {
-      /**
-       * Id
-       * @description Model identifier
-       */
-      id?: string | null;
-      /**
-       * Provider
-       * @description Model provider name
-       */
-      provider?: string | null;
-    };
-    /** ModelResponse */
-    ModelResponse: {
-      /**
-       * Name
-       * @description Name of the model
-       */
-      name?: string | null;
-      /**
-       * Model
-       * @description Model identifier
-       */
-      model?: string | null;
-      /**
-       * Provider
-       * @description Model provider name
-       */
-      provider?: string | null;
-    };
-    /**
-     * NotFoundResponse
-     * @example {
-     *       "detail": "Not found",
-     *       "error_code": "NOT_FOUND"
-     *     }
-     */
-    NotFoundResponse: {
-      /**
-       * Detail
-       * @description Error detail message
-       */
-      detail: string;
-      /**
-       * Error Code
-       * @description Error code for categorization
-       */
-      error_code?: string | null;
-    };
-    /**
-     * OptimizeMemoriesRequest
-     * @description Schema for memory optimization request
-     */
-    OptimizeMemoriesRequest: {
-      /**
-       * User Id
-       * @description User ID to optimize memories for
-       */
-      user_id: string;
-      /**
-       * Model
-       * @description Model to use for optimization in format 'provider:model_id' (e.g., 'openai:gpt-4o-mini', 'anthropic:claude-3-5-sonnet-20241022', 'google:gemini-2.0-flash-exp'). If not specified, uses MemoryManager's default model (gpt-4o).
-       */
-      model?: string | null;
-      /**
-       * Apply
-       * @description If True, apply optimization changes to database. If False, return preview only without saving.
-       * @default true
-       */
-      apply: boolean;
-    };
-    /**
-     * OptimizeMemoriesResponse
-     * @description Schema for memory optimization response
-     */
-    OptimizeMemoriesResponse: {
-      /**
-       * Memories
-       * @description List of optimized memory objects
-       */
-      memories: components["schemas"]["UserMemorySchema"][];
-      /**
-       * Memories Before
-       * @description Number of memories before optimization
-       */
-      memories_before: number;
-      /**
-       * Memories After
-       * @description Number of memories after optimization
-       */
-      memories_after: number;
-      /**
-       * Tokens Before
-       * @description Token count before optimization
-       */
-      tokens_before: number;
-      /**
-       * Tokens After
-       * @description Token count after optimization
-       */
-      tokens_after: number;
-      /**
-       * Tokens Saved
-       * @description Number of tokens saved through optimization
-       */
-      tokens_saved: number;
-      /**
-       * Reduction Percentage
-       * @description Percentage of token reduction achieved
-       */
-      reduction_percentage: number;
-    };
-    /** PaginatedResponse[ContentResponseSchema] */
-    PaginatedResponse_ContentResponseSchema_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["ContentResponseSchema"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[EvalSchema] */
-    PaginatedResponse_EvalSchema_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["EvalSchema"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[SessionSchema] */
-    PaginatedResponse_SessionSchema_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["SessionSchema"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[TraceSessionStats] */
-    PaginatedResponse_TraceSessionStats_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["TraceSessionStats"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[TraceSummary] */
-    PaginatedResponse_TraceSummary_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["TraceSummary"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[UserMemorySchema] */
-    PaginatedResponse_UserMemorySchema_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["UserMemorySchema"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[UserStatsSchema] */
-    PaginatedResponse_UserStatsSchema_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["UserStatsSchema"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginatedResponse[VectorSearchResult] */
-    PaginatedResponse_VectorSearchResult_: {
-      /**
-       * Data
-       * @description List of items for the current page
-       */
-      data: components["schemas"]["VectorSearchResult"][];
-      /** @description Pagination metadata */
-      meta: components["schemas"]["PaginationInfo"];
-    };
-    /** PaginationInfo */
-    PaginationInfo: {
-      /**
-       * Page
-       * @description Current page number (0-indexed)
-       * @default 0
-       */
-      page: number;
-      /**
-       * Limit
-       * @description Number of items per page
-       * @default 20
-       */
-      limit: number;
-      /**
-       * Total Pages
-       * @description Total number of pages
-       * @default 0
-       */
-      total_pages: number;
-      /**
-       * Total Count
-       * @description Total count of items
-       * @default 0
-       */
-      total_count: number;
-      /**
-       * Search Time Ms
-       * @description Search execution time in milliseconds
-       * @default 0
-       */
-      search_time_ms: number;
-    };
-    /** ReaderSchema */
-    ReaderSchema: {
-      /**
-       * Id
-       * @description Unique identifier for the reader
-       */
-      id: string;
-      /**
-       * Name
-       * @description Name of the reader
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the reader's capabilities
-       */
-      description?: string | null;
-      /**
-       * Chunkers
-       * @description List of supported chunking strategies
-       */
-      chunkers?: string[] | null;
-    };
-    /**
-     * RemoteContentSourceSchema
-     * @description Schema for remote content source configuration.
-     */
-    RemoteContentSourceSchema: {
-      /**
-       * Id
-       * @description Unique identifier for the content source
-       */
-      id: string;
-      /**
-       * Name
-       * @description Display name for the content source
-       */
-      name: string;
-      /**
-       * Type
-       * @description Type of content source (s3, gcs, sharepoint, github, azureblob)
-       */
-      type: string;
-      /**
-       * Metadata
-       * @description Custom metadata for the content source
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /** RunSchema */
-    RunSchema: {
-      /**
-       * Run Id
-       * @description Unique identifier for the run
-       */
-      run_id: string;
-      /**
-       * Parent Run Id
-       * @description Parent run ID if this is a nested run
-       */
-      parent_run_id?: string | null;
-      /**
-       * Agent Id
-       * @description Agent ID that executed this run
-       */
-      agent_id?: string | null;
-      /**
-       * User Id
-       * @description User ID associated with the run
-       */
-      user_id?: string | null;
-      /**
-       * Run Input
-       * @description Input provided to the run
-       */
-      run_input?: string | null;
-      /**
-       * Content
-       * @description Output content from the run
-       */
-      content?:
-        | string
-        | {
-            [key: string]: unknown;
-          }
-        | null;
-      /**
-       * Run Response Format
-       * @description Format of the response (text/json)
-       */
-      run_response_format?: string | null;
-      /**
-       * Reasoning Content
-       * @description Reasoning content if reasoning was enabled
-       */
-      reasoning_content?: string | null;
-      /**
-       * Reasoning Steps
-       * @description List of reasoning steps
-       */
-      reasoning_steps?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Metrics
-       * @description Performance and usage metrics
-       */
-      metrics?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Messages
-       * @description Message history for the run
-       */
-      messages?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Tools
-       * @description Tools used in the run
-       */
-      tools?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Events
-       * @description Events generated during the run
-       */
-      events?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Created At
-       * @description Run creation timestamp
-       */
-      created_at?: string | null;
-      /**
-       * References
-       * @description References cited in the run
-       */
-      references?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Citations
-       * @description Citations from the model (e.g., from Gemini grounding/search)
-       */
-      citations?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Reasoning Messages
-       * @description Reasoning process messages
-       */
-      reasoning_messages?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Session State
-       * @description Session state at the end of the run
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Images
-       * @description Images included in the run
-       */
-      images?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Videos
-       * @description Videos included in the run
-       */
-      videos?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Audio
-       * @description Audio files included in the run
-       */
-      audio?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Files
-       * @description Files included in the run
-       */
-      files?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Response Audio
-       * @description Audio response if generated
-       */
-      response_audio?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Input Media
-       * @description Input media attachments
-       */
-      input_media?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /**
-     * SessionConfig
-     * @description Configuration for the Session domain of the AgentOS
-     */
-    SessionConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Dbs */
-      dbs?:
-        | components["schemas"]["DatabaseConfig_SessionDomainConfig_"][]
-        | null;
-    };
-    /**
-     * SessionDomainConfig
-     * @description Configuration for the Session domain of the AgentOS
-     */
-    SessionDomainConfig: {
-      /** Display Name */
-      display_name?: string | null;
-    };
-    /** SessionSchema */
-    SessionSchema: {
-      /**
-       * Session Id
-       * @description Unique identifier for the session
-       */
-      session_id: string;
-      /**
-       * Session Name
-       * @description Human-readable name for the session
-       */
-      session_name: string;
-      /**
-       * Session State
-       * @description Current state data of the session
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Created At
-       * @description Timestamp when session was created
-       */
-      created_at?: string | null;
-      /**
-       * Updated At
-       * @description Timestamp when session was last updated
-       */
-      updated_at?: string | null;
-    };
-    /**
-     * SessionType
-     * @enum {string}
-     */
-    SessionType: "agent" | "team" | "workflow";
-    /**
-     * SortOrder
-     * @enum {string}
-     */
-    SortOrder: "asc" | "desc";
-    /** TeamResponse */
-    TeamResponse: {
-      /** Id */
-      id?: string | null;
-      /** Name */
-      name?: string | null;
-      /** Db Id */
-      db_id?: string | null;
-      /** Description */
-      description?: string | null;
-      /** Role */
-      role?: string | null;
-      model?: components["schemas"]["ModelResponse"] | null;
-      /** Tools */
-      tools?: {
-        [key: string]: unknown;
-      } | null;
-      /** Sessions */
-      sessions?: {
-        [key: string]: unknown;
-      } | null;
-      /** Knowledge */
-      knowledge?: {
-        [key: string]: unknown;
-      } | null;
-      /** Memory */
-      memory?: {
-        [key: string]: unknown;
-      } | null;
-      /** Reasoning */
-      reasoning?: {
-        [key: string]: unknown;
-      } | null;
-      /** Default Tools */
-      default_tools?: {
-        [key: string]: unknown;
-      } | null;
-      /** System Message */
-      system_message?: {
-        [key: string]: unknown;
-      } | null;
-      /** Response Settings */
-      response_settings?: {
-        [key: string]: unknown;
-      } | null;
-      /** Introduction */
-      introduction?: string | null;
-      /** Streaming */
-      streaming?: {
-        [key: string]: unknown;
-      } | null;
-      /** Members */
-      members?:
-        | (
-            | components["schemas"]["AgentResponse"]
-            | components["schemas"]["TeamResponse"]
-          )[]
-        | null;
-      /** Metadata */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /** Input Schema */
-      input_schema?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /** TeamRunSchema */
-    TeamRunSchema: {
-      /**
-       * Run Id
-       * @description Unique identifier for the team run
-       */
-      run_id: string;
-      /**
-       * Parent Run Id
-       * @description Parent run ID if this is a nested run
-       */
-      parent_run_id?: string | null;
-      /**
-       * Team Id
-       * @description Team ID that executed this run
-       */
-      team_id?: string | null;
-      /**
-       * Content
-       * @description Output content from the team run
-       */
-      content?:
-        | string
-        | {
-            [key: string]: unknown;
-          }
-        | null;
-      /**
-       * Reasoning Content
-       * @description Reasoning content if reasoning was enabled
-       */
-      reasoning_content?: string | null;
-      /**
-       * Reasoning Steps
-       * @description List of reasoning steps
-       */
-      reasoning_steps?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Run Input
-       * @description Input provided to the run
-       */
-      run_input?: string | null;
-      /**
-       * Run Response Format
-       * @description Format of the response (text/json)
-       */
-      run_response_format?: string | null;
-      /**
-       * Metrics
-       * @description Performance and usage metrics
-       */
-      metrics?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Tools
-       * @description Tools used in the run
-       */
-      tools?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Messages
-       * @description Message history for the run
-       */
-      messages?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Events
-       * @description Events generated during the run
-       */
-      events?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Created At
-       * @description Run creation timestamp
-       */
-      created_at?: string | null;
-      /**
-       * References
-       * @description References cited in the run
-       */
-      references?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Citations
-       * @description Citations from the model (e.g., from Gemini grounding/search)
-       */
-      citations?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Reasoning Messages
-       * @description Reasoning process messages
-       */
-      reasoning_messages?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Session State
-       * @description Session state at the end of the run
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Input Media
-       * @description Input media attachments
-       */
-      input_media?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Images
-       * @description Images included in the run
-       */
-      images?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Videos
-       * @description Videos included in the run
-       */
-      videos?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Audio
-       * @description Audio files included in the run
-       */
-      audio?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Files
-       * @description Files included in the run
-       */
-      files?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Response Audio
-       * @description Audio response if generated
-       */
-      response_audio?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /** TeamSessionDetailSchema */
-    TeamSessionDetailSchema: {
-      /**
-       * Session Id
-       * @description Unique session identifier
-       */
-      session_id: string;
-      /**
-       * Session Name
-       * @description Human-readable session name
-       */
-      session_name: string;
-      /**
-       * User Id
-       * @description User ID associated with the session
-       */
-      user_id?: string | null;
-      /**
-       * Team Id
-       * @description Team ID used in this session
-       */
-      team_id?: string | null;
-      /**
-       * Session Summary
-       * @description Summary of team interactions
-       */
-      session_summary?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Session State
-       * @description Current state of the session
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metrics
-       * @description Session metrics
-       */
-      metrics?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Team Data
-       * @description Team-specific data
-       */
-      team_data?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metadata
-       * @description Additional metadata
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Chat History
-       * @description Complete chat history
-       */
-      chat_history?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Created At
-       * @description Session creation timestamp
-       */
-      created_at?: string | null;
-      /**
-       * Updated At
-       * @description Last update timestamp
-       */
-      updated_at?: string | null;
-      /**
-       * Total Tokens
-       * @description Total tokens used in this session
-       */
-      total_tokens?: number | null;
-    };
-    /** TeamSummaryResponse */
-    TeamSummaryResponse: {
-      /**
-       * Id
-       * @description Unique identifier for the team
-       */
-      id?: string | null;
-      /**
-       * Name
-       * @description Name of the team
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the team
-       */
-      description?: string | null;
-      /**
-       * Db Id
-       * @description Database identifier
-       */
-      db_id?: string | null;
-    };
-    /**
-     * TraceDetail
-     * @description Detailed trace information with hierarchical span tree
-     */
-    TraceDetail: {
-      /**
-       * Trace Id
-       * @description Unique trace identifier
-       */
-      trace_id: string;
-      /**
-       * Name
-       * @description Trace name (usually root span name)
-       */
-      name: string;
-      /**
-       * Status
-       * @description Overall status (OK, ERROR)
-       */
-      status: string;
-      /**
-       * Duration
-       * @description Human-readable total duration
-       */
-      duration: string;
-      /**
-       * Start Time
-       * Format: date-time
-       * @description Trace start time (Pydantic auto-serializes to ISO 8601)
-       */
-      start_time: string;
-      /**
-       * End Time
-       * Format: date-time
-       * @description Trace end time (Pydantic auto-serializes to ISO 8601)
-       */
-      end_time: string;
-      /**
-       * Total Spans
-       * @description Total number of spans in this trace
-       */
-      total_spans: number;
-      /**
-       * Error Count
-       * @description Number of spans with errors
-       */
-      error_count: number;
-      /**
-       * Input
-       * @description Input to the agent/workflow
-       */
-      input?: string | null;
-      /**
-       * Output
-       * @description Output from the agent/workflow
-       */
-      output?: string | null;
-      /**
-       * Error
-       * @description Error message if status is ERROR
-       */
-      error?: string | null;
-      /**
-       * Run Id
-       * @description Associated run ID
-       */
-      run_id?: string | null;
-      /**
-       * Session Id
-       * @description Associated session ID
-       */
-      session_id?: string | null;
-      /**
-       * User Id
-       * @description Associated user ID
-       */
-      user_id?: string | null;
-      /**
-       * Agent Id
-       * @description Associated agent ID
-       */
-      agent_id?: string | null;
-      /**
-       * Team Id
-       * @description Associated team ID
-       */
-      team_id?: string | null;
-      /**
-       * Workflow Id
-       * @description Associated workflow ID
-       */
-      workflow_id?: string | null;
-      /**
-       * Created At
-       * Format: date-time
-       * @description Time when trace was created (Pydantic auto-serializes to ISO 8601)
-       */
-      created_at: string;
-      /**
-       * Tree
-       * @description Hierarchical tree of spans (root nodes)
-       */
-      tree: components["schemas"]["TraceNode"][];
-    };
-    /**
-     * TraceNode
-     * @description Recursive node structure for rendering trace hierarchy in the frontend
-     */
-    TraceNode: {
-      /**
-       * Id
-       * @description Span ID
-       */
-      id: string;
-      /**
-       * Name
-       * @description Span name (e.g., 'agent.run', 'llm.invoke')
-       */
-      name: string;
-      /**
-       * Type
-       * @description Span kind (AGENT, TEAM, WORKFLOW, LLM, TOOL)
-       */
-      type: string;
-      /**
-       * Duration
-       * @description Human-readable duration (e.g., '123ms', '1.5s')
-       */
-      duration: string;
-      /**
-       * Start Time
-       * Format: date-time
-       * @description Start time (Pydantic auto-serializes to ISO 8601)
-       */
-      start_time: string;
-      /**
-       * End Time
-       * Format: date-time
-       * @description End time (Pydantic auto-serializes to ISO 8601)
-       */
-      end_time: string;
-      /**
-       * Status
-       * @description Status code (OK, ERROR)
-       */
-      status: string;
-      /**
-       * Input
-       * @description Input to the span
-       */
-      input?: string | null;
-      /**
-       * Output
-       * @description Output from the span
-       */
-      output?: string | null;
-      /**
-       * Error
-       * @description Error message if status is ERROR
-       */
-      error?: string | null;
-      /**
-       * Spans
-       * @description Child spans in the trace hierarchy
-       */
-      spans?: components["schemas"]["TraceNode"][] | null;
-      /**
-       * Step Type
-       * @description Workflow step type (Step, Condition, function, Agent, Team)
-       */
-      step_type?: string | null;
-      /**
-       * Metadata
-       * @description Additional span attributes and data
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Extra Data
-       * @description Flexible field for custom attributes and additional data
-       */
-      extra_data?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /**
-     * TraceSessionStats
-     * @description Aggregated trace statistics grouped by session
-     */
-    TraceSessionStats: {
-      /**
-       * Session Id
-       * @description Session identifier
-       */
-      session_id: string;
-      /**
-       * User Id
-       * @description User ID associated with the session
-       */
-      user_id?: string | null;
-      /**
-       * Agent Id
-       * @description Agent ID(s) used in the session
-       */
-      agent_id?: string | null;
-      /**
-       * Team Id
-       * @description Team ID associated with the session
-       */
-      team_id?: string | null;
-      /**
-       * Workflow Id
-       * @description Workflow ID associated with the session
-       */
-      workflow_id?: string | null;
-      /**
-       * Total Traces
-       * @description Total number of traces in this session
-       */
-      total_traces: number;
-      /**
-       * First Trace At
-       * Format: date-time
-       * @description Time of first trace (Pydantic auto-serializes to ISO 8601)
-       */
-      first_trace_at: string;
-      /**
-       * Last Trace At
-       * Format: date-time
-       * @description Time of last trace (Pydantic auto-serializes to ISO 8601)
-       */
-      last_trace_at: string;
-    };
-    /**
-     * TraceSummary
-     * @description Summary information for trace list view
-     */
-    TraceSummary: {
-      /**
-       * Trace Id
-       * @description Unique trace identifier
-       */
-      trace_id: string;
-      /**
-       * Name
-       * @description Trace name (usually root span name)
-       */
-      name: string;
-      /**
-       * Status
-       * @description Overall status (OK, ERROR, UNSET)
-       */
-      status: string;
-      /**
-       * Duration
-       * @description Human-readable total duration
-       */
-      duration: string;
-      /**
-       * Start Time
-       * Format: date-time
-       * @description Trace start time (Pydantic auto-serializes to ISO 8601)
-       */
-      start_time: string;
-      /**
-       * End Time
-       * Format: date-time
-       * @description Trace end time (Pydantic auto-serializes to ISO 8601)
-       */
-      end_time: string;
-      /**
-       * Total Spans
-       * @description Total number of spans in this trace
-       */
-      total_spans: number;
-      /**
-       * Error Count
-       * @description Number of spans with errors
-       */
-      error_count: number;
-      /**
-       * Input
-       * @description Input to the agent
-       */
-      input?: string | null;
-      /**
-       * Run Id
-       * @description Associated run ID
-       */
-      run_id?: string | null;
-      /**
-       * Session Id
-       * @description Associated session ID
-       */
-      session_id?: string | null;
-      /**
-       * User Id
-       * @description Associated user ID
-       */
-      user_id?: string | null;
-      /**
-       * Agent Id
-       * @description Associated agent ID
-       */
-      agent_id?: string | null;
-      /**
-       * Team Id
-       * @description Associated team ID
-       */
-      team_id?: string | null;
-      /**
-       * Workflow Id
-       * @description Associated workflow ID
-       */
-      workflow_id?: string | null;
-      /**
-       * Created At
-       * Format: date-time
-       * @description Time when trace was created (Pydantic auto-serializes to ISO 8601)
-       */
-      created_at: string;
-    };
-    /**
-     * TracesConfig
-     * @description Configuration for the Traces domain of the AgentOS
-     */
-    TracesConfig: {
-      /** Display Name */
-      display_name?: string | null;
-      /** Dbs */
-      dbs?:
-        | components["schemas"]["DatabaseConfig_TracesDomainConfig_"][]
-        | null;
-    };
-    /**
-     * TracesDomainConfig
-     * @description Configuration for the Traces domain of the AgentOS
-     */
-    TracesDomainConfig: {
-      /** Display Name */
-      display_name?: string | null;
-    };
-    /**
-     * UnauthenticatedResponse
-     * @example {
-     *       "detail": "Unauthenticated access",
-     *       "error_code": "UNAUTHENTICATED"
-     *     }
-     */
-    UnauthenticatedResponse: {
-      /**
-       * Detail
-       * @description Error detail message
-       */
-      detail: string;
-      /**
-       * Error Code
-       * @description Error code for categorization
-       */
-      error_code?: string | null;
-    };
-    /** UpdateEvalRunRequest */
-    UpdateEvalRunRequest: {
-      /**
-       * Name
-       * @description New name for the evaluation run
-       */
-      name: string;
-    };
-    /** UpdateSessionRequest */
-    UpdateSessionRequest: {
-      /**
-       * Session Name
-       * @description Updated session name
-       */
-      session_name?: string | null;
-      /**
-       * Session State
-       * @description Updated session state
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metadata
-       * @description Updated metadata
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Summary
-       * @description Session summary
-       */
-      summary?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /**
-     * UserMemoryCreateSchema
-     * @description Define the payload expected for creating a new user memory
-     */
-    UserMemoryCreateSchema: {
-      /**
-       * Memory
-       * @description Memory content text
-       */
-      memory: string;
-      /**
-       * User Id
-       * @description User ID who owns this memory
-       */
-      user_id?: string | null;
-      /**
-       * Topics
-       * @description Topics or tags to categorize the memory
-       */
-      topics?: string[] | null;
-    };
-    /** UserMemorySchema */
-    UserMemorySchema: {
-      /**
-       * Memory Id
-       * @description Unique identifier for the memory
-       */
-      memory_id: string;
-      /**
-       * Memory
-       * @description Memory content text
-       */
-      memory: string;
-      /**
-       * Topics
-       * @description Topics or tags associated with the memory
-       */
-      topics?: string[] | null;
-      /**
-       * Agent Id
-       * @description Agent ID associated with this memory
-       */
-      agent_id?: string | null;
-      /**
-       * Team Id
-       * @description Team ID associated with this memory
-       */
-      team_id?: string | null;
-      /**
-       * User Id
-       * @description User ID who owns this memory
-       */
-      user_id?: string | null;
-      /**
-       * Updated At
-       * @description Timestamp when memory was last updated
-       */
-      updated_at?: string | null;
-    };
-    /**
-     * UserStatsSchema
-     * @description Schema for user memory statistics
-     */
-    UserStatsSchema: {
-      /**
-       * User Id
-       * @description User ID
-       */
-      user_id: string;
-      /**
-       * Total Memories
-       * @description Total number of memories for this user
-       */
-      total_memories: number;
-      /**
-       * Last Memory Updated At
-       * @description Timestamp of the most recent memory update
-       */
-      last_memory_updated_at?: string | null;
-    };
-    /**
-     * ValidationErrorResponse
-     * @example {
-     *       "detail": "Validation error",
-     *       "error_code": "VALIDATION_ERROR"
-     *     }
-     */
-    ValidationErrorResponse: {
-      /**
-       * Detail
-       * @description Error detail message
-       */
-      detail: string;
-      /**
-       * Error Code
-       * @description Error code for categorization
-       */
-      error_code?: string | null;
-    };
-    /** VectorDbSchema */
-    VectorDbSchema: {
-      /**
-       * Id
-       * @description Unique identifier for the vector database
-       */
-      id: string;
-      /**
-       * Name
-       * @description Name of the vector database
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the vector database
-       */
-      description?: string | null;
-      /**
-       * Search Types
-       * @description List of supported search types (vector, keyword, hybrid)
-       */
-      search_types?: string[] | null;
-    };
-    /**
-     * VectorSearchRequestSchema
-     * @description Schema for vector search request.
-     */
-    VectorSearchRequestSchema: {
-      /**
-       * Query
-       * @description The search query text
-       */
-      query: string;
-      /**
-       * Db Id
-       * @description The content database ID to search in
-       */
-      db_id?: string | null;
-      /**
-       * Vector Db Ids
-       * @description List of vector database IDs to search in
-       */
-      vector_db_ids?: string[] | null;
-      /**
-       * Search Type
-       * @description The type of search to perform (vector, keyword, hybrid)
-       */
-      search_type?: string | null;
-      /**
-       * Max Results
-       * @description The maximum number of results to return
-       */
-      max_results?: number | null;
-      /**
-       * Filters
-       * @description Filters to apply to the search results
-       */
-      filters?: {
-        [key: string]: unknown;
-      } | null;
-      /** @description Pagination metadata. Limit and page number to return a subset of results. */
-      meta?: components["schemas"]["Meta"] | null;
-    };
-    /**
-     * VectorSearchResult
-     * @description Schema for search result documents.
-     */
-    VectorSearchResult: {
-      /**
-       * Id
-       * @description Unique identifier for the search result document
-       */
-      id: string;
-      /**
-       * Content
-       * @description Content text of the document
-       */
-      content: string;
-      /**
-       * Name
-       * @description Name of the document
-       */
-      name?: string | null;
-      /**
-       * Meta Data
-       * @description Metadata associated with the document
-       */
-      meta_data?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Usage
-       * @description Usage statistics (e.g., token counts)
-       */
-      usage?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Reranking Score
-       * @description Reranking score for relevance
-       */
-      reranking_score?: number | null;
-      /**
-       * Content Id
-       * @description ID of the source content
-       */
-      content_id?: string | null;
-      /**
-       * Content Origin
-       * @description Origin URL or source of the content
-       */
-      content_origin?: string | null;
-      /**
-       * Size
-       * @description Size of the content in bytes
-       */
-      size?: number | null;
-    };
-    /** WorkflowResponse */
-    WorkflowResponse: {
-      /**
-       * Id
-       * @description Unique identifier for the workflow
-       */
-      id?: string | null;
-      /**
-       * Name
-       * @description Name of the workflow
-       */
-      name?: string | null;
-      /**
-       * Db Id
-       * @description Database identifier
-       */
-      db_id?: string | null;
-      /**
-       * Description
-       * @description Description of the workflow
-       */
-      description?: string | null;
-      /**
-       * Input Schema
-       * @description Input schema for the workflow
-       */
-      input_schema?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Steps
-       * @description List of workflow steps
-       */
-      steps?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /** @description Agent configuration if used */
-      agent?: components["schemas"]["AgentResponse"] | null;
-      /** @description Team configuration if used */
-      team?: components["schemas"]["TeamResponse"] | null;
-      /**
-       * Metadata
-       * @description Additional metadata
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Workflow Agent
-       * @description Whether this workflow uses a WorkflowAgent
-       * @default false
-       */
-      workflow_agent: boolean;
-    };
-    /** WorkflowRunSchema */
-    WorkflowRunSchema: {
-      /**
-       * Run Id
-       * @description Unique identifier for the workflow run
-       */
-      run_id: string;
-      /**
-       * Run Input
-       * @description Input provided to the workflow
-       */
-      run_input?: string | null;
-      /**
-       * Events
-       * @description Events generated during the workflow
-       */
-      events?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Workflow Id
-       * @description Workflow ID that was executed
-       */
-      workflow_id?: string | null;
-      /**
-       * User Id
-       * @description User ID associated with the run
-       */
-      user_id?: string | null;
-      /**
-       * Content
-       * @description Output content from the workflow
-       */
-      content?:
-        | string
-        | {
-            [key: string]: unknown;
-          }
-        | null;
-      /**
-       * Content Type
-       * @description Type of content returned
-       */
-      content_type?: string | null;
-      /**
-       * Status
-       * @description Status of the workflow run
-       */
-      status?: string | null;
-      /**
-       * Step Results
-       * @description Results from each workflow step
-       */
-      step_results?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Step Executor Runs
-       * @description Executor runs for each step
-       */
-      step_executor_runs?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Metrics
-       * @description Performance and usage metrics
-       */
-      metrics?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Created At
-       * @description Run creation timestamp
-       */
-      created_at?: string | null;
-      /**
-       * Reasoning Content
-       * @description Reasoning content if reasoning was enabled
-       */
-      reasoning_content?: string | null;
-      /**
-       * Reasoning Steps
-       * @description List of reasoning steps
-       */
-      reasoning_steps?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * References
-       * @description References cited in the workflow
-       */
-      references?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Citations
-       * @description Citations from the model (e.g., from Gemini grounding/search)
-       */
-      citations?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Reasoning Messages
-       * @description Reasoning process messages
-       */
-      reasoning_messages?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Images
-       * @description Images included in the workflow
-       */
-      images?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Videos
-       * @description Videos included in the workflow
-       */
-      videos?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Audio
-       * @description Audio files included in the workflow
-       */
-      audio?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Files
-       * @description Files included in the workflow
-       */
-      files?:
-        | {
-            [key: string]: unknown;
-          }[]
-        | null;
-      /**
-       * Response Audio
-       * @description Audio response if generated
-       */
-      response_audio?: {
-        [key: string]: unknown;
-      } | null;
-    };
-    /** WorkflowSessionDetailSchema */
-    WorkflowSessionDetailSchema: {
-      /**
-       * User Id
-       * @description User ID associated with the session
-       */
-      user_id?: string | null;
-      /**
-       * Workflow Id
-       * @description Workflow ID used in this session
-       */
-      workflow_id?: string | null;
-      /**
-       * Workflow Name
-       * @description Name of the workflow
-       */
-      workflow_name?: string | null;
-      /**
-       * Session Id
-       * @description Unique session identifier
-       */
-      session_id: string;
-      /**
-       * Session Name
-       * @description Human-readable session name
-       */
-      session_name: string;
-      /**
-       * Session Data
-       * @description Complete session data
-       */
-      session_data?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Session State
-       * @description Current workflow state
-       */
-      session_state?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Workflow Data
-       * @description Workflow-specific data
-       */
-      workflow_data?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Metadata
-       * @description Additional metadata
-       */
-      metadata?: {
-        [key: string]: unknown;
-      } | null;
-      /**
-       * Created At
-       * @description Session creation timestamp
-       */
-      created_at?: string | null;
-      /**
-       * Updated At
-       * @description Last update timestamp
-       */
-      updated_at?: string | null;
-    };
-    /** WorkflowSummaryResponse */
-    WorkflowSummaryResponse: {
-      /**
-       * Id
-       * @description Unique identifier for the workflow
-       */
-      id?: string | null;
-      /**
-       * Name
-       * @description Name of the workflow
-       */
-      name?: string | null;
-      /**
-       * Description
-       * @description Description of the workflow
-       */
-      description?: string | null;
-      /**
-       * Db Id
-       * @description Database identifier
-       */
-      db_id?: string | null;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    schemas: {
+        /** AdminConnectionResponse */
+        AdminConnectionResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Api Key Id
+             * Format: uuid
+             */
+            api_key_id: string;
+            /** Name */
+            name: string;
+            /** Host */
+            host: string;
+            /** Port */
+            port: number;
+            /** Ibmi User */
+            ibmi_user: string;
+            /** Is Default */
+            is_default: boolean;
+            /** Is Active */
+            is_active: boolean;
+            /** Created At */
+            created_at: unknown;
+            /** Updated At */
+            updated_at?: unknown | null;
+            /** Last Connected */
+            last_connected?: unknown | null;
+            /** Api Key Name */
+            api_key_name?: string | null;
+        };
+        /** AgentResponse */
+        AgentResponse: {
+            /** Id */
+            id?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Db Id */
+            db_id?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Role */
+            role?: string | null;
+            model?: components["schemas"]["ModelResponse"] | null;
+            /** Tools */
+            tools?: {
+                [key: string]: unknown;
+            } | null;
+            /** Sessions */
+            sessions?: {
+                [key: string]: unknown;
+            } | null;
+            /** Knowledge */
+            knowledge?: {
+                [key: string]: unknown;
+            } | null;
+            /** Memory */
+            memory?: {
+                [key: string]: unknown;
+            } | null;
+            /** Reasoning */
+            reasoning?: {
+                [key: string]: unknown;
+            } | null;
+            /** Default Tools */
+            default_tools?: {
+                [key: string]: unknown;
+            } | null;
+            /** System Message */
+            system_message?: {
+                [key: string]: unknown;
+            } | null;
+            /** Extra Messages */
+            extra_messages?: {
+                [key: string]: unknown;
+            } | null;
+            /** Response Settings */
+            response_settings?: {
+                [key: string]: unknown;
+            } | null;
+            /** Introduction */
+            introduction?: string | null;
+            /** Streaming */
+            streaming?: {
+                [key: string]: unknown;
+            } | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /** Input Schema */
+            input_schema?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Is Component
+             * @default false
+             */
+            is_component: boolean;
+            /** Current Version */
+            current_version?: number | null;
+            /** Stage */
+            stage?: string | null;
+        };
+        /** AgentSessionDetailSchema */
+        AgentSessionDetailSchema: {
+            /**
+             * User Id
+             * @description User ID associated with the session
+             */
+            user_id?: string | null;
+            /**
+             * Agent Session Id
+             * @description Unique agent session identifier
+             */
+            agent_session_id: string;
+            /**
+             * Session Id
+             * @description Session identifier
+             */
+            session_id: string;
+            /**
+             * Session Name
+             * @description Human-readable session name
+             */
+            session_name: string;
+            /**
+             * Session Summary
+             * @description Summary of session interactions
+             */
+            session_summary?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Session State
+             * @description Current state of the session
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Agent Id
+             * @description Agent ID used in this session
+             */
+            agent_id?: string | null;
+            /**
+             * Total Tokens
+             * @description Total tokens used in this session
+             */
+            total_tokens?: number | null;
+            /**
+             * Agent Data
+             * @description Agent-specific data
+             */
+            agent_data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metrics
+             * @description Session metrics
+             */
+            metrics?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metadata
+             * @description Additional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Chat History
+             * @description Complete chat history
+             */
+            chat_history?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Created At
+             * @description Session creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Updated At
+             * @description Last update timestamp
+             */
+            updated_at?: string | null;
+        };
+        /** AgentSummaryResponse */
+        AgentSummaryResponse: {
+            /**
+             * Id
+             * @description Unique identifier for the agent
+             */
+            id?: string | null;
+            /**
+             * Name
+             * @description Name of the agent
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the agent
+             */
+            description?: string | null;
+            /**
+             * Db Id
+             * @description Database identifier
+             */
+            db_id?: string | null;
+        };
+        /**
+         * ApprovalCountResponse
+         * @description Response model for pending approval count.
+         */
+        ApprovalCountResponse: {
+            /** Count */
+            count: number;
+        };
+        /**
+         * ApprovalResolve
+         * @description Request body for resolving (approve/reject) an approval.
+         */
+        ApprovalResolve: {
+            /** Status */
+            status: string;
+            /** Resolved By */
+            resolved_by?: string | null;
+            /** Resolution Data */
+            resolution_data?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * ApprovalResponse
+         * @description Response model for a single approval.
+         */
+        ApprovalResponse: {
+            /** Id */
+            id: string;
+            /** Run Id */
+            run_id: string;
+            /** Session Id */
+            session_id: string;
+            /** Status */
+            status: string;
+            /** Source Type */
+            source_type: string;
+            /** Approval Type */
+            approval_type?: string | null;
+            /** Pause Type */
+            pause_type?: string | null;
+            /** Tool Name */
+            tool_name?: string | null;
+            /** Tool Args */
+            tool_args?: {
+                [key: string]: unknown;
+            } | null;
+            /** Expires At */
+            expires_at?: number | null;
+            /** Agent Id */
+            agent_id?: string | null;
+            /** Team Id */
+            team_id?: string | null;
+            /** Workflow Id */
+            workflow_id?: string | null;
+            /** User Id */
+            user_id?: string | null;
+            /** Schedule Id */
+            schedule_id?: string | null;
+            /** Schedule Run Id */
+            schedule_run_id?: string | null;
+            /** Source Name */
+            source_name?: string | null;
+            /** Requirements */
+            requirements?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Context */
+            context?: {
+                [key: string]: unknown;
+            } | null;
+            /** Resolution Data */
+            resolution_data?: {
+                [key: string]: unknown;
+            } | null;
+            /** Resolved By */
+            resolved_by?: string | null;
+            /** Resolved At */
+            resolved_at?: number | null;
+            /** Created At */
+            created_at?: number | null;
+            /** Updated At */
+            updated_at?: number | null;
+            run_status?: components["schemas"]["RunStatus"] | null;
+        };
+        /**
+         * ApprovalStatusResponse
+         * @description Lightweight response model for polling approval status.
+         */
+        ApprovalStatusResponse: {
+            /** Approval Id */
+            approval_id: string;
+            /** Status */
+            status: string;
+            /** Run Id */
+            run_id: string;
+            /** Resolved At */
+            resolved_at?: number | null;
+            /** Resolved By */
+            resolved_by?: string | null;
+        };
+        /**
+         * BadRequestResponse
+         * @example {
+         *       "detail": "Bad request",
+         *       "error_code": "BAD_REQUEST"
+         *     }
+         */
+        BadRequestResponse: {
+            /**
+             * Detail
+             * @description Error detail message
+             */
+            detail: string;
+            /**
+             * Error Code
+             * @description Error code for categorization
+             */
+            error_code?: string | null;
+        };
+        /** Body_continue_agent_run */
+        Body_continue_agent_run: {
+            /**
+             * Tools
+             * @description JSON string of tool call results to continue the paused run
+             * @default
+             */
+            tools: string;
+            /**
+             * Session Id
+             * @description Session ID for the paused run
+             */
+            session_id?: string | null;
+            /**
+             * User Id
+             * @description User identifier for tracking and personalization
+             */
+            user_id?: string | null;
+            /**
+             * Stream
+             * @description Enable streaming responses via Server-Sent Events (SSE)
+             * @default true
+             */
+            stream: boolean;
+        };
+        /** Body_create_agent_run */
+        Body_create_agent_run: {
+            /**
+             * Message
+             * @description The input message or prompt to send to the agent
+             */
+            message: string;
+            /**
+             * Stream
+             * @description Enable streaming responses via Server-Sent Events (SSE)
+             * @default true
+             */
+            stream: boolean;
+            /**
+             * Session Id
+             * @description Session ID for conversation continuity. If not provided, a new session is created
+             */
+            session_id?: string | null;
+            /**
+             * User Id
+             * @description User identifier for tracking and personalization
+             */
+            user_id?: string | null;
+            /**
+             * Files
+             * @description Files to upload (images, audio, video, or documents)
+             */
+            files?: string[] | null;
+            /**
+             * Version
+             * @description Agent version to use for this run
+             */
+            version?: string | null;
+            /**
+             * Background
+             * @description Run in background and return immediately with run metadata (requires database)
+             * @default false
+             */
+            background: boolean;
+        };
+        /** Body_create_team_run */
+        Body_create_team_run: {
+            /**
+             * Message
+             * @description The input message or prompt to send to the team
+             */
+            message: string;
+            /**
+             * Stream
+             * @description Enable streaming responses via Server-Sent Events (SSE)
+             * @default true
+             */
+            stream: boolean;
+            /**
+             * Monitor
+             * @description Enable monitoring and logging for this run
+             * @default true
+             */
+            monitor: boolean;
+            /**
+             * Session Id
+             * @description Session ID for conversation continuity. If not provided, a new session is created
+             */
+            session_id?: string | null;
+            /**
+             * User Id
+             * @description User identifier for tracking and personalization
+             */
+            user_id?: string | null;
+            /**
+             * Files
+             * @description Files to upload (images, audio, video, or documents)
+             */
+            files?: string[] | null;
+            /**
+             * Version
+             * @description Team version to use for this run
+             */
+            version?: number | null;
+            /**
+             * Background
+             * @description Run in background and return immediately with run metadata (requires database)
+             * @default false
+             */
+            background: boolean;
+        };
+        /** Body_create_workflow_run */
+        Body_create_workflow_run: {
+            /**
+             * Message
+             * @description The input message or prompt to send to the workflow
+             */
+            message: string;
+            /**
+             * Stream
+             * @description Enable streaming responses via Server-Sent Events (SSE)
+             * @default true
+             */
+            stream: boolean;
+            /**
+             * Session Id
+             * @description Session ID for conversation continuity. If not provided, a new session is created
+             */
+            session_id?: string | null;
+            /**
+             * User Id
+             * @description User identifier for tracking and personalization
+             */
+            user_id?: string | null;
+            /**
+             * Version
+             * @description Workflow version to use for this run
+             */
+            version?: number | null;
+        };
+        /** Body_rename_session */
+        Body_rename_session: {
+            /**
+             * Session Name
+             * @description New name for the session
+             */
+            session_name: string;
+        };
+        /** Body_update_content */
+        Body_update_content: {
+            /**
+             * Name
+             * @description Content name
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Content description
+             */
+            description?: string | null;
+            /**
+             * Metadata
+             * @description Content metadata as JSON string
+             */
+            metadata?: string | null;
+            /**
+             * Reader Id
+             * @description ID of the reader to use for processing
+             */
+            reader_id?: string | null;
+        };
+        /** Body_upload_content */
+        Body_upload_content: {
+            /**
+             * Name
+             * @description Content name (auto-generated from file/URL if not provided)
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Content description for context
+             */
+            description?: string | null;
+            /**
+             * Url
+             * @description URL to fetch content from (JSON array or single URL string)
+             */
+            url?: string | null;
+            /**
+             * Metadata
+             * @description JSON metadata object for additional content properties
+             */
+            metadata?: string | null;
+            /**
+             * File
+             * @description File to upload for processing
+             */
+            file?: string | null;
+            /**
+             * Text Content
+             * @description Raw text content to process
+             */
+            text_content?: string | null;
+            /**
+             * Reader Id
+             * @description ID of the reader to use for content processing
+             */
+            reader_id?: string | null;
+            /**
+             * Chunker
+             * @description Chunking strategy to apply during processing
+             */
+            chunker?: string | null;
+            /**
+             * Chunk Size
+             * @description Chunk size to use for processing
+             */
+            chunk_size?: number | null;
+            /**
+             * Chunk Overlap
+             * @description Chunk overlap to use for processing
+             */
+            chunk_overlap?: number | null;
+        };
+        /** Body_upload_remote_content */
+        Body_upload_remote_content: {
+            /**
+             * Config Id
+             * @description ID of the configured remote content source (from /knowledge/config)
+             */
+            config_id: string;
+            /**
+             * Path
+             * @description Path to file or folder in the remote source
+             */
+            path: string;
+            /**
+             * Name
+             * @description Content name (auto-generated if not provided)
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Content description
+             */
+            description?: string | null;
+            /**
+             * Metadata
+             * @description JSON metadata object
+             */
+            metadata?: string | null;
+            /**
+             * Reader Id
+             * @description ID of the reader to use for processing
+             */
+            reader_id?: string | null;
+            /**
+             * Chunker
+             * @description Chunking strategy to apply
+             */
+            chunker?: string | null;
+            /**
+             * Chunk Size
+             * @description Chunk size for processing
+             */
+            chunk_size?: number | null;
+            /**
+             * Chunk Overlap
+             * @description Chunk overlap for processing
+             */
+            chunk_overlap?: number | null;
+        };
+        /**
+         * ChatConfig
+         * @description Configuration for the Chat page of the AgentOS
+         */
+        ChatConfig: {
+            /** Quick Prompts */
+            quick_prompts: {
+                [key: string]: string[];
+            };
+        };
+        /** ChunkerSchema */
+        ChunkerSchema: {
+            /** Key */
+            key: string;
+            /** Name */
+            name?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** ComponentConfigResponse */
+        ComponentConfigResponse: {
+            /** Component Id */
+            component_id: string;
+            /** Version */
+            version: number;
+            /** Label */
+            label?: string | null;
+            /** Stage */
+            stage: string;
+            /** Config */
+            config: {
+                [key: string]: unknown;
+            };
+            /** Notes */
+            notes?: string | null;
+            /** Created At */
+            created_at: number;
+            /** Updated At */
+            updated_at?: number | null;
+        };
+        /** ComponentCreate */
+        ComponentCreate: {
+            /**
+             * Name
+             * @description Display name
+             */
+            name: string;
+            /**
+             * Component Id
+             * @description Unique identifier for the entity. Auto-generated from name if not provided.
+             */
+            component_id?: string | null;
+            /** @description Type of entity: agent, team, or workflow */
+            component_type: components["schemas"]["ComponentType"];
+            /**
+             * Description
+             * @description Optional description
+             */
+            description?: string | null;
+            /**
+             * Metadata
+             * @description Optional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Config
+             * @description Optional configuration
+             */
+            config?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Label
+             * @description Optional label (e.g., 'stable')
+             */
+            label?: string | null;
+            /**
+             * Stage
+             * @description Stage: 'draft' or 'published'
+             * @default draft
+             */
+            stage: string;
+            /**
+             * Notes
+             * @description Optional notes
+             */
+            notes?: string | null;
+            /**
+             * Set Current
+             * @description Set as current version
+             * @default true
+             */
+            set_current: boolean;
+        };
+        /** ComponentResponse */
+        ComponentResponse: {
+            /** Component Id */
+            component_id: string;
+            component_type: components["schemas"]["ComponentType"];
+            /** Name */
+            name?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Current Version */
+            current_version?: number | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /** Created At */
+            created_at: number;
+            /** Updated At */
+            updated_at?: number | null;
+        };
+        /**
+         * ComponentType
+         * @enum {string}
+         */
+        ComponentType: "agent" | "team" | "workflow";
+        /** ComponentUpdate */
+        ComponentUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Component Type */
+            component_type?: string | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /** Current Version */
+            current_version?: number | null;
+        };
+        /** ConfigCreate */
+        ConfigCreate: {
+            /**
+             * Config
+             * @description The configuration data
+             */
+            config: {
+                [key: string]: unknown;
+            };
+            /**
+             * Version
+             * @description Optional version number
+             */
+            version?: number | null;
+            /**
+             * Label
+             * @description Optional label (e.g., 'stable')
+             */
+            label?: string | null;
+            /**
+             * Stage
+             * @description Stage: 'draft' or 'published'
+             * @default draft
+             */
+            stage: string;
+            /**
+             * Notes
+             * @description Optional notes
+             */
+            notes?: string | null;
+            /**
+             * Links
+             * @description Optional links to child components
+             */
+            links?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Set Current
+             * @description Set as current version
+             * @default true
+             */
+            set_current: boolean;
+        };
+        /**
+         * ConfigResponse
+         * @description Response schema for the general config endpoint
+         */
+        ConfigResponse: {
+            /**
+             * Os Id
+             * @description Unique identifier for the OS instance
+             */
+            os_id: string;
+            /**
+             * Name
+             * @description Name of the OS instance
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the OS instance
+             */
+            description?: string | null;
+            /**
+             * Available Models
+             * @description List of available models
+             */
+            available_models?: string[] | null;
+            /**
+             * Os Database
+             * @description ID of the database used for the OS instance
+             */
+            os_database?: string | null;
+            /**
+             * Databases
+             * @description List of database IDs used by the components of the OS instance
+             */
+            databases: string[];
+            /** @description Chat configuration */
+            chat?: components["schemas"]["ChatConfig"] | null;
+            /** @description Session configuration */
+            session?: components["schemas"]["SessionConfig"] | null;
+            /** @description Metrics configuration */
+            metrics?: components["schemas"]["MetricsConfig"] | null;
+            /** @description Memory configuration */
+            memory?: components["schemas"]["MemoryConfig"] | null;
+            /** @description Knowledge configuration */
+            knowledge?: components["schemas"]["KnowledgeConfig"] | null;
+            /** @description Evaluations configuration */
+            evals?: components["schemas"]["EvalsConfig"] | null;
+            /** @description Traces configuration */
+            traces?: components["schemas"]["TracesConfig"] | null;
+            /**
+             * Agents
+             * @description List of registered agents
+             */
+            agents: components["schemas"]["AgentSummaryResponse"][];
+            /**
+             * Teams
+             * @description List of registered teams
+             */
+            teams: components["schemas"]["TeamSummaryResponse"][];
+            /**
+             * Workflows
+             * @description List of registered workflows
+             */
+            workflows: components["schemas"]["WorkflowSummaryResponse"][];
+            /**
+             * Interfaces
+             * @description List of available interfaces
+             */
+            interfaces: components["schemas"]["InterfaceResponse"][];
+        };
+        /** ConfigResponseSchema */
+        ConfigResponseSchema: {
+            /**
+             * Readers
+             * @description Available content readers
+             */
+            readers?: {
+                [key: string]: components["schemas"]["ReaderSchema"];
+            } | null;
+            /**
+             * Readersfortype
+             * @description Mapping of content types to reader IDs
+             */
+            readersForType?: {
+                [key: string]: string[];
+            } | null;
+            /**
+             * Chunkers
+             * @description Available chunking strategies
+             */
+            chunkers?: {
+                [key: string]: components["schemas"]["ChunkerSchema"];
+            } | null;
+            /**
+             * Filters
+             * @description Available filter tags
+             */
+            filters?: string[] | null;
+            /**
+             * Vector Dbs
+             * @description Configured vector databases
+             */
+            vector_dbs?: components["schemas"]["VectorDbSchema"][] | null;
+            /**
+             * Remote Content Sources
+             * @description Configured remote content sources (S3, GCS, SharePoint, GitHub)
+             */
+            remote_content_sources?: components["schemas"]["RemoteContentSourceSchema"][] | null;
+        };
+        /** ConfigUpdate */
+        ConfigUpdate: {
+            /** Config */
+            config?: {
+                [key: string]: unknown;
+            } | null;
+            /** Label */
+            label?: string | null;
+            /** Stage */
+            stage?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Links */
+            links?: {
+                [key: string]: unknown;
+            }[] | null;
+        };
+        /** ConnectionResponse */
+        ConnectionResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Api Key Id
+             * Format: uuid
+             */
+            api_key_id: string;
+            /** Name */
+            name: string;
+            /** Host */
+            host: string;
+            /** Port */
+            port: number;
+            /** Ibmi User */
+            ibmi_user: string;
+            /** Is Default */
+            is_default: boolean;
+            /** Is Active */
+            is_active: boolean;
+            /** Created At */
+            created_at: unknown;
+            /** Updated At */
+            updated_at?: unknown | null;
+            /** Last Connected */
+            last_connected?: unknown | null;
+        };
+        /** ContentResponseSchema */
+        ContentResponseSchema: {
+            /**
+             * Id
+             * @description Unique identifier for the content
+             */
+            id: string;
+            /**
+             * Name
+             * @description Name of the content
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the content
+             */
+            description?: string | null;
+            /**
+             * Type
+             * @description MIME type of the content
+             */
+            type?: string | null;
+            /**
+             * Size
+             * @description Size of the content in bytes
+             */
+            size?: string | null;
+            /**
+             * Linked To
+             * @description ID of related content if linked
+             */
+            linked_to?: string | null;
+            /**
+             * Metadata
+             * @description Additional metadata as key-value pairs
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Access Count
+             * @description Number of times content has been accessed
+             */
+            access_count?: number | null;
+            /** @description Processing status of the content */
+            status?: components["schemas"]["ContentStatus"] | null;
+            /**
+             * Status Message
+             * @description Status message or error details
+             */
+            status_message?: string | null;
+            /**
+             * Created At
+             * @description Timestamp when content was created
+             */
+            created_at?: string | null;
+            /**
+             * Updated At
+             * @description Timestamp when content was last updated
+             */
+            updated_at?: string | null;
+        };
+        /**
+         * ContentStatus
+         * @description Enumeration of possible content processing statuses.
+         * @enum {string}
+         */
+        ContentStatus: "processing" | "completed" | "failed";
+        /**
+         * ContentStatusResponse
+         * @description Response model for content status endpoint.
+         */
+        ContentStatusResponse: {
+            /**
+             * Id
+             * @description Content ID
+             */
+            id?: string | null;
+            /** @description Current processing status of the content */
+            status: components["schemas"]["ContentStatus"];
+            /**
+             * Status Message
+             * @description Status message or error details
+             * @default
+             */
+            status_message: string;
+        };
+        /** CreateConnectionRequest */
+        CreateConnectionRequest: {
+            /**
+             * Name
+             * @description Human-readable label (e.g., 'Production LPAR')
+             */
+            name: string;
+            /**
+             * Host
+             * @description IBM i hostname or IP
+             */
+            host: string;
+            /**
+             * Port
+             * @description Mapepire port
+             * @default 8076
+             */
+            port: number;
+            /**
+             * User
+             * @description IBM i user profile
+             */
+            user: string;
+            /**
+             * Password
+             * @description IBM i password
+             */
+            password: string;
+            /**
+             * Is Default
+             * @description Set as the default connection for this API key
+             * @default false
+             */
+            is_default: boolean;
+        };
+        /** CreateKeyRequest */
+        CreateKeyRequest: {
+            /**
+             * Name
+             * @description Human-readable label for the key
+             */
+            name: string;
+            /**
+             * Scopes
+             * @description Permission scopes (defaults to agent/team/workflow run)
+             */
+            scopes?: string[] | null;
+            /**
+             * Expires At
+             * @description Optional expiration timestamp (UTC)
+             */
+            expires_at?: string | null;
+        };
+        /** CreateKeyResponse */
+        CreateKeyResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Key Prefix */
+            key_prefix: string;
+            /** Scopes */
+            scopes: string[];
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Expires At */
+            expires_at?: string | null;
+            /** Revoked At */
+            revoked_at?: string | null;
+            /** Last Used At */
+            last_used_at?: string | null;
+            /**
+             * Connection Count
+             * @default 0
+             */
+            connection_count: number;
+            /**
+             * Key
+             * @description The API key — shown once, never stored. Save it now.
+             */
+            key: string;
+        };
+        /** CreateSessionRequest */
+        CreateSessionRequest: {
+            /**
+             * Session Id
+             * @description Optional session ID (generated if not provided)
+             */
+            session_id?: string | null;
+            /**
+             * Session Name
+             * @description Name for the session
+             */
+            session_name?: string | null;
+            /**
+             * Session State
+             * @description Initial session state
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metadata
+             * @description Additional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * User Id
+             * @description User ID associated with the session
+             */
+            user_id?: string | null;
+            /**
+             * Agent Id
+             * @description Agent ID if this is an agent session
+             */
+            agent_id?: string | null;
+            /**
+             * Team Id
+             * @description Team ID if this is a team session
+             */
+            team_id?: string | null;
+            /**
+             * Workflow Id
+             * @description Workflow ID if this is a workflow session
+             */
+            workflow_id?: string | null;
+        };
+        /** DatabaseConfig[EvalsDomainConfig] */
+        DatabaseConfig_EvalsDomainConfig_: {
+            /** Db Id */
+            db_id: string;
+            domain_config?: components["schemas"]["EvalsDomainConfig"] | null;
+            /** Tables */
+            tables?: string[] | null;
+        };
+        /** DatabaseConfig[MemoryDomainConfig] */
+        DatabaseConfig_MemoryDomainConfig_: {
+            /** Db Id */
+            db_id: string;
+            domain_config?: components["schemas"]["MemoryDomainConfig"] | null;
+            /** Tables */
+            tables?: string[] | null;
+        };
+        /** DatabaseConfig[MetricsDomainConfig] */
+        DatabaseConfig_MetricsDomainConfig_: {
+            /** Db Id */
+            db_id: string;
+            domain_config?: components["schemas"]["MetricsDomainConfig"] | null;
+            /** Tables */
+            tables?: string[] | null;
+        };
+        /** DatabaseConfig[SessionDomainConfig] */
+        DatabaseConfig_SessionDomainConfig_: {
+            /** Db Id */
+            db_id: string;
+            domain_config?: components["schemas"]["SessionDomainConfig"] | null;
+            /** Tables */
+            tables?: string[] | null;
+        };
+        /** DatabaseConfig[TracesDomainConfig] */
+        DatabaseConfig_TracesDomainConfig_: {
+            /** Db Id */
+            db_id: string;
+            domain_config?: components["schemas"]["TracesDomainConfig"] | null;
+            /** Tables */
+            tables?: string[] | null;
+        };
+        /**
+         * DayAggregatedMetrics
+         * @description Aggregated metrics for a given day
+         */
+        DayAggregatedMetrics: {
+            /**
+             * Id
+             * @description Unique identifier for the metrics record
+             */
+            id: string;
+            /**
+             * Agent Runs Count
+             * @description Total number of agent runs
+             */
+            agent_runs_count: number;
+            /**
+             * Agent Sessions Count
+             * @description Total number of agent sessions
+             */
+            agent_sessions_count: number;
+            /**
+             * Team Runs Count
+             * @description Total number of team runs
+             */
+            team_runs_count: number;
+            /**
+             * Team Sessions Count
+             * @description Total number of team sessions
+             */
+            team_sessions_count: number;
+            /**
+             * Workflow Runs Count
+             * @description Total number of workflow runs
+             */
+            workflow_runs_count: number;
+            /**
+             * Workflow Sessions Count
+             * @description Total number of workflow sessions
+             */
+            workflow_sessions_count: number;
+            /**
+             * Users Count
+             * @description Total number of unique users
+             */
+            users_count: number;
+            /**
+             * Token Metrics
+             * @description Token usage metrics (input, output, cached, etc.)
+             */
+            token_metrics: {
+                [key: string]: unknown;
+            };
+            /**
+             * Model Metrics
+             * @description Metrics grouped by model (model_id, provider, count)
+             */
+            model_metrics: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Date
+             * Format: date-time
+             * @description Date for which these metrics are aggregated
+             */
+            date: string;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Timestamp when metrics were created
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             * @description Timestamp when metrics were last updated
+             */
+            updated_at: string;
+        };
+        /** DeleteEvalRunsRequest */
+        DeleteEvalRunsRequest: {
+            /**
+             * Eval Run Ids
+             * @description List of evaluation run IDs to delete
+             */
+            eval_run_ids: string[];
+        };
+        /** DeleteMemoriesRequest */
+        DeleteMemoriesRequest: {
+            /**
+             * Memory Ids
+             * @description List of memory IDs to delete
+             */
+            memory_ids: string[];
+            /**
+             * User Id
+             * @description User ID to filter memories for deletion
+             */
+            user_id?: string | null;
+        };
+        /** DeleteSessionRequest */
+        DeleteSessionRequest: {
+            /**
+             * Session Ids
+             * @description List of session IDs to delete
+             */
+            session_ids: string[];
+            /**
+             * Session Types
+             * @description Types of sessions to delete
+             */
+            session_types: components["schemas"]["SessionType"][];
+        };
+        /**
+         * EvalFilterType
+         * @enum {string}
+         */
+        EvalFilterType: "agent" | "team" | "workflow";
+        /** EvalRunInput */
+        EvalRunInput: {
+            /**
+             * Agent Id
+             * @description Agent ID to evaluate
+             */
+            agent_id?: string | null;
+            /**
+             * Team Id
+             * @description Team ID to evaluate
+             */
+            team_id?: string | null;
+            /**
+             * Model Id
+             * @description Model ID to use for evaluation
+             */
+            model_id?: string | null;
+            /**
+             * Model Provider
+             * @description Model provider name
+             */
+            model_provider?: string | null;
+            /** @description Type of evaluation to run (accuracy, performance, or reliability) */
+            eval_type: components["schemas"]["EvalType"];
+            /**
+             * Input
+             * @description Input text/query for the evaluation
+             */
+            input: string;
+            /**
+             * Additional Guidelines
+             * @description Additional guidelines for the evaluation
+             */
+            additional_guidelines?: string | null;
+            /**
+             * Additional Context
+             * @description Additional context for the evaluation
+             */
+            additional_context?: string | null;
+            /**
+             * Num Iterations
+             * @description Number of times to run the evaluation
+             * @default 1
+             */
+            num_iterations: number;
+            /**
+             * Name
+             * @description Name for this evaluation run
+             */
+            name?: string | null;
+            /**
+             * Expected Output
+             * @description Expected output for accuracy evaluation
+             */
+            expected_output?: string | null;
+            /**
+             * Criteria
+             * @description Evaluation criteria for agent-as-judge evaluation
+             */
+            criteria?: string | null;
+            /**
+             * Scoring Strategy
+             * @description Scoring strategy: 'numeric' (1-10 with threshold) or 'binary' (PASS/FAIL)
+             * @default binary
+             */
+            scoring_strategy: ("numeric" | "binary") | null;
+            /**
+             * Threshold
+             * @description Score threshold for pass/fail (1-10), only used with numeric scoring
+             * @default 7
+             */
+            threshold: number | null;
+            /**
+             * Warmup Runs
+             * @description Number of warmup runs before measuring performance
+             * @default 0
+             */
+            warmup_runs: number;
+            /**
+             * Expected Tool Calls
+             * @description Expected tool calls for reliability evaluation
+             */
+            expected_tool_calls?: string[] | null;
+        };
+        /** EvalSchema */
+        EvalSchema: {
+            /**
+             * Id
+             * @description Unique identifier for the evaluation run
+             */
+            id: string;
+            /**
+             * Agent Id
+             * @description Agent ID that was evaluated
+             */
+            agent_id?: string | null;
+            /**
+             * Model Id
+             * @description Model ID used in evaluation
+             */
+            model_id?: string | null;
+            /**
+             * Model Provider
+             * @description Model provider name
+             */
+            model_provider?: string | null;
+            /**
+             * Team Id
+             * @description Team ID that was evaluated
+             */
+            team_id?: string | null;
+            /**
+             * Workflow Id
+             * @description Workflow ID that was evaluated
+             */
+            workflow_id?: string | null;
+            /**
+             * Name
+             * @description Name of the evaluation run
+             */
+            name?: string | null;
+            /**
+             * Evaluated Component Name
+             * @description Name of the evaluated component
+             */
+            evaluated_component_name?: string | null;
+            /** @description Type of evaluation (accuracy, performance, or reliability) */
+            eval_type: components["schemas"]["EvalType"];
+            /**
+             * Eval Data
+             * @description Evaluation results and metrics
+             */
+            eval_data: {
+                [key: string]: unknown;
+            };
+            /**
+             * Eval Input
+             * @description Input parameters used for the evaluation
+             */
+            eval_input?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Created At
+             * @description Timestamp when evaluation was created
+             */
+            created_at?: string | null;
+            /**
+             * Updated At
+             * @description Timestamp when evaluation was last updated
+             */
+            updated_at?: string | null;
+        };
+        /**
+         * EvalType
+         * @enum {string}
+         */
+        EvalType: "accuracy" | "agent_as_judge" | "performance" | "reliability";
+        /**
+         * EvalsConfig
+         * @description Configuration for the Evals domain of the AgentOS
+         */
+        EvalsConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Available Models */
+            available_models?: string[] | null;
+            /** Dbs */
+            dbs?: components["schemas"]["DatabaseConfig_EvalsDomainConfig_"][] | null;
+        };
+        /**
+         * EvalsDomainConfig
+         * @description Configuration for the Evals domain of the AgentOS
+         */
+        EvalsDomainConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Available Models */
+            available_models?: string[] | null;
+        };
+        /**
+         * FilterFieldSchema
+         * @description Schema describing a single filterable field for the frontend filter bar.
+         */
+        FilterFieldSchema: {
+            /**
+             * Key
+             * @description Column/field name used in filter expressions
+             */
+            key: string;
+            /**
+             * Label
+             * @description Human-readable display label for the UI
+             */
+            label: string;
+            /**
+             * Type
+             * @description Field data type: string, number, datetime, enum
+             */
+            type: string;
+            /**
+             * Operators
+             * @description List of valid filter operators for this field
+             */
+            operators: string[];
+            /**
+             * Values
+             * @description Allowed enum values (for autocomplete/dropdown)
+             */
+            values?: string[] | null;
+        };
+        /**
+         * FilterSchemaResponse
+         * @description Response for the filter schema endpoint. Tells the FE what fields, operators, and values are available.
+         */
+        FilterSchemaResponse: {
+            /**
+             * Fields
+             * @description Available filterable fields
+             */
+            fields: components["schemas"]["FilterFieldSchema"][];
+            /**
+             * Logical Operators
+             * @description Logical operators for combining filter clauses
+             * @default [
+             *       "AND",
+             *       "OR"
+             *     ]
+             */
+            logical_operators: string[];
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * HealthResponse
+         * @example {
+         *       "instantiated_at": "2025-06-10T12:00:00Z",
+         *       "status": "ok"
+         *     }
+         */
+        HealthResponse: {
+            /**
+             * Status
+             * @description Health status of the service
+             */
+            status: string;
+            /**
+             * Instantiated At
+             * Format: date-time
+             * @description Timestamp when service was instantiated
+             */
+            instantiated_at: string;
+        };
+        /** InterfaceResponse */
+        InterfaceResponse: {
+            /**
+             * Type
+             * @description Type of the interface
+             */
+            type: string;
+            /**
+             * Version
+             * @description Version of the interface
+             */
+            version: string;
+            /**
+             * Route
+             * @description API route path
+             */
+            route: string;
+        };
+        /**
+         * InternalServerErrorResponse
+         * @example {
+         *       "detail": "Internal server error",
+         *       "error_code": "INTERNAL_SERVER_ERROR"
+         *     }
+         */
+        InternalServerErrorResponse: {
+            /**
+             * Detail
+             * @description Error detail message
+             */
+            detail: string;
+            /**
+             * Error Code
+             * @description Error code for categorization
+             */
+            error_code?: string | null;
+        };
+        /** KeyResponse */
+        KeyResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Key Prefix */
+            key_prefix: string;
+            /** Scopes */
+            scopes: string[];
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Expires At */
+            expires_at?: string | null;
+            /** Revoked At */
+            revoked_at?: string | null;
+            /** Last Used At */
+            last_used_at?: string | null;
+            /**
+             * Connection Count
+             * @default 0
+             */
+            connection_count: number;
+        };
+        /**
+         * KnowledgeConfig
+         * @description Configuration for the Knowledge domain of the AgentOS
+         */
+        KnowledgeConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Dbs */
+            dbs?: components["schemas"]["KnowledgeDatabaseConfig"][] | null;
+            /** Knowledge Instances */
+            knowledge_instances?: components["schemas"]["KnowledgeInstanceConfig"][] | null;
+        };
+        /**
+         * KnowledgeDatabaseConfig
+         * @description Configuration for a knowledge database with its tables
+         */
+        KnowledgeDatabaseConfig: {
+            /** Db Id */
+            db_id: string;
+            domain_config?: components["schemas"]["KnowledgeDomainConfig"] | null;
+            /**
+             * Tables
+             * @default []
+             */
+            tables: string[];
+        };
+        /**
+         * KnowledgeDomainConfig
+         * @description Configuration for the Knowledge domain of the AgentOS
+         */
+        KnowledgeDomainConfig: {
+            /** Display Name */
+            display_name?: string | null;
+        };
+        /**
+         * KnowledgeInstanceConfig
+         * @description Configuration for a single knowledge instance
+         */
+        KnowledgeInstanceConfig: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Description */
+            description?: string | null;
+            /** Db Id */
+            db_id: string;
+            /** Table */
+            table: string;
+        };
+        /** MeResponse */
+        MeResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Key Prefix */
+            key_prefix: string;
+            /** Scopes */
+            scopes: string[];
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Expires At */
+            expires_at?: string | null;
+            /** Last Used At */
+            last_used_at?: string | null;
+        };
+        /**
+         * MemoryConfig
+         * @description Configuration for the Memory domain of the AgentOS
+         */
+        MemoryConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Dbs */
+            dbs?: components["schemas"]["DatabaseConfig_MemoryDomainConfig_"][] | null;
+        };
+        /**
+         * MemoryDomainConfig
+         * @description Configuration for the Memory domain of the AgentOS
+         */
+        MemoryDomainConfig: {
+            /** Display Name */
+            display_name?: string | null;
+        };
+        /**
+         * Meta
+         * @description Inline metadata schema for pagination.
+         */
+        Meta: {
+            /**
+             * Limit
+             * @description Number of results per page
+             * @default 20
+             */
+            limit: number;
+            /**
+             * Page
+             * @description Page number
+             * @default 1
+             */
+            page: number;
+        };
+        /**
+         * MetricsConfig
+         * @description Configuration for the Metrics domain of the AgentOS
+         */
+        MetricsConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Dbs */
+            dbs?: components["schemas"]["DatabaseConfig_MetricsDomainConfig_"][] | null;
+        };
+        /**
+         * MetricsDomainConfig
+         * @description Configuration for the Metrics domain of the AgentOS
+         */
+        MetricsDomainConfig: {
+            /** Display Name */
+            display_name?: string | null;
+        };
+        /** MetricsResponse */
+        MetricsResponse: {
+            /**
+             * Metrics
+             * @description List of daily aggregated metrics
+             */
+            metrics: components["schemas"]["DayAggregatedMetrics"][];
+            /**
+             * Updated At
+             * @description Timestamp of the most recent metrics update
+             */
+            updated_at?: string | null;
+        };
+        /** Model */
+        Model: {
+            /**
+             * Id
+             * @description Model identifier
+             */
+            id?: string | null;
+            /**
+             * Provider
+             * @description Model provider name
+             */
+            provider?: string | null;
+        };
+        /** ModelResponse */
+        ModelResponse: {
+            /**
+             * Name
+             * @description Name of the model
+             */
+            name?: string | null;
+            /**
+             * Model
+             * @description Model identifier
+             */
+            model?: string | null;
+            /**
+             * Provider
+             * @description Model provider name
+             */
+            provider?: string | null;
+        };
+        /**
+         * NotFoundResponse
+         * @example {
+         *       "detail": "Not found",
+         *       "error_code": "NOT_FOUND"
+         *     }
+         */
+        NotFoundResponse: {
+            /**
+             * Detail
+             * @description Error detail message
+             */
+            detail: string;
+            /**
+             * Error Code
+             * @description Error code for categorization
+             */
+            error_code?: string | null;
+        };
+        /**
+         * OptimizeMemoriesRequest
+         * @description Schema for memory optimization request
+         */
+        OptimizeMemoriesRequest: {
+            /**
+             * User Id
+             * @description User ID to optimize memories for
+             */
+            user_id: string;
+            /**
+             * Model
+             * @description Model to use for optimization in format 'provider:model_id' (e.g., 'openai:gpt-4o-mini', 'anthropic:claude-3-5-sonnet-20241022', 'google:gemini-2.0-flash-exp'). If not specified, uses MemoryManager's default model (gpt-4o).
+             */
+            model?: string | null;
+            /**
+             * Apply
+             * @description If True, apply optimization changes to database. If False, return preview only without saving.
+             * @default true
+             */
+            apply: boolean;
+        };
+        /**
+         * OptimizeMemoriesResponse
+         * @description Schema for memory optimization response
+         */
+        OptimizeMemoriesResponse: {
+            /**
+             * Memories
+             * @description List of optimized memory objects
+             */
+            memories: components["schemas"]["UserMemorySchema"][];
+            /**
+             * Memories Before
+             * @description Number of memories before optimization
+             */
+            memories_before: number;
+            /**
+             * Memories After
+             * @description Number of memories after optimization
+             */
+            memories_after: number;
+            /**
+             * Tokens Before
+             * @description Token count before optimization
+             */
+            tokens_before: number;
+            /**
+             * Tokens After
+             * @description Token count after optimization
+             */
+            tokens_after: number;
+            /**
+             * Tokens Saved
+             * @description Number of tokens saved through optimization
+             */
+            tokens_saved: number;
+            /**
+             * Reduction Percentage
+             * @description Percentage of token reduction achieved
+             */
+            reduction_percentage: number;
+        };
+        /** PaginatedResponse[ApprovalResponse] */
+        PaginatedResponse_ApprovalResponse_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["ApprovalResponse"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[ComponentResponse] */
+        PaginatedResponse_ComponentResponse_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["ComponentResponse"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[ContentResponseSchema] */
+        PaginatedResponse_ContentResponseSchema_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["ContentResponseSchema"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[EvalSchema] */
+        PaginatedResponse_EvalSchema_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["EvalSchema"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[RegistryContentResponse] */
+        PaginatedResponse_RegistryContentResponse_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["RegistryContentResponse"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[ScheduleResponse] */
+        PaginatedResponse_ScheduleResponse_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["ScheduleResponse"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[ScheduleRunResponse] */
+        PaginatedResponse_ScheduleRunResponse_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["ScheduleRunResponse"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[SessionSchema] */
+        PaginatedResponse_SessionSchema_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["SessionSchema"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[TraceDetail] */
+        PaginatedResponse_TraceDetail_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["TraceDetail"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[TraceSessionStats] */
+        PaginatedResponse_TraceSessionStats_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["TraceSessionStats"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[TraceSummary] */
+        PaginatedResponse_TraceSummary_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["TraceSummary"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[UserMemorySchema] */
+        PaginatedResponse_UserMemorySchema_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["UserMemorySchema"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[UserStatsSchema] */
+        PaginatedResponse_UserStatsSchema_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["UserStatsSchema"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginatedResponse[VectorSearchResult] */
+        PaginatedResponse_VectorSearchResult_: {
+            /**
+             * Data
+             * @description List of items for the current page
+             */
+            data: components["schemas"]["VectorSearchResult"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /** PaginationInfo */
+        PaginationInfo: {
+            /**
+             * Page
+             * @description Current page number (0-indexed)
+             * @default 0
+             */
+            page: number;
+            /**
+             * Limit
+             * @description Number of items per page
+             * @default 20
+             */
+            limit: number;
+            /**
+             * Total Pages
+             * @description Total number of pages
+             * @default 0
+             */
+            total_pages: number;
+            /**
+             * Total Count
+             * @description Total count of items
+             * @default 0
+             */
+            total_count: number;
+            /**
+             * Search Time Ms
+             * @description Search execution time in milliseconds
+             * @default 0
+             */
+            search_time_ms: number;
+        };
+        /** ReaderSchema */
+        ReaderSchema: {
+            /**
+             * Id
+             * @description Unique identifier for the reader
+             */
+            id: string;
+            /**
+             * Name
+             * @description Name of the reader
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the reader's capabilities
+             */
+            description?: string | null;
+            /**
+             * Chunkers
+             * @description List of supported chunking strategies
+             */
+            chunkers?: string[] | null;
+        };
+        /** RegistryContentResponse */
+        RegistryContentResponse: {
+            /** Name */
+            name: string;
+            type: components["schemas"]["RegistryResourceType"];
+            /** Id */
+            id?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * RegistryResourceType
+         * @description Types of resources that can be stored in a registry.
+         * @enum {string}
+         */
+        RegistryResourceType: "tool" | "model" | "db" | "vector_db" | "schema" | "function" | "agent" | "team";
+        /**
+         * RemoteContentSourceSchema
+         * @description Schema for remote content source configuration.
+         */
+        RemoteContentSourceSchema: {
+            /**
+             * Id
+             * @description Unique identifier for the content source
+             */
+            id: string;
+            /**
+             * Name
+             * @description Display name for the content source
+             */
+            name: string;
+            /**
+             * Type
+             * @description Type of content source (s3, gcs, sharepoint, github, azureblob)
+             */
+            type: string;
+            /**
+             * Metadata
+             * @description Custom metadata for the content source
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Prefix
+             * @description Default path prefix for this source
+             */
+            prefix?: string | null;
+        };
+        /** RunSchema */
+        RunSchema: {
+            /**
+             * Run Id
+             * @description Unique identifier for the run
+             */
+            run_id: string;
+            /**
+             * Parent Run Id
+             * @description Parent run ID if this is a nested run
+             */
+            parent_run_id?: string | null;
+            /**
+             * Agent Id
+             * @description Agent ID that executed this run
+             */
+            agent_id?: string | null;
+            /**
+             * User Id
+             * @description User ID associated with the run
+             */
+            user_id?: string | null;
+            /**
+             * Status
+             * @description Run status (PENDING, RUNNING, COMPLETED, ERROR, etc.)
+             */
+            status?: string | null;
+            /**
+             * Run Input
+             * @description Input provided to the run
+             */
+            run_input?: string | null;
+            /**
+             * Content
+             * @description Output content from the run
+             */
+            content?: string | {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Run Response Format
+             * @description Format of the response (text/json)
+             */
+            run_response_format?: string | null;
+            /**
+             * Reasoning Content
+             * @description Reasoning content if reasoning was enabled
+             */
+            reasoning_content?: string | null;
+            /**
+             * Reasoning Steps
+             * @description List of reasoning steps
+             */
+            reasoning_steps?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Metrics
+             * @description Performance and usage metrics
+             */
+            metrics?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Messages
+             * @description Message history for the run
+             */
+            messages?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Tools
+             * @description Tools used in the run
+             */
+            tools?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Events
+             * @description Events generated during the run
+             */
+            events?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Created At
+             * @description Run creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * References
+             * @description References cited in the run
+             */
+            references?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Citations
+             * @description Citations from the model (e.g., from Gemini grounding/search)
+             */
+            citations?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Reasoning Messages
+             * @description Reasoning process messages
+             */
+            reasoning_messages?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Session State
+             * @description Session state at the end of the run
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Images
+             * @description Images included in the run
+             */
+            images?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Videos
+             * @description Videos included in the run
+             */
+            videos?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Audio
+             * @description Audio files included in the run
+             */
+            audio?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Files
+             * @description Files included in the run
+             */
+            files?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Response Audio
+             * @description Audio response if generated
+             */
+            response_audio?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Input Media
+             * @description Input media attachments
+             */
+            input_media?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Followups
+             * @description Followup suggestions generated after the run
+             */
+            followups?: string[] | null;
+        };
+        /**
+         * RunStatus
+         * @description State of the main run response
+         * @enum {string}
+         */
+        RunStatus: "PENDING" | "RUNNING" | "COMPLETED" | "PAUSED" | "CANCELLED" | "ERROR";
+        /** ScheduleCreate */
+        ScheduleCreate: {
+            /** Name */
+            name: string;
+            /** Cron Expr */
+            cron_expr: string;
+            /** Endpoint */
+            endpoint: string;
+            /**
+             * Method
+             * @default POST
+             */
+            method: string;
+            /** Description */
+            description?: string | null;
+            /** Payload */
+            payload?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Timezone
+             * @default UTC
+             */
+            timezone: string;
+            /**
+             * Timeout Seconds
+             * @default 3600
+             */
+            timeout_seconds: number;
+            /**
+             * Max Retries
+             * @default 0
+             */
+            max_retries: number;
+            /**
+             * Retry Delay Seconds
+             * @default 60
+             */
+            retry_delay_seconds: number;
+        };
+        /** ScheduleResponse */
+        ScheduleResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Description */
+            description?: string | null;
+            /** Method */
+            method: string;
+            /** Endpoint */
+            endpoint: string;
+            /** Payload */
+            payload?: {
+                [key: string]: unknown;
+            } | null;
+            /** Cron Expr */
+            cron_expr: string;
+            /** Timezone */
+            timezone: string;
+            /** Timeout Seconds */
+            timeout_seconds: number;
+            /** Max Retries */
+            max_retries: number;
+            /** Retry Delay Seconds */
+            retry_delay_seconds: number;
+            /** Enabled */
+            enabled: boolean;
+            /** Next Run At */
+            next_run_at?: number | null;
+            /** Created At */
+            created_at?: number | null;
+            /** Updated At */
+            updated_at?: number | null;
+        };
+        /** ScheduleRunResponse */
+        ScheduleRunResponse: {
+            /** Id */
+            id: string;
+            /** Schedule Id */
+            schedule_id: string;
+            /** Attempt */
+            attempt: number;
+            /** Triggered At */
+            triggered_at?: number | null;
+            /** Completed At */
+            completed_at?: number | null;
+            /** Status */
+            status: string;
+            /** Status Code */
+            status_code?: number | null;
+            /** Run Id */
+            run_id?: string | null;
+            /** Session Id */
+            session_id?: string | null;
+            /** Error */
+            error?: string | null;
+            /** Input */
+            input?: {
+                [key: string]: unknown;
+            } | null;
+            /** Output */
+            output?: {
+                [key: string]: unknown;
+            } | null;
+            /** Requirements */
+            requirements?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Created At */
+            created_at?: number | null;
+        };
+        /**
+         * ScheduleStateResponse
+         * @description Trimmed response for state-changing operations (enable/disable).
+         */
+        ScheduleStateResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Next Run At */
+            next_run_at?: number | null;
+            /** Updated At */
+            updated_at?: number | null;
+        };
+        /** ScheduleUpdate */
+        ScheduleUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Cron Expr */
+            cron_expr?: string | null;
+            /** Endpoint */
+            endpoint?: string | null;
+            /** Method */
+            method?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Payload */
+            payload?: {
+                [key: string]: unknown;
+            } | null;
+            /** Timezone */
+            timezone?: string | null;
+            /** Timeout Seconds */
+            timeout_seconds?: number | null;
+            /** Max Retries */
+            max_retries?: number | null;
+            /** Retry Delay Seconds */
+            retry_delay_seconds?: number | null;
+        };
+        /**
+         * SessionConfig
+         * @description Configuration for the Session domain of the AgentOS
+         */
+        SessionConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Dbs */
+            dbs?: components["schemas"]["DatabaseConfig_SessionDomainConfig_"][] | null;
+        };
+        /**
+         * SessionDomainConfig
+         * @description Configuration for the Session domain of the AgentOS
+         */
+        SessionDomainConfig: {
+            /** Display Name */
+            display_name?: string | null;
+        };
+        /** SessionSchema */
+        SessionSchema: {
+            /**
+             * Session Id
+             * @description Unique identifier for the session
+             */
+            session_id: string;
+            /**
+             * Session Name
+             * @description Human-readable name for the session
+             */
+            session_name: string;
+            /**
+             * Session State
+             * @description Current state data of the session
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Created At
+             * @description Timestamp when session was created
+             */
+            created_at?: string | null;
+            /**
+             * Updated At
+             * @description Timestamp when session was last updated
+             */
+            updated_at?: string | null;
+        };
+        /**
+         * SessionType
+         * @enum {string}
+         */
+        SessionType: "agent" | "team" | "workflow";
+        /**
+         * SortOrder
+         * @enum {string}
+         */
+        SortOrder: "asc" | "desc";
+        /**
+         * SourceFileSchema
+         * @description Schema for a file in a content source.
+         */
+        SourceFileSchema: {
+            /**
+             * Key
+             * @description Full path/key of the file
+             */
+            key: string;
+            /**
+             * Name
+             * @description Display name (filename)
+             */
+            name: string;
+            /**
+             * Size
+             * @description File size in bytes
+             */
+            size?: number | null;
+            /**
+             * Last Modified
+             * @description ISO 8601 timestamp of last modification
+             */
+            last_modified?: string | null;
+            /**
+             * Content Type
+             * @description MIME type of the file
+             */
+            content_type?: string | null;
+        };
+        /**
+         * SourceFilesResponseSchema
+         * @description Response schema for listing files in a content source.
+         */
+        SourceFilesResponseSchema: {
+            /**
+             * Source Id
+             * @description ID of the content source
+             */
+            source_id: string;
+            /**
+             * Source Name
+             * @description Name of the content source
+             */
+            source_name: string;
+            /**
+             * Prefix
+             * @description Prefix filter that was applied
+             */
+            prefix?: string | null;
+            /**
+             * Folders
+             * @description Subfolders at this level
+             */
+            folders?: components["schemas"]["SourceFolderSchema"][];
+            /**
+             * Files
+             * @description List of files at this level
+             */
+            files?: components["schemas"]["SourceFileSchema"][];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationInfo"];
+        };
+        /**
+         * SourceFolderSchema
+         * @description Schema for a folder in a content source.
+         */
+        SourceFolderSchema: {
+            /**
+             * Prefix
+             * @description Full prefix to use for navigating into this folder
+             */
+            prefix: string;
+            /**
+             * Name
+             * @description Display name of the folder
+             */
+            name: string;
+            /**
+             * Is Empty
+             * @description Whether the folder contains any files
+             * @default false
+             */
+            is_empty: boolean;
+        };
+        /** TeamResponse */
+        TeamResponse: {
+            /** Id */
+            id?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Db Id */
+            db_id?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Role */
+            role?: string | null;
+            /** Mode */
+            mode?: string | null;
+            model?: components["schemas"]["ModelResponse"] | null;
+            /** Tools */
+            tools?: {
+                [key: string]: unknown;
+            } | null;
+            /** Sessions */
+            sessions?: {
+                [key: string]: unknown;
+            } | null;
+            /** Knowledge */
+            knowledge?: {
+                [key: string]: unknown;
+            } | null;
+            /** Memory */
+            memory?: {
+                [key: string]: unknown;
+            } | null;
+            /** Reasoning */
+            reasoning?: {
+                [key: string]: unknown;
+            } | null;
+            /** Default Tools */
+            default_tools?: {
+                [key: string]: unknown;
+            } | null;
+            /** System Message */
+            system_message?: {
+                [key: string]: unknown;
+            } | null;
+            /** Response Settings */
+            response_settings?: {
+                [key: string]: unknown;
+            } | null;
+            /** Introduction */
+            introduction?: string | null;
+            /** Streaming */
+            streaming?: {
+                [key: string]: unknown;
+            } | null;
+            /** Members */
+            members?: (components["schemas"]["AgentResponse"] | components["schemas"]["TeamResponse"])[] | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /** Input Schema */
+            input_schema?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Is Component
+             * @default false
+             */
+            is_component: boolean;
+            /** Current Version */
+            current_version?: number | null;
+            /** Stage */
+            stage?: string | null;
+        };
+        /** TeamRunSchema */
+        TeamRunSchema: {
+            /**
+             * Run Id
+             * @description Unique identifier for the team run
+             */
+            run_id: string;
+            /**
+             * Parent Run Id
+             * @description Parent run ID if this is a nested run
+             */
+            parent_run_id?: string | null;
+            /**
+             * Team Id
+             * @description Team ID that executed this run
+             */
+            team_id?: string | null;
+            /**
+             * Status
+             * @description Run status (PENDING, RUNNING, COMPLETED, ERROR, etc.)
+             */
+            status?: string | null;
+            /**
+             * Content
+             * @description Output content from the team run
+             */
+            content?: string | {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Reasoning Content
+             * @description Reasoning content if reasoning was enabled
+             */
+            reasoning_content?: string | null;
+            /**
+             * Reasoning Steps
+             * @description List of reasoning steps
+             */
+            reasoning_steps?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Run Input
+             * @description Input provided to the run
+             */
+            run_input?: string | null;
+            /**
+             * Run Response Format
+             * @description Format of the response (text/json)
+             */
+            run_response_format?: string | null;
+            /**
+             * Metrics
+             * @description Performance and usage metrics
+             */
+            metrics?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Tools
+             * @description Tools used in the run
+             */
+            tools?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Messages
+             * @description Message history for the run
+             */
+            messages?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Events
+             * @description Events generated during the run
+             */
+            events?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Created At
+             * @description Run creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * References
+             * @description References cited in the run
+             */
+            references?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Citations
+             * @description Citations from the model (e.g., from Gemini grounding/search)
+             */
+            citations?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Reasoning Messages
+             * @description Reasoning process messages
+             */
+            reasoning_messages?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Session State
+             * @description Session state at the end of the run
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Input Media
+             * @description Input media attachments
+             */
+            input_media?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Images
+             * @description Images included in the run
+             */
+            images?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Videos
+             * @description Videos included in the run
+             */
+            videos?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Audio
+             * @description Audio files included in the run
+             */
+            audio?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Files
+             * @description Files included in the run
+             */
+            files?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Response Audio
+             * @description Audio response if generated
+             */
+            response_audio?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Followups
+             * @description Followup suggestions generated after the run
+             */
+            followups?: string[] | null;
+        };
+        /** TeamSessionDetailSchema */
+        TeamSessionDetailSchema: {
+            /**
+             * Session Id
+             * @description Unique session identifier
+             */
+            session_id: string;
+            /**
+             * Session Name
+             * @description Human-readable session name
+             */
+            session_name: string;
+            /**
+             * User Id
+             * @description User ID associated with the session
+             */
+            user_id?: string | null;
+            /**
+             * Team Id
+             * @description Team ID used in this session
+             */
+            team_id?: string | null;
+            /**
+             * Session Summary
+             * @description Summary of team interactions
+             */
+            session_summary?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Session State
+             * @description Current state of the session
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metrics
+             * @description Session metrics
+             */
+            metrics?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Team Data
+             * @description Team-specific data
+             */
+            team_data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metadata
+             * @description Additional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Chat History
+             * @description Complete chat history
+             */
+            chat_history?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Created At
+             * @description Session creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Updated At
+             * @description Last update timestamp
+             */
+            updated_at?: string | null;
+            /**
+             * Total Tokens
+             * @description Total tokens used in this session
+             */
+            total_tokens?: number | null;
+        };
+        /** TeamSummaryResponse */
+        TeamSummaryResponse: {
+            /**
+             * Id
+             * @description Unique identifier for the team
+             */
+            id?: string | null;
+            /**
+             * Name
+             * @description Name of the team
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the team
+             */
+            description?: string | null;
+            /**
+             * Db Id
+             * @description Database identifier
+             */
+            db_id?: string | null;
+            /**
+             * Mode
+             * @description Team execution mode (coordinate, route, broadcast, tasks)
+             */
+            mode?: string | null;
+        };
+        /** TestConnectionResponse */
+        TestConnectionResponse: {
+            /** Success */
+            success: boolean;
+            /** Message */
+            message: string;
+        };
+        /**
+         * TraceDetail
+         * @description Detailed trace information with hierarchical span tree
+         */
+        TraceDetail: {
+            /**
+             * Trace Id
+             * @description Unique trace identifier
+             */
+            trace_id: string;
+            /**
+             * Name
+             * @description Trace name (usually root span name)
+             */
+            name: string;
+            /**
+             * Status
+             * @description Overall status (OK, ERROR)
+             */
+            status: string;
+            /**
+             * Duration
+             * @description Human-readable total duration
+             */
+            duration: string;
+            /**
+             * Start Time
+             * Format: date-time
+             * @description Trace start time (Pydantic auto-serializes to ISO 8601)
+             */
+            start_time: string;
+            /**
+             * End Time
+             * Format: date-time
+             * @description Trace end time (Pydantic auto-serializes to ISO 8601)
+             */
+            end_time: string;
+            /**
+             * Total Spans
+             * @description Total number of spans in this trace
+             */
+            total_spans: number;
+            /**
+             * Error Count
+             * @description Number of spans with errors
+             */
+            error_count: number;
+            /**
+             * Input
+             * @description Input to the agent/workflow
+             */
+            input?: string | null;
+            /**
+             * Output
+             * @description Output from the agent/workflow
+             */
+            output?: string | null;
+            /**
+             * Error
+             * @description Error message if status is ERROR
+             */
+            error?: string | null;
+            /**
+             * Run Id
+             * @description Associated run ID
+             */
+            run_id?: string | null;
+            /**
+             * Session Id
+             * @description Associated session ID
+             */
+            session_id?: string | null;
+            /**
+             * User Id
+             * @description Associated user ID
+             */
+            user_id?: string | null;
+            /**
+             * Agent Id
+             * @description Associated agent ID
+             */
+            agent_id?: string | null;
+            /**
+             * Team Id
+             * @description Associated team ID
+             */
+            team_id?: string | null;
+            /**
+             * Workflow Id
+             * @description Associated workflow ID
+             */
+            workflow_id?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Time when trace was created (Pydantic auto-serializes to ISO 8601)
+             */
+            created_at: string;
+            /**
+             * Tree
+             * @description Hierarchical tree of spans (root nodes)
+             */
+            tree: components["schemas"]["TraceNode"][];
+        };
+        /**
+         * TraceNode
+         * @description Recursive node structure for rendering trace hierarchy in the frontend
+         */
+        TraceNode: {
+            /**
+             * Id
+             * @description Span ID
+             */
+            id: string;
+            /**
+             * Name
+             * @description Span name (e.g., 'agent.run', 'llm.invoke')
+             */
+            name: string;
+            /**
+             * Type
+             * @description Span kind (AGENT, TEAM, WORKFLOW, LLM, TOOL)
+             */
+            type: string;
+            /**
+             * Duration
+             * @description Human-readable duration (e.g., '123ms', '1.5s')
+             */
+            duration: string;
+            /**
+             * Start Time
+             * Format: date-time
+             * @description Start time (Pydantic auto-serializes to ISO 8601)
+             */
+            start_time: string;
+            /**
+             * End Time
+             * Format: date-time
+             * @description End time (Pydantic auto-serializes to ISO 8601)
+             */
+            end_time: string;
+            /**
+             * Status
+             * @description Status code (OK, ERROR)
+             */
+            status: string;
+            /**
+             * Input
+             * @description Input to the span
+             */
+            input?: string | null;
+            /**
+             * Output
+             * @description Output from the span
+             */
+            output?: string | null;
+            /**
+             * Error
+             * @description Error message if status is ERROR
+             */
+            error?: string | null;
+            /**
+             * Spans
+             * @description Child spans in the trace hierarchy
+             */
+            spans?: components["schemas"]["TraceNode"][] | null;
+            /**
+             * Step Type
+             * @description Workflow step type (Step, Condition, function, Agent, Team)
+             */
+            step_type?: string | null;
+            /**
+             * Metadata
+             * @description Additional span attributes and data
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Extra Data
+             * @description Flexible field for custom attributes and additional data
+             */
+            extra_data?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * TraceSearchGroupBy
+         * @description Grouping options for trace search results.
+         * @enum {string}
+         */
+        TraceSearchGroupBy: "run" | "session";
+        /**
+         * TraceSearchRequest
+         * @description Request body for POST /traces/search with advanced filtering.
+         *
+         *     The filter field accepts a FilterExpr DSL dict supporting composable queries
+         *     with AND/OR/NOT logic and operators like EQ, NEQ, GT, GTE, LT, LTE, IN, CONTAINS, STARTSWITH.
+         *
+         *     Example for run grouping (default):
+         *         {
+         *             "filter": {
+         *                 "op": "AND",
+         *                 "conditions": [
+         *                     {"op": "EQ", "key": "status", "value": "OK"},
+         *                     {"op": "CONTAINS", "key": "user_id", "value": "admin"}
+         *                 ]
+         *             },
+         *             "group_by": "run",
+         *             "page": 1,
+         *             "limit": 20
+         *         }
+         *
+         *     Example for session grouping:
+         *         {
+         *             "filter": {"op": "EQ", "key": "agent_id", "value": "my-agent"},
+         *             "group_by": "session",
+         *             "page": 1,
+         *             "limit": 20
+         *         }
+         */
+        TraceSearchRequest: {
+            /**
+             * Filter
+             * @description FilterExpr DSL as JSON dict. Supports operators: EQ, NEQ, GT, GTE, LT, LTE, IN, CONTAINS, STARTSWITH, AND, OR, NOT.
+             */
+            filter?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * @description Grouping mode: 'run' returns individual TraceDetail, 'session' returns aggregated TraceSessionStats.
+             * @default run
+             */
+            group_by: components["schemas"]["TraceSearchGroupBy"];
+            /**
+             * Page
+             * @description Page number (1-indexed)
+             * @default 1
+             */
+            page: number;
+            /**
+             * Limit
+             * @description Number of traces per page (max 100)
+             * @default 20
+             */
+            limit: number;
+        };
+        /**
+         * TraceSessionStats
+         * @description Aggregated trace statistics grouped by session
+         */
+        TraceSessionStats: {
+            /**
+             * Session Id
+             * @description Session identifier
+             */
+            session_id: string;
+            /**
+             * User Id
+             * @description User ID associated with the session
+             */
+            user_id?: string | null;
+            /**
+             * Agent Id
+             * @description Agent ID(s) used in the session
+             */
+            agent_id?: string | null;
+            /**
+             * Team Id
+             * @description Team ID associated with the session
+             */
+            team_id?: string | null;
+            /**
+             * Workflow Id
+             * @description Workflow ID associated with the session
+             */
+            workflow_id?: string | null;
+            /**
+             * Total Traces
+             * @description Total number of traces in this session
+             */
+            total_traces: number;
+            /**
+             * First Trace At
+             * Format: date-time
+             * @description Time of first trace (Pydantic auto-serializes to ISO 8601)
+             */
+            first_trace_at: string;
+            /**
+             * Last Trace At
+             * Format: date-time
+             * @description Time of last trace (Pydantic auto-serializes to ISO 8601)
+             */
+            last_trace_at: string;
+        };
+        /**
+         * TraceSummary
+         * @description Summary information for trace list view
+         */
+        TraceSummary: {
+            /**
+             * Trace Id
+             * @description Unique trace identifier
+             */
+            trace_id: string;
+            /**
+             * Name
+             * @description Trace name (usually root span name)
+             */
+            name: string;
+            /**
+             * Status
+             * @description Overall status (OK, ERROR, UNSET)
+             */
+            status: string;
+            /**
+             * Duration
+             * @description Human-readable total duration
+             */
+            duration: string;
+            /**
+             * Start Time
+             * Format: date-time
+             * @description Trace start time (Pydantic auto-serializes to ISO 8601)
+             */
+            start_time: string;
+            /**
+             * End Time
+             * Format: date-time
+             * @description Trace end time (Pydantic auto-serializes to ISO 8601)
+             */
+            end_time: string;
+            /**
+             * Total Spans
+             * @description Total number of spans in this trace
+             */
+            total_spans: number;
+            /**
+             * Error Count
+             * @description Number of spans with errors
+             */
+            error_count: number;
+            /**
+             * Input
+             * @description Input to the agent
+             */
+            input?: string | null;
+            /**
+             * Run Id
+             * @description Associated run ID
+             */
+            run_id?: string | null;
+            /**
+             * Session Id
+             * @description Associated session ID
+             */
+            session_id?: string | null;
+            /**
+             * User Id
+             * @description Associated user ID
+             */
+            user_id?: string | null;
+            /**
+             * Agent Id
+             * @description Associated agent ID
+             */
+            agent_id?: string | null;
+            /**
+             * Team Id
+             * @description Associated team ID
+             */
+            team_id?: string | null;
+            /**
+             * Workflow Id
+             * @description Associated workflow ID
+             */
+            workflow_id?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Time when trace was created (Pydantic auto-serializes to ISO 8601)
+             */
+            created_at: string;
+        };
+        /**
+         * TracesConfig
+         * @description Configuration for the Traces domain of the AgentOS
+         */
+        TracesConfig: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Dbs */
+            dbs?: components["schemas"]["DatabaseConfig_TracesDomainConfig_"][] | null;
+        };
+        /**
+         * TracesDomainConfig
+         * @description Configuration for the Traces domain of the AgentOS
+         */
+        TracesDomainConfig: {
+            /** Display Name */
+            display_name?: string | null;
+        };
+        /**
+         * UnauthenticatedResponse
+         * @example {
+         *       "detail": "Unauthenticated access",
+         *       "error_code": "UNAUTHENTICATED"
+         *     }
+         */
+        UnauthenticatedResponse: {
+            /**
+             * Detail
+             * @description Error detail message
+             */
+            detail: string;
+            /**
+             * Error Code
+             * @description Error code for categorization
+             */
+            error_code?: string | null;
+        };
+        /** UpdateConnectionRequest */
+        UpdateConnectionRequest: {
+            /** Name */
+            name?: string | null;
+            /** Host */
+            host?: string | null;
+            /** Port */
+            port?: number | null;
+            /** User */
+            user?: string | null;
+            /** Password */
+            password?: string | null;
+        };
+        /** UpdateEvalRunRequest */
+        UpdateEvalRunRequest: {
+            /**
+             * Name
+             * @description New name for the evaluation run
+             */
+            name: string;
+        };
+        /** UpdateSessionRequest */
+        UpdateSessionRequest: {
+            /**
+             * Session Name
+             * @description Updated session name
+             */
+            session_name?: string | null;
+            /**
+             * Session State
+             * @description Updated session state
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metadata
+             * @description Updated metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Summary
+             * @description Session summary
+             */
+            summary?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /**
+         * UserMemoryCreateSchema
+         * @description Define the payload expected for creating a new user memory
+         */
+        UserMemoryCreateSchema: {
+            /**
+             * Memory
+             * @description Memory content text
+             */
+            memory: string;
+            /**
+             * User Id
+             * @description User ID who owns this memory
+             */
+            user_id?: string | null;
+            /**
+             * Topics
+             * @description Topics or tags to categorize the memory
+             */
+            topics?: string[] | null;
+        };
+        /** UserMemorySchema */
+        UserMemorySchema: {
+            /**
+             * Memory Id
+             * @description Unique identifier for the memory
+             */
+            memory_id: string;
+            /**
+             * Memory
+             * @description Memory content text
+             */
+            memory: string;
+            /**
+             * Topics
+             * @description Topics or tags associated with the memory
+             */
+            topics?: string[] | null;
+            /**
+             * Agent Id
+             * @description Agent ID associated with this memory
+             */
+            agent_id?: string | null;
+            /**
+             * Team Id
+             * @description Team ID associated with this memory
+             */
+            team_id?: string | null;
+            /**
+             * User Id
+             * @description User ID who owns this memory
+             */
+            user_id?: string | null;
+            /**
+             * Updated At
+             * @description Timestamp when memory was last updated
+             */
+            updated_at?: string | null;
+        };
+        /**
+         * UserStatsSchema
+         * @description Schema for user memory statistics
+         */
+        UserStatsSchema: {
+            /**
+             * User Id
+             * @description User ID
+             */
+            user_id: string;
+            /**
+             * Total Memories
+             * @description Total number of memories for this user
+             */
+            total_memories: number;
+            /**
+             * Last Memory Updated At
+             * @description Timestamp of the most recent memory update
+             */
+            last_memory_updated_at?: string | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
+        /**
+         * ValidationErrorResponse
+         * @example {
+         *       "detail": "Validation error",
+         *       "error_code": "VALIDATION_ERROR"
+         *     }
+         */
+        ValidationErrorResponse: {
+            /**
+             * Detail
+             * @description Error detail message
+             */
+            detail: string;
+            /**
+             * Error Code
+             * @description Error code for categorization
+             */
+            error_code?: string | null;
+        };
+        /** VectorDbSchema */
+        VectorDbSchema: {
+            /**
+             * Id
+             * @description Unique identifier for the vector database
+             */
+            id: string;
+            /**
+             * Name
+             * @description Name of the vector database
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the vector database
+             */
+            description?: string | null;
+            /**
+             * Search Types
+             * @description List of supported search types (vector, keyword, hybrid)
+             */
+            search_types?: string[] | null;
+        };
+        /**
+         * VectorSearchRequestSchema
+         * @description Schema for vector search request.
+         */
+        VectorSearchRequestSchema: {
+            /**
+             * Query
+             * @description The search query text
+             */
+            query: string;
+            /**
+             * Db Id
+             * @description Database ID to search in
+             */
+            db_id?: string | null;
+            /**
+             * Knowledge Id
+             * @description Knowledge base ID to search in
+             */
+            knowledge_id?: string | null;
+            /**
+             * Vector Db Ids
+             * @description List of vector database IDs to search in
+             */
+            vector_db_ids?: string[] | null;
+            /**
+             * Search Type
+             * @description The type of search to perform (vector, keyword, hybrid)
+             */
+            search_type?: string | null;
+            /**
+             * Max Results
+             * @description The maximum number of results to return
+             */
+            max_results?: number | null;
+            /**
+             * Filters
+             * @description Filters to apply to the search results
+             */
+            filters?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description Pagination metadata. Limit and page number to return a subset of results. */
+            meta?: components["schemas"]["Meta"] | null;
+        };
+        /**
+         * VectorSearchResult
+         * @description Schema for search result documents.
+         */
+        VectorSearchResult: {
+            /**
+             * Id
+             * @description Unique identifier for the search result document
+             */
+            id: string;
+            /**
+             * Content
+             * @description Content text of the document
+             */
+            content: string;
+            /**
+             * Name
+             * @description Name of the document
+             */
+            name?: string | null;
+            /**
+             * Meta Data
+             * @description Metadata associated with the document
+             */
+            meta_data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Usage
+             * @description Usage statistics (e.g., token counts)
+             */
+            usage?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Reranking Score
+             * @description Reranking score for relevance
+             */
+            reranking_score?: number | null;
+            /**
+             * Content Id
+             * @description ID of the source content
+             */
+            content_id?: string | null;
+            /**
+             * Content Origin
+             * @description Origin URL or source of the content
+             */
+            content_origin?: string | null;
+            /**
+             * Size
+             * @description Size of the content in bytes
+             */
+            size?: number | null;
+        };
+        /** WorkflowResponse */
+        WorkflowResponse: {
+            /**
+             * Id
+             * @description Unique identifier for the workflow
+             */
+            id?: string | null;
+            /**
+             * Name
+             * @description Name of the workflow
+             */
+            name?: string | null;
+            /**
+             * Db Id
+             * @description Database identifier
+             */
+            db_id?: string | null;
+            /**
+             * Description
+             * @description Description of the workflow
+             */
+            description?: string | null;
+            /**
+             * Input Schema
+             * @description Input schema for the workflow
+             */
+            input_schema?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Steps
+             * @description List of workflow steps
+             */
+            steps?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** @description Agent configuration if used */
+            agent?: components["schemas"]["AgentResponse"] | null;
+            /** @description Team configuration if used */
+            team?: components["schemas"]["TeamResponse"] | null;
+            /**
+             * Metadata
+             * @description Additional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Workflow Agent
+             * @description Whether this workflow uses a WorkflowAgent
+             * @default false
+             */
+            workflow_agent: boolean;
+            /**
+             * Is Component
+             * @description Whether this workflow was created via Builder
+             * @default false
+             */
+            is_component: boolean;
+            /**
+             * Current Version
+             * @description Current published version number
+             */
+            current_version?: number | null;
+            /**
+             * Stage
+             * @description Stage of the loaded config (draft/published)
+             */
+            stage?: string | null;
+        };
+        /** WorkflowRunSchema */
+        WorkflowRunSchema: {
+            /**
+             * Run Id
+             * @description Unique identifier for the workflow run
+             */
+            run_id: string;
+            /**
+             * Run Input
+             * @description Input provided to the workflow
+             */
+            run_input?: string | null;
+            /**
+             * Events
+             * @description Events generated during the workflow
+             */
+            events?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Workflow Id
+             * @description Workflow ID that was executed
+             */
+            workflow_id?: string | null;
+            /**
+             * User Id
+             * @description User ID associated with the run
+             */
+            user_id?: string | null;
+            /**
+             * Content
+             * @description Output content from the workflow
+             */
+            content?: string | {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Content Type
+             * @description Type of content returned
+             */
+            content_type?: string | null;
+            /**
+             * Status
+             * @description Status of the workflow run
+             */
+            status?: string | null;
+            /**
+             * Step Results
+             * @description Results from each workflow step
+             */
+            step_results?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Step Executor Runs
+             * @description Executor runs for each step
+             */
+            step_executor_runs?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Metrics
+             * @description Performance and usage metrics
+             */
+            metrics?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Created At
+             * @description Run creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Reasoning Content
+             * @description Reasoning content if reasoning was enabled
+             */
+            reasoning_content?: string | null;
+            /**
+             * Reasoning Steps
+             * @description List of reasoning steps
+             */
+            reasoning_steps?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * References
+             * @description References cited in the workflow
+             */
+            references?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Citations
+             * @description Citations from the model (e.g., from Gemini grounding/search)
+             */
+            citations?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Reasoning Messages
+             * @description Reasoning process messages
+             */
+            reasoning_messages?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Images
+             * @description Images included in the workflow
+             */
+            images?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Videos
+             * @description Videos included in the workflow
+             */
+            videos?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Audio
+             * @description Audio files included in the workflow
+             */
+            audio?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Files
+             * @description Files included in the workflow
+             */
+            files?: {
+                [key: string]: unknown;
+            }[] | null;
+            /**
+             * Response Audio
+             * @description Audio response if generated
+             */
+            response_audio?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** WorkflowSessionDetailSchema */
+        WorkflowSessionDetailSchema: {
+            /**
+             * User Id
+             * @description User ID associated with the session
+             */
+            user_id?: string | null;
+            /**
+             * Workflow Id
+             * @description Workflow ID used in this session
+             */
+            workflow_id?: string | null;
+            /**
+             * Workflow Name
+             * @description Name of the workflow
+             */
+            workflow_name?: string | null;
+            /**
+             * Session Id
+             * @description Unique session identifier
+             */
+            session_id: string;
+            /**
+             * Session Name
+             * @description Human-readable session name
+             */
+            session_name: string;
+            /**
+             * Session Data
+             * @description Complete session data
+             */
+            session_data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Session State
+             * @description Current workflow state
+             */
+            session_state?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Workflow Data
+             * @description Workflow-specific data
+             */
+            workflow_data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Metadata
+             * @description Additional metadata
+             */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Created At
+             * @description Session creation timestamp
+             */
+            created_at?: string | null;
+            /**
+             * Updated At
+             * @description Last update timestamp
+             */
+            updated_at?: string | null;
+        };
+        /** WorkflowSummaryResponse */
+        WorkflowSummaryResponse: {
+            /**
+             * Id
+             * @description Unique identifier for the workflow
+             */
+            id?: string | null;
+            /**
+             * Name
+             * @description Name of the workflow
+             */
+            name?: string | null;
+            /**
+             * Description
+             * @description Description of the workflow
+             */
+            description?: string | null;
+            /**
+             * Db Id
+             * @description Database identifier
+             */
+            db_id?: string | null;
+            /**
+             * Is Component
+             * @description Whether this workflow was created via Builder
+             * @default false
+             */
+            is_component: boolean;
+            /**
+             * Current Version
+             * @description Current published version number
+             */
+            current_version?: number | null;
+            /**
+             * Stage
+             * @description Stage of the loaded config (draft/published)
+             */
+            stage?: string | null;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  health_check: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description API is healthy and operational */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "status": "ok",
-           *       "instantiated_at": "2025-06-10T12:00:00Z"
-           *     }
-           */
-          "application/json": components["schemas"]["HealthResponse"];
-        };
-      };
-    };
-  };
-  get_config: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OS configuration retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "demo",
-           *       "description": "Example AgentOS configuration",
-           *       "available_models": [],
-           *       "databases": [
-           *         "9c884dc4-9066-448c-9074-ef49ec7eb73c"
-           *       ],
-           *       "session": {
-           *         "dbs": [
-           *           {
-           *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
-           *             "domain_config": {
-           *               "display_name": "Sessions"
-           *             }
-           *           }
-           *         ]
-           *       },
-           *       "metrics": {
-           *         "dbs": [
-           *           {
-           *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
-           *             "domain_config": {
-           *               "display_name": "Metrics"
-           *             }
-           *           }
-           *         ]
-           *       },
-           *       "memory": {
-           *         "dbs": [
-           *           {
-           *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
-           *             "domain_config": {
-           *               "display_name": "Memory"
-           *             }
-           *           }
-           *         ]
-           *       },
-           *       "knowledge": {
-           *         "dbs": [
-           *           {
-           *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
-           *             "domain_config": {
-           *               "display_name": "Knowledge"
-           *             }
-           *           }
-           *         ]
-           *       },
-           *       "evals": {
-           *         "dbs": [
-           *           {
-           *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
-           *             "domain_config": {
-           *               "display_name": "Evals"
-           *             }
-           *           }
-           *         ]
-           *       },
-           *       "agents": [
-           *         {
-           *           "id": "main-agent",
-           *           "name": "Main Agent",
-           *           "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c"
-           *         }
-           *       ],
-           *       "teams": [],
-           *       "workflows": [],
-           *       "interfaces": []
-           *     }
-           */
-          "application/json": components["schemas"]["ConfigResponse"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_models: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of models retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example [
-           *       {
-           *         "id": "gpt-4",
-           *         "provider": "openai"
-           *       },
-           *       {
-           *         "id": "claude-3-sonnet",
-           *         "provider": "anthropic"
-           *       }
-           *     ]
-           */
-          "application/json": components["schemas"]["Model"][];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  create_agent_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        agent_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "multipart/form-data": components["schemas"]["Body_create_agent_run"];
-      };
-    };
-    responses: {
-      /** @description Agent run executed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-          "text/event-stream": unknown;
-        };
-      };
-      /** @description Invalid request or unsupported file type */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Agent not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  cancel_agent_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        agent_id: string;
-        run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Agent not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to cancel run */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  continue_agent_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        agent_id: string;
-        run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_continue_agent_run"];
-      };
-    };
-    responses: {
-      /** @description Agent run continued successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-          /**
-           * @example event: RunContent
-           *     data: {"created_at": 1757348314, "run_id": "123..."}
-           */
-          "text/event-stream": unknown;
-        };
-      };
-      /** @description Invalid JSON in tools field or invalid tool structure */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Agent not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_agents: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of agents retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example [
-           *       {
-           *         "id": "main-agent",
-           *         "name": "Main Agent",
-           *         "db_id": "c6bf0644-feb8-4930-a305-380dae5ad6aa",
-           *         "model": {
-           *           "name": "OpenAIChat",
-           *           "model": "gpt-4o",
-           *           "provider": "OpenAI"
-           *         },
-           *         "sessions": {
-           *           "session_table": "agno_sessions"
-           *         },
-           *         "knowledge": {
-           *           "knowledge_table": "main_knowledge"
-           *         },
-           *         "system_message": {
-           *           "markdown": true,
-           *           "add_datetime_to_context": true
-           *         }
-           *       }
-           *     ]
-           */
-          "application/json": components["schemas"]["AgentResponse"][];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_agent: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        agent_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Agent details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "main-agent",
-           *       "name": "Main Agent",
-           *       "db_id": "9e064c70-6821-4840-a333-ce6230908a70",
-           *       "model": {
-           *         "name": "OpenAIChat",
-           *         "model": "gpt-4o",
-           *         "provider": "OpenAI"
-           *       },
-           *       "sessions": {
-           *         "session_table": "agno_sessions"
-           *       },
-           *       "knowledge": {
-           *         "knowledge_table": "main_knowledge"
-           *       },
-           *       "system_message": {
-           *         "markdown": true,
-           *         "add_datetime_to_context": true
-           *       }
-           *     }
-           */
-          "application/json": components["schemas"]["AgentResponse"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Agent not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  create_team_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        team_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "multipart/form-data": components["schemas"]["Body_create_team_run"];
-      };
-    };
-    responses: {
-      /** @description Team run executed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-          /**
-           * @example event: RunStarted
-           *     data: {"content": "Hello!", "run_id": "123..."}
-           */
-          "text/event-stream": unknown;
-        };
-      };
-      /** @description Invalid request or unsupported file type */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Team not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  cancel_team_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        team_id: string;
-        run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Team not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to cancel team run */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_teams: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of teams retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example [
-           *       {
-           *         "team_id": "basic-team",
-           *         "name": "Basic Team",
-           *         "mode": "coordinate",
-           *         "model": {
-           *           "name": "OpenAIChat",
-           *           "model": "gpt-4o",
-           *           "provider": "OpenAI"
-           *         },
-           *         "tools": [
-           *           {
-           *             "name": "transfer_task_to_member",
-           *             "description": "Use this function to transfer a task to the selected team member.\nYou must provide a clear and concise description of the task the member should achieve AND the expected output.",
-           *             "parameters": {
-           *               "type": "object",
-           *               "properties": {
-           *                 "member_id": {
-           *                   "type": "string",
-           *                   "description": "(str) The ID of the member to transfer the task to. Use only the ID of the member, not the ID of the team followed by the ID of the member."
-           *                 },
-           *                 "task_description": {
-           *                   "type": "string",
-           *                   "description": "(str) A clear and concise description of the task the member should achieve."
-           *                 },
-           *                 "expected_output": {
-           *                   "type": "string",
-           *                   "description": "(str) The expected output from the member (optional)."
-           *                 }
-           *               },
-           *               "additionalProperties": false,
-           *               "required": [
-           *                 "member_id",
-           *                 "task_description"
-           *               ]
-           *             }
-           *           }
-           *         ],
-           *         "members": [
-           *           {
-           *             "agent_id": "basic-agent",
-           *             "name": "Basic Agent",
-           *             "model": {
-           *               "name": "OpenAIChat",
-           *               "model": "gpt-4o",
-           *               "provider": "OpenAI gpt-4o"
-           *             },
-           *             "memory": {
-           *               "app_name": "Memory",
-           *               "model": {
-           *                 "name": "OpenAIChat",
-           *                 "model": "gpt-4o",
-           *                 "provider": "OpenAI"
-           *               }
-           *             },
-           *             "session_table": "agno_sessions",
-           *             "memory_table": "agno_memories"
-           *           }
-           *         ],
-           *         "enable_agentic_context": false,
-           *         "memory": {
-           *           "app_name": "agno_memories",
-           *           "app_url": "/memory/1",
-           *           "model": {
-           *             "name": "OpenAIChat",
-           *             "model": "gpt-4o",
-           *             "provider": "OpenAI"
-           *           }
-           *         },
-           *         "async_mode": false,
-           *         "session_table": "agno_sessions",
-           *         "memory_table": "agno_memories"
-           *       }
-           *     ]
-           */
-          "application/json": components["schemas"]["TeamResponse"][];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_team: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        team_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Team details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "team_id": "basic-team",
-           *       "name": "Basic Team",
-           *       "mode": "coordinate",
-           *       "model": {
-           *         "name": "OpenAIChat",
-           *         "model": "gpt-4o",
-           *         "provider": "OpenAI"
-           *       },
-           *       "tools": [
-           *         {
-           *           "name": "transfer_task_to_member",
-           *           "description": "Use this function to transfer a task to the selected team member.\nYou must provide a clear and concise description of the task the member should achieve AND the expected output.",
-           *           "parameters": {
-           *             "type": "object",
-           *             "properties": {
-           *               "member_id": {
-           *                 "type": "string",
-           *                 "description": "(str) The ID of the member to transfer the task to. Use only the ID of the member, not the ID of the team followed by the ID of the member."
-           *               },
-           *               "task_description": {
-           *                 "type": "string",
-           *                 "description": "(str) A clear and concise description of the task the member should achieve."
-           *               },
-           *               "expected_output": {
-           *                 "type": "string",
-           *                 "description": "(str) The expected output from the member (optional)."
-           *               }
-           *             },
-           *             "additionalProperties": false,
-           *             "required": [
-           *               "member_id",
-           *               "task_description"
-           *             ]
-           *           }
-           *         }
-           *       ],
-           *       "members": [
-           *         {
-           *           "agent_id": "basic-agent",
-           *           "name": "Basic Agent",
-           *           "model": {
-           *             "name": "OpenAIChat",
-           *             "model": "gpt-4o",
-           *             "provider": "OpenAI gpt-4o"
-           *           },
-           *           "memory": {
-           *             "app_name": "Memory",
-           *             "model": {
-           *               "name": "OpenAIChat",
-           *               "model": "gpt-4o",
-           *               "provider": "OpenAI"
-           *             }
-           *           },
-           *           "session_table": "agno_sessions",
-           *           "memory_table": "agno_memories"
-           *         }
-           *       ],
-           *       "enable_agentic_context": false,
-           *       "memory": {
-           *         "app_name": "Memory",
-           *         "model": {
-           *           "name": "OpenAIChat",
-           *           "model": "gpt-4o",
-           *           "provider": "OpenAI"
-           *         }
-           *       },
-           *       "async_mode": false,
-           *       "session_table": "agno_sessions",
-           *       "memory_table": "agno_memories"
-           *     }
-           */
-          "application/json": components["schemas"]["TeamResponse"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Team not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_workflows: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of workflows retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example [
-           *       {
-           *         "id": "content-creation-workflow",
-           *         "name": "Content Creation Workflow",
-           *         "description": "Automated content creation from blog posts to social media",
-           *         "db_id": "123"
-           *       }
-           *     ]
-           */
-          "application/json": components["schemas"]["WorkflowSummaryResponse"][];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_workflow: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        workflow_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Workflow details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "content-creation-workflow",
-           *       "name": "Content Creation Workflow",
-           *       "description": "Automated content creation from blog posts to social media",
-           *       "db_id": "123"
-           *     }
-           */
-          "application/json": components["schemas"]["WorkflowResponse"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Workflow not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  create_workflow_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        workflow_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_create_workflow_run"];
-      };
-    };
-    responses: {
-      /** @description Workflow executed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-          /**
-           * @example event: RunStarted
-           *     data: {"content": "Hello!", "run_id": "123..."}
-           */
-          "text/event-stream": unknown;
-        };
-      };
-      /** @description Invalid input data or workflow configuration */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Workflow not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Workflow execution error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  cancel_workflow_run: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        workflow_id: string;
-        run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Workflow or run not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to cancel workflow run */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_sessions: {
-    parameters: {
-      query?: {
-        /** @description Type of sessions to retrieve (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description Filter sessions by component ID (agent/team/workflow ID) */
-        component_id?: string | null;
-        /** @description Filter sessions by user ID */
-        user_id?: string | null;
-        /** @description Filter sessions by name (partial match) */
-        session_name?: string | null;
-        /** @description Number of sessions to return per page */
-        limit?: number | null;
-        /** @description Page number for pagination */
-        page?: number | null;
-        /** @description Field to sort sessions by */
-        sort_by?: string | null;
-        /** @description Sort order (asc or desc) */
-        sort_order?: components["schemas"]["SortOrder"] | null;
-        /** @description Database ID to query sessions from */
-        db_id?: string | null;
-        /** @description The database table to use */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Sessions retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "session_example": {
-           *         "summary": "Example session response",
-           *         "value": {
-           *           "data": [
-           *             {
-           *               "session_id": "6f6cfbfd-9643-479a-ae47-b8f32eb4d710",
-           *               "session_name": "What tools do you have?",
-           *               "session_state": {},
-           *               "created_at": "2025-09-05T16:02:09Z",
-           *               "updated_at": "2025-09-05T16:02:09Z"
-           *             }
-           *           ]
-           *         }
-           *       }
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_SessionSchema_"];
-        };
-      };
-      /** @description Invalid session type or filter parameters */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation error in query parameters */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  create_session: {
-    parameters: {
-      query?: {
-        /** @description Type of session to create (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description Database ID to create session in */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/json": components["schemas"]["CreateSessionRequest"];
-      };
-    };
-    responses: {
-      /** @description Session created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json":
-            | components["schemas"]["AgentSessionDetailSchema"]
-            | components["schemas"]["TeamSessionDetailSchema"]
-            | components["schemas"]["WorkflowSessionDetailSchema"];
-        };
-      };
-      /** @description Invalid request parameters */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to create session */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_sessions: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for deletion */
-        db_id?: string | null;
-        /** @description Table to use for deletion */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DeleteSessionRequest"];
-      };
-    };
-    responses: {
-      /** @description Sessions deleted successfully */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid request - session IDs and types length mismatch */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete sessions */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_session_by_id: {
-    parameters: {
-      query?: {
-        /** @description Session type (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description User ID to query session from */
-        user_id?: string | null;
-        /** @description Database ID to query session from */
-        db_id?: string | null;
-        /** @description Table to query session from */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Session ID to retrieve */
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Session details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json":
-            | components["schemas"]["AgentSessionDetailSchema"]
-            | components["schemas"]["TeamSessionDetailSchema"]
-            | components["schemas"]["WorkflowSessionDetailSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Invalid session type */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_session: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for deletion */
-        db_id?: string | null;
-        /** @description Table to use for deletion */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Session ID to delete */
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete session */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  update_session: {
-    parameters: {
-      query?: {
-        /** @description Session type (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description User ID */
-        user_id?: string | null;
-        /** @description Database ID to use for update operation */
-        db_id?: string | null;
-        /** @description Table to use for update operation */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Session ID to update */
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpdateSessionRequest"];
-      };
-    };
-    responses: {
-      /** @description Session updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json":
-            | components["schemas"]["AgentSessionDetailSchema"]
-            | components["schemas"]["TeamSessionDetailSchema"]
-            | components["schemas"]["WorkflowSessionDetailSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Invalid request */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to update session */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_session_runs: {
-    parameters: {
-      query?: {
-        /** @description Session type (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description User ID to query runs from */
-        user_id?: string | null;
-        /** @description Filter runs created after this Unix timestamp (epoch time in seconds) */
-        created_after?: number | null;
-        /** @description Filter runs created before this Unix timestamp (epoch time in seconds) */
-        created_before?: number | null;
-        /** @description Database ID to query runs from */
-        db_id?: string | null;
-        /** @description Table to query runs from */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Session ID to get runs from */
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Session runs retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": (
-            | components["schemas"]["RunSchema"]
-            | components["schemas"]["TeamRunSchema"]
-            | components["schemas"]["WorkflowRunSchema"]
-          )[];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Session not found or has no runs */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Invalid session type */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_session_run: {
-    parameters: {
-      query?: {
-        /** @description Session type (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description User ID to query run from */
-        user_id?: string | null;
-        /** @description Database ID to query run from */
-        db_id?: string | null;
-        /** @description Table to query run from */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Session ID to get run from */
-        session_id: string;
-        /** @description Run ID to retrieve */
-        run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Run retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json":
-            | components["schemas"]["RunSchema"]
-            | components["schemas"]["TeamRunSchema"]
-            | components["schemas"]["WorkflowRunSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Session or run not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Invalid session type */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  rename_session: {
-    parameters: {
-      query?: {
-        /** @description Session type (agent, team, or workflow) */
-        type?: components["schemas"]["SessionType"];
-        /** @description Database ID to use for rename operation */
-        db_id?: string | null;
-        /** @description Table to use for rename operation */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Session ID to rename */
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Body_rename_session"];
-      };
-    };
-    responses: {
-      /** @description Session renamed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json":
-            | components["schemas"]["AgentSessionDetailSchema"]
-            | components["schemas"]["TeamSessionDetailSchema"]
-            | components["schemas"]["WorkflowSessionDetailSchema"];
-        };
-      };
-      /** @description Invalid session name */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Invalid session type or validation error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_memories: {
-    parameters: {
-      query?: {
-        /** @description Filter memories by user ID */
-        user_id?: string | null;
-        /** @description Filter memories by agent ID */
-        agent_id?: string | null;
-        /** @description Filter memories by team ID */
-        team_id?: string | null;
-        /** @description Fuzzy search within memory content */
-        search_content?: string | null;
-        /** @description Number of memories to return per page */
-        limit?: number | null;
-        /** @description Page number for pagination */
-        page?: number | null;
-        /** @description Field to sort memories by */
-        sort_by?: string | null;
-        /** @description Sort order (asc or desc) */
-        sort_order?: components["schemas"]["SortOrder"] | null;
-        /** @description Database ID to query memories from */
-        db_id?: string | null;
-        /** @description The database table to use */
-        table?: string | null;
-        /** @description Comma-separated list of topics to filter by */
-        topics?: string[] | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Memories retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
-           *           "memory": "User likes coffee.",
-           *           "topics": [
-           *             "preferences"
-           *           ],
-           *           "user_id": "123",
-           *           "updated_at": "2025-09-01T07:53:17Z"
-           *         }
-           *       ]
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_UserMemorySchema_"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  create_memory: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for memory storage */
-        db_id?: string | null;
-        /** @description Table to use for memory storage */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UserMemoryCreateSchema"];
-      };
-    };
-    responses: {
-      /** @description Memory created successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "memory_id": "mem-123",
-           *       "memory": "User prefers technical explanations with code examples",
-           *       "topics": [
-           *         "preferences",
-           *         "communication_style",
-           *         "technical"
-           *       ],
-           *       "user_id": "user-456",
-           *       "created_at": "2024-01-15T10:30:00Z",
-           *       "updated_at": "2024-01-15T10:30:00Z"
-           *     }
-           */
-          "application/json": components["schemas"]["UserMemorySchema"];
-        };
-      };
-      /** @description Invalid request data */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation error in payload */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to create memory */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_memories: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for deletion */
-        db_id?: string | null;
-        /** @description Table to use for deletion */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DeleteMemoriesRequest"];
-      };
-    };
-    responses: {
-      /** @description Memories deleted successfully */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid request - empty memory_ids list */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete memories */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_memory: {
-    parameters: {
-      query?: {
-        /** @description User ID to query memory for */
-        user_id?: string | null;
-        /** @description Database ID to query memory from */
-        db_id?: string | null;
-        /** @description Table to query memory from */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Memory ID to retrieve */
-        memory_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Memory retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
-           *       "memory": "User likes coffee.",
-           *       "topics": [
-           *         "preferences"
-           *       ],
-           *       "user_id": "123",
-           *       "updated_at": "2025-09-01T07:53:17Z"
-           *     }
-           */
-          "application/json": components["schemas"]["UserMemorySchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Memory not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_memory: {
-    parameters: {
-      query?: {
-        /** @description User ID to delete memory for */
-        user_id?: string | null;
-        /** @description Database ID to use for deletion */
-        db_id?: string | null;
-        /** @description Table to use for deletion */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Memory ID to delete */
-        memory_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Memory deleted successfully */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Memory not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete memory */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  update_memory: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for update */
-        db_id?: string | null;
-        /** @description Table to use for update */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Memory ID to update */
-        memory_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UserMemoryCreateSchema"];
-      };
-    };
-    responses: {
-      /** @description Memory updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
-           *       "memory": "User likes coffee.",
-           *       "topics": [
-           *         "preferences"
-           *       ],
-           *       "user_id": "123",
-           *       "updated_at": "2025-09-01T07:53:17Z"
-           *     }
-           */
-          "application/json": components["schemas"]["UserMemorySchema"];
-        };
-      };
-      /** @description Invalid request data */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Memory not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation error in payload */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to update memory */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_memory_topics: {
-    parameters: {
-      query?: {
-        /** @description Database ID to query topics from */
-        db_id?: string | null;
-        /** @description Table to query topics from */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Memory topics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example [
-           *       "preferences",
-           *       "communication_style",
-           *       "technical",
-           *       "industry",
-           *       "compliance",
-           *       "code_examples",
-           *       "requirements",
-           *       "healthcare",
-           *       "finance"
-           *     ]
-           */
-          "application/json": string[];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_user_memory_stats: {
-    parameters: {
-      query?: {
-        /** @description Number of user statistics to return per page */
-        limit?: number | null;
-        /** @description Page number for pagination */
-        page?: number | null;
-        /** @description Database ID to query statistics from */
-        db_id?: string | null;
-        /** @description Table to query statistics from */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description User memory statistics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "user_id": "123",
-           *           "total_memories": 3,
-           *           "last_memory_updated_at": "2025-09-01T07:53:17Z"
-           *         }
-           *       ]
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_UserStatsSchema_"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to retrieve user statistics */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  optimize_memories: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for optimization */
-        db_id?: string | null;
-        /** @description Table to use for optimization */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["OptimizeMemoriesRequest"];
-      };
-    };
-    responses: {
-      /** @description Memories optimized successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "memories": [
-           *         {
-           *           "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
-           *           "memory": "User has a 3-year-old golden retriever named Max who loves fetch and walks. Lives in San Francisco's Mission district, works as a product manager in tech. Enjoys hiking Bay Area trails, trying new restaurants (especially Japanese, Thai, Mexican), and learning piano for 1.5 years.",
-           *           "topics": [
-           *             "pets",
-           *             "location",
-           *             "work",
-           *             "hobbies",
-           *             "food_preferences"
-           *           ],
-           *           "user_id": "user2",
-           *           "updated_at": "2025-11-18T10:30:00Z"
-           *         }
-           *       ],
-           *       "memories_before": 4,
-           *       "memories_after": 1,
-           *       "tokens_before": 450,
-           *       "tokens_after": 180,
-           *       "tokens_saved": 270,
-           *       "reduction_percentage": 60
-           *     }
-           */
-          "application/json": components["schemas"]["OptimizeMemoriesResponse"];
-        };
-      };
-      /** @description Bad request - User ID is required or invalid model string format */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description No memories found for user */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to optimize memories */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_eval_runs: {
-    parameters: {
-      query?: {
-        /** @description Agent ID */
-        agent_id?: string | null;
-        /** @description Team ID */
-        team_id?: string | null;
-        /** @description Workflow ID */
-        workflow_id?: string | null;
-        /** @description Model ID */
-        model_id?: string | null;
-        /** @description Filter type */
-        type?: components["schemas"]["EvalFilterType"] | null;
-        /** @description Number of eval runs to return */
-        limit?: number | null;
-        /** @description Page number */
-        page?: number | null;
-        /** @description Field to sort by */
-        sort_by?: string | null;
-        /** @description Sort order (asc or desc) */
-        sort_order?: components["schemas"]["SortOrder"] | null;
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-        /** @description The database table to use */
-        table?: string | null;
-        /** @description Comma-separated eval types (accuracy,agent_as_judge,performance,reliability) */
-        eval_types?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Evaluation runs retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "id": "a03fa2f4-900d-482d-afe0-470d4cd8d1f4",
-           *           "agent_id": "basic-agent",
-           *           "model_id": "gpt-4o",
-           *           "model_provider": "OpenAI",
-           *           "name": "Test ",
-           *           "eval_type": "reliability",
-           *           "eval_data": {
-           *             "eval_status": "PASSED",
-           *             "failed_tool_calls": [],
-           *             "passed_tool_calls": [
-           *               "multiply"
-           *             ]
-           *           },
-           *           "eval_input": {
-           *             "expected_tool_calls": [
-           *               "multiply"
-           *             ]
-           *           },
-           *           "created_at": "2025-08-27T15:41:59Z",
-           *           "updated_at": "2025-08-27T15:41:59Z"
-           *         }
-           *       ]
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_EvalSchema_"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  run_eval: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for evaluation */
-        db_id?: string | null;
-        /** @description Table to use for evaluation */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["EvalRunInput"];
-      };
-    };
-    responses: {
-      /** @description Evaluation executed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "f2b2d72f-e9e2-4f0e-8810-0a7e1ff58614",
-           *       "agent_id": "basic-agent",
-           *       "model_id": "gpt-4o",
-           *       "model_provider": "OpenAI",
-           *       "eval_type": "reliability",
-           *       "eval_data": {
-           *         "eval_status": "PASSED",
-           *         "failed_tool_calls": [],
-           *         "passed_tool_calls": [
-           *           "multiply"
-           *         ]
-           *       },
-           *       "created_at": "2025-08-27T15:41:59Z",
-           *       "updated_at": "2025-08-27T15:41:59Z"
-           *     }
-           */
-          "application/json": components["schemas"]["EvalSchema"];
-        };
-      };
-      /** @description Invalid request - provide either agent_id or team_id */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Agent or team not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_eval_runs: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for deletion */
-        db_id?: string | null;
-        /** @description Table to use for deletion */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DeleteEvalRunsRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete evaluation runs */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_eval_run: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-        /** @description Table to query eval run from */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        eval_run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Evaluation run details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "a03fa2f4-900d-482d-afe0-470d4cd8d1f4",
-           *       "agent_id": "basic-agent",
-           *       "model_id": "gpt-4o",
-           *       "model_provider": "OpenAI",
-           *       "name": "Test ",
-           *       "eval_type": "reliability",
-           *       "eval_data": {
-           *         "eval_status": "PASSED",
-           *         "failed_tool_calls": [],
-           *         "passed_tool_calls": [
-           *           "multiply"
-           *         ]
-           *       },
-           *       "eval_input": {
-           *         "expected_tool_calls": [
-           *           "multiply"
-           *         ]
-           *       },
-           *       "created_at": "2025-08-27T15:41:59Z",
-           *       "updated_at": "2025-08-27T15:41:59Z"
-           *     }
-           */
-          "application/json": components["schemas"]["EvalSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Evaluation run not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  update_eval_run: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-        /** @description Table to use for rename operation */
-        table?: string | null;
-      };
-      header?: never;
-      path: {
-        eval_run_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpdateEvalRunRequest"];
-      };
-    };
-    responses: {
-      /** @description Evaluation run updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "a03fa2f4-900d-482d-afe0-470d4cd8d1f4",
-           *       "agent_id": "basic-agent",
-           *       "model_id": "gpt-4o",
-           *       "model_provider": "OpenAI",
-           *       "name": "Test ",
-           *       "eval_type": "reliability",
-           *       "eval_data": {
-           *         "eval_status": "PASSED",
-           *         "failed_tool_calls": [],
-           *         "passed_tool_calls": [
-           *           "multiply"
-           *         ]
-           *       },
-           *       "eval_input": {
-           *         "expected_tool_calls": [
-           *           "multiply"
-           *         ]
-           *       },
-           *       "created_at": "2025-08-27T15:41:59Z",
-           *       "updated_at": "2025-08-27T15:41:59Z"
-           *     }
-           */
-          "application/json": components["schemas"]["EvalSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Evaluation run not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to update evaluation run */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_metrics: {
-    parameters: {
-      query?: {
-        /** @description Starting date for metrics range (YYYY-MM-DD format) */
-        starting_date?: string | null;
-        /** @description Ending date for metrics range (YYYY-MM-DD format) */
-        ending_date?: string | null;
-        /** @description Database ID to query metrics from */
-        db_id?: string | null;
-        /** @description The database table to use */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Metrics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "metrics": [
-           *         {
-           *           "id": "7bf39658-a00a-484c-8a28-67fd8a9ddb2a",
-           *           "agent_runs_count": 5,
-           *           "agent_sessions_count": 5,
-           *           "team_runs_count": 0,
-           *           "team_sessions_count": 0,
-           *           "workflow_runs_count": 0,
-           *           "workflow_sessions_count": 0,
-           *           "users_count": 1,
-           *           "token_metrics": {
-           *             "input_tokens": 448,
-           *             "output_tokens": 148,
-           *             "total_tokens": 596,
-           *             "audio_tokens": 0,
-           *             "input_audio_tokens": 0,
-           *             "output_audio_tokens": 0,
-           *             "cached_tokens": 0,
-           *             "cache_write_tokens": 0,
-           *             "reasoning_tokens": 0
-           *           },
-           *           "model_metrics": [
-           *             {
-           *               "model_id": "gpt-4o",
-           *               "model_provider": "OpenAI",
-           *               "count": 5
-           *             }
-           *           ],
-           *           "date": "2025-07-31T00:00:00Z",
-           *           "created_at": "2025-07-31T12:38:52Z",
-           *           "updated_at": "2025-07-31T12:49:01Z"
-           *         }
-           *       ]
-           *     }
-           */
-          "application/json": components["schemas"]["MetricsResponse"];
-        };
-      };
-      /** @description Invalid date range parameters */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to retrieve metrics */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  refresh_metrics: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for metrics calculation */
-        db_id?: string | null;
-        /** @description Table to use for metrics calculation */
-        table?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Metrics refreshed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example [
-           *       {
-           *         "id": "e77c9531-818b-47a5-99cd-59fed61e5403",
-           *         "agent_runs_count": 2,
-           *         "agent_sessions_count": 2,
-           *         "team_runs_count": 0,
-           *         "team_sessions_count": 0,
-           *         "workflow_runs_count": 0,
-           *         "workflow_sessions_count": 0,
-           *         "users_count": 1,
-           *         "token_metrics": {
-           *           "input_tokens": 256,
-           *           "output_tokens": 441,
-           *           "total_tokens": 697,
-           *           "audio_total_tokens": 0,
-           *           "audio_input_tokens": 0,
-           *           "audio_output_tokens": 0,
-           *           "cache_read_tokens": 0,
-           *           "cache_write_tokens": 0,
-           *           "reasoning_tokens": 0
-           *         },
-           *         "model_metrics": [
-           *           {
-           *             "model_id": "gpt-4o",
-           *             "model_provider": "OpenAI",
-           *             "count": 2
-           *           }
-           *         ],
-           *         "date": "2025-08-12T00:00:00Z",
-           *         "created_at": "2025-08-12T08:01:47Z",
-           *         "updated_at": "2025-08-12T08:01:47Z"
-           *       }
-           *     ]
-           */
-          "application/json": components["schemas"]["DayAggregatedMetrics"][];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to refresh metrics */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_content: {
-    parameters: {
-      query?: {
-        /** @description Number of content entries to return */
-        limit?: number | null;
-        /** @description Page number */
-        page?: number | null;
-        /** @description Field to sort by */
-        sort_by?: string | null;
-        /** @description Sort order (asc or desc) */
-        sort_order?: components["schemas"]["SortOrder"] | null;
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Content list retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "id": "3c2fc685-d451-4d47-b0c0-b9a544c672b7",
-           *           "name": "example.pdf",
-           *           "description": "",
-           *           "type": "application/pdf",
-           *           "size": "251261",
-           *           "metadata": {},
-           *           "access_count": 1,
-           *           "status": "completed",
-           *           "status_message": "",
-           *           "created_at": "2025-09-08T15:22:53Z",
-           *           "updated_at": "2025-09-08T15:22:54Z"
-           *         }
-           *       ],
-           *       "meta": {
-           *         "page": 1,
-           *         "limit": 20,
-           *         "total_pages": 1,
-           *         "total_count": 2
-           *       }
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_ContentResponseSchema_"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  upload_content: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for content storage */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "multipart/form-data": components["schemas"]["Body_upload_content"];
-      };
-    };
-    responses: {
-      /** @description Content upload accepted for processing */
-      202: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "content-123",
-           *       "name": "example-document.pdf",
-           *       "description": "Sample document for processing",
-           *       "metadata": {
-           *         "category": "documentation",
-           *         "priority": "high"
-           *       },
-           *       "status": "processing"
-           *     }
-           */
-          "application/json": components["schemas"]["ContentResponseSchema"];
-        };
-      };
-      /** @description Invalid request - malformed metadata or missing content */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation error in form data */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_all_content: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete all content */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  upload_remote_content: {
-    parameters: {
-      query?: {
-        /** @description Database ID to use for content storage */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_upload_remote_content"];
-      };
-    };
-    responses: {
-      /** @description Remote content upload accepted for processing */
-      202: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "content-456",
-           *       "name": "reports/q1-2024.pdf",
-           *       "description": "Q1 Report from S3",
-           *       "metadata": {
-           *         "source": "s3-docs"
-           *       },
-           *       "status": "processing"
-           *     }
-           */
-          "application/json": components["schemas"]["ContentResponseSchema"];
-        };
-      };
-      /** @description Invalid request - unknown config or missing path */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation error in request body */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_content_by_id: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path: {
-        content_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Content details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "3c2fc685-d451-4d47-b0c0-b9a544c672b7",
-           *       "name": "example.pdf",
-           *       "description": "",
-           *       "type": "application/pdf",
-           *       "size": "251261",
-           *       "metadata": {},
-           *       "access_count": 1,
-           *       "status": "completed",
-           *       "status_message": "",
-           *       "created_at": "2025-09-08T15:22:53Z",
-           *       "updated_at": "2025-09-08T15:22:54Z"
-           *     }
-           */
-          "application/json": components["schemas"]["ContentResponseSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Content not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  delete_content_by_id: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path: {
-        content_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ContentResponseSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Content not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to delete content */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  update_content: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path: {
-        /** @description Content ID */
-        content_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_update_content"];
-      };
-    };
-    responses: {
-      /** @description Content updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "id": "3c2fc685-d451-4d47-b0c0-b9a544c672b7",
-           *       "name": "example.pdf",
-           *       "description": "",
-           *       "type": "application/pdf",
-           *       "size": "251261",
-           *       "metadata": {},
-           *       "access_count": 1,
-           *       "status": "completed",
-           *       "status_message": "",
-           *       "created_at": "2025-09-08T15:22:53Z",
-           *       "updated_at": "2025-09-08T15:22:54Z"
-           *     }
-           */
-          "application/json": components["schemas"]["ContentResponseSchema"];
-        };
-      };
-      /** @description Invalid request - malformed metadata or invalid reader_id */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Content not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_content_status: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path: {
-        content_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Content status retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ContentStatusResponse"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Content not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  search_knowledge: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["VectorSearchRequestSchema"];
-      };
-    };
-    responses: {
-      /** @description Search results retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "id": "doc_123",
-           *           "content": "Jordan Mitchell - Software Engineer with skills in JavaScript, React, Python",
-           *           "name": "cv_1",
-           *           "meta_data": {
-           *             "page": 1,
-           *             "chunk": 1
-           *           },
-           *           "usage": {
-           *             "total_tokens": 14
-           *           },
-           *           "reranking_score": 0.95,
-           *           "content_id": "content_456"
-           *         }
-           *       ],
-           *       "meta": {
-           *         "page": 1,
-           *         "limit": 20,
-           *         "total_pages": 2,
-           *         "total_count": 35
-           *       }
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_VectorSearchResult_"];
-        };
-      };
-      /** @description Invalid search parameters */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description No documents found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_knowledge_config: {
-    parameters: {
-      query?: {
-        /** @description The ID of the database to use */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Knowledge configuration retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "readers": {
-           *         "website": {
-           *           "id": "website",
-           *           "name": "WebsiteReader",
-           *           "description": "Reads website files",
-           *           "chunkers": [
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker",
-           *             "FixedSizeChunker"
-           *           ]
-           *         },
-           *         "firecrawl": {
-           *           "id": "firecrawl",
-           *           "name": "FirecrawlReader",
-           *           "description": "Reads firecrawl files",
-           *           "chunkers": [
-           *             "SemanticChunker",
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker"
-           *           ]
-           *         },
-           *         "youtube": {
-           *           "id": "youtube",
-           *           "name": "YoutubeReader",
-           *           "description": "Reads youtube files",
-           *           "chunkers": [
-           *             "RecursiveChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "SemanticChunker",
-           *             "FixedSizeChunker"
-           *           ]
-           *         },
-           *         "web_search": {
-           *           "id": "web_search",
-           *           "name": "WebSearchReader",
-           *           "description": "Reads web_search files",
-           *           "chunkers": [
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker",
-           *             "FixedSizeChunker"
-           *           ]
-           *         },
-           *         "arxiv": {
-           *           "id": "arxiv",
-           *           "name": "ArxivReader",
-           *           "description": "Reads arxiv files",
-           *           "chunkers": [
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker"
-           *           ]
-           *         },
-           *         "csv": {
-           *           "id": "csv",
-           *           "name": "CsvReader",
-           *           "description": "Reads csv files",
-           *           "chunkers": [
-           *             "RowChunker",
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker"
-           *           ]
-           *         },
-           *         "docx": {
-           *           "id": "docx",
-           *           "name": "DocxReader",
-           *           "description": "Reads docx files",
-           *           "chunkers": [
-           *             "DocumentChunker",
-           *             "FixedSizeChunker",
-           *             "SemanticChunker",
-           *             "AgenticChunker",
-           *             "RecursiveChunker"
-           *           ]
-           *         },
-           *         "gcs": {
-           *           "id": "gcs",
-           *           "name": "GcsReader",
-           *           "description": "Reads gcs files",
-           *           "chunkers": [
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker"
-           *           ]
-           *         },
-           *         "json": {
-           *           "id": "json",
-           *           "name": "JsonReader",
-           *           "description": "Reads json files",
-           *           "chunkers": [
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker"
-           *           ]
-           *         },
-           *         "markdown": {
-           *           "id": "markdown",
-           *           "name": "MarkdownReader",
-           *           "description": "Reads markdown files",
-           *           "chunkers": [
-           *             "MarkdownChunker",
-           *             "DocumentChunker",
-           *             "AgenticChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker",
-           *             "FixedSizeChunker"
-           *           ]
-           *         },
-           *         "pdf": {
-           *           "id": "pdf",
-           *           "name": "PdfReader",
-           *           "description": "Reads pdf files",
-           *           "chunkers": [
-           *             "DocumentChunker",
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "SemanticChunker",
-           *             "RecursiveChunker"
-           *           ]
-           *         },
-           *         "text": {
-           *           "id": "text",
-           *           "name": "TextReader",
-           *           "description": "Reads text files",
-           *           "chunkers": [
-           *             "CodeChunker",
-           *             "FixedSizeChunker",
-           *             "AgenticChunker",
-           *             "DocumentChunker",
-           *             "RecursiveChunker",
-           *             "SemanticChunker"
-           *           ]
-           *         }
-           *       },
-           *       "readersForType": {
-           *         "url": [
-           *           "url",
-           *           "website",
-           *           "firecrawl",
-           *           "youtube",
-           *           "web_search",
-           *           "gcs"
-           *         ],
-           *         "youtube": [
-           *           "youtube"
-           *         ],
-           *         "text": [
-           *           "web_search"
-           *         ],
-           *         "topic": [
-           *           "arxiv"
-           *         ],
-           *         "file": [
-           *           "csv",
-           *           "gcs"
-           *         ],
-           *         ".csv": [
-           *           "csv",
-           *           "field_labeled_csv"
-           *         ],
-           *         ".xlsx": [
-           *           "excel"
-           *         ],
-           *         ".xls": [
-           *           "excel"
-           *         ],
-           *         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-           *           "excel"
-           *         ],
-           *         "application/vnd.ms-excel": [
-           *           "excel"
-           *         ],
-           *         ".docx": [
-           *           "docx"
-           *         ],
-           *         ".doc": [
-           *           "docx"
-           *         ],
-           *         ".json": [
-           *           "json"
-           *         ],
-           *         ".md": [
-           *           "markdown"
-           *         ],
-           *         ".pdf": [
-           *           "pdf"
-           *         ],
-           *         ".txt": [
-           *           "text"
-           *         ]
-           *       },
-           *       "chunkers": {
-           *         "AgenticChunker": {
-           *           "key": "AgenticChunker",
-           *           "name": "AgenticChunker",
-           *           "description": "Chunking strategy that uses an LLM to determine natural breakpoints in the text",
-           *           "metadata": {
-           *             "chunk_size": 5000
-           *           }
-           *         },
-           *         "CodeChunker": {
-           *           "key": "CodeChunker",
-           *           "name": "CodeChunker",
-           *           "description": "The CodeChunker splits code into chunks based on its structure, leveraging Abstract Syntax Trees (ASTs) to create contextually relevant segments",
-           *           "metadata": {
-           *             "chunk_size": 2048
-           *           }
-           *         },
-           *         "DocumentChunker": {
-           *           "key": "DocumentChunker",
-           *           "name": "DocumentChunker",
-           *           "description": "A chunking strategy that splits text based on document structure like paragraphs and sections",
-           *           "metadata": {
-           *             "chunk_size": 5000,
-           *             "chunk_overlap": 0
-           *           }
-           *         },
-           *         "FixedSizeChunker": {
-           *           "key": "FixedSizeChunker",
-           *           "name": "FixedSizeChunker",
-           *           "description": "Chunking strategy that splits text into fixed-size chunks with optional overlap",
-           *           "metadata": {
-           *             "chunk_size": 5000,
-           *             "chunk_overlap": 0
-           *           }
-           *         },
-           *         "MarkdownChunker": {
-           *           "key": "MarkdownChunker",
-           *           "name": "MarkdownChunker",
-           *           "description": "A chunking strategy that splits markdown based on structure like headers, paragraphs and sections",
-           *           "metadata": {
-           *             "chunk_size": 5000,
-           *             "chunk_overlap": 0
-           *           }
-           *         },
-           *         "RecursiveChunker": {
-           *           "key": "RecursiveChunker",
-           *           "name": "RecursiveChunker",
-           *           "description": "Chunking strategy that recursively splits text into chunks by finding natural break points",
-           *           "metadata": {
-           *             "chunk_size": 5000,
-           *             "chunk_overlap": 0
-           *           }
-           *         },
-           *         "RowChunker": {
-           *           "key": "RowChunker",
-           *           "name": "RowChunker",
-           *           "description": "RowChunking chunking strategy",
-           *           "metadata": {}
-           *         },
-           *         "SemanticChunker": {
-           *           "key": "SemanticChunker",
-           *           "name": "SemanticChunker",
-           *           "description": "Chunking strategy that splits text into semantic chunks using chonkie",
-           *           "metadata": {
-           *             "chunk_size": 5000
-           *           }
-           *         }
-           *       },
-           *       "vector_dbs": [
-           *         {
-           *           "id": "vector_db_1",
-           *           "name": "Vector DB 1",
-           *           "description": "Vector DB 1 description",
-           *           "search_types": [
-           *             "vector",
-           *             "keyword",
-           *             "hybrid"
-           *           ]
-           *         }
-           *       ],
-           *       "filters": [
-           *         "filter_tag_1",
-           *         "filter_tag2"
-           *       ]
-           *     }
-           */
-          "application/json": components["schemas"]["ConfigResponseSchema"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_traces: {
-    parameters: {
-      query?: {
-        /** @description Filter by run ID */
-        run_id?: string | null;
-        /** @description Filter by session ID */
-        session_id?: string | null;
-        /** @description Filter by user ID */
-        user_id?: string | null;
-        /** @description Filter by agent ID */
-        agent_id?: string | null;
-        /** @description Filter by team ID */
-        team_id?: string | null;
-        /** @description Filter by workflow ID */
-        workflow_id?: string | null;
-        /** @description Filter by status (OK, ERROR) */
-        status?: string | null;
-        /** @description Filter traces starting after this time (ISO 8601 format with timezone, e.g., '2025-11-19T10:00:00Z' or '2025-11-19T15:30:00+05:30'). Times are converted to UTC for comparison. */
-        start_time?: string | null;
-        /** @description Filter traces ending before this time (ISO 8601 format with timezone, e.g., '2025-11-19T11:00:00Z' or '2025-11-19T16:30:00+05:30'). Times are converted to UTC for comparison. */
-        end_time?: string | null;
-        /** @description Page number (1-indexed) */
-        page?: number;
-        /** @description Number of traces per page */
-        limit?: number;
-        /** @description Database ID to query traces from */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of traces retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "trace_id": "a1b2c3d4",
-           *           "name": "Stock_Price_Agent.run",
-           *           "status": "OK",
-           *           "duration": "1.2s",
-           *           "start_time": "2025-11-19T10:30:00.000000+00:00",
-           *           "total_spans": 4,
-           *           "error_count": 0,
-           *           "input": "What is the stock price of NVDA?",
-           *           "run_id": "run123",
-           *           "session_id": "session456",
-           *           "user_id": "user789",
-           *           "agent_id": "agent_stock",
-           *           "created_at": "2025-11-19T10:30:00+00:00"
-           *         }
-           *       ],
-           *       "meta": {
-           *         "page": 1,
-           *         "limit": 20,
-           *         "total_pages": 5,
-           *         "total_count": 95
-           *       }
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_TraceSummary_"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_trace: {
-    parameters: {
-      query?: {
-        /** @description Optional: Span ID to retrieve specific span */
-        span_id?: string | null;
-        /** @description Optional: Run ID to retrieve trace for */
-        run_id?: string | null;
-        /** @description Database ID to query trace from */
-        db_id?: string | null;
-      };
-      header?: never;
-      path: {
-        trace_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trace or span detail retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json":
-            | components["schemas"]["TraceDetail"]
-            | components["schemas"]["TraceNode"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Trace or span not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  get_trace_stats: {
-    parameters: {
-      query?: {
-        /** @description Filter by user ID */
-        user_id?: string | null;
-        /** @description Filter by agent ID */
-        agent_id?: string | null;
-        /** @description Filter by team ID */
-        team_id?: string | null;
-        /** @description Filter by workflow ID */
-        workflow_id?: string | null;
-        /** @description Filter sessions with traces created after this time (ISO 8601 format with timezone, e.g., '2025-11-19T10:00:00Z' or '2025-11-19T15:30:00+05:30'). Times are converted to UTC for comparison. */
-        start_time?: string | null;
-        /** @description Filter sessions with traces created before this time (ISO 8601 format with timezone, e.g., '2025-11-19T11:00:00Z' or '2025-11-19T16:30:00+05:30'). Times are converted to UTC for comparison. */
-        end_time?: string | null;
-        /** @description Page number (1-indexed) */
-        page?: number;
-        /** @description Number of sessions per page */
-        limit?: number;
-        /** @description Database ID to query statistics from */
-        db_id?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trace statistics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "data": [
-           *         {
-           *           "session_id": "37029bc6-1794-4ba8-a629-1efedc53dcad",
-           *           "user_id": "kaustubh@agno.com",
-           *           "agent_id": "hackernews-agent",
-           *           "total_traces": 5,
-           *           "first_trace_at": "2025-11-19T10:15:16+00:00",
-           *           "last_trace_at": "2025-11-19T10:21:30+00:00"
-           *         }
-           *       ],
-           *       "meta": {
-           *         "page": 1,
-           *         "limit": 20,
-           *         "total_pages": 3,
-           *         "total_count": 45
-           *       }
-           *     }
-           */
-          "application/json": components["schemas"]["PaginatedResponse_TraceSessionStats_"];
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to retrieve statistics */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  migrate_all_databases: {
-    parameters: {
-      query?: {
-        target_version?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description All databases migrated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "message": "All databases migrated successfully to version 3.0.0"
-           *     }
-           */
-          "application/json": unknown;
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Not Found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to migrate databases */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
-  migrate_database: {
-    parameters: {
-      query?: {
-        target_version?: string | null;
-      };
-      header?: never;
-      path: {
-        db_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Database migrated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          /**
-           * @example {
-           *       "message": "Database migrated successfully to version 3.0.0"
-           *     }
-           */
-          "application/json": unknown;
-        };
-      };
-      /** @description Bad Request */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["BadRequestResponse"];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UnauthenticatedResponse"];
-        };
-      };
-      /** @description Database not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["NotFoundResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ValidationErrorResponse"];
-        };
-      };
-      /** @description Failed to migrate database */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["InternalServerErrorResponse"];
-        };
-      };
-    };
-  };
+    get_me_auth_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeResponse"];
+                };
+            };
+        };
+    };
+    list_keys_auth_keys_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KeyResponse"][];
+                };
+            };
+        };
+    };
+    create_key_auth_keys_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateKeyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateKeyResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_key_auth_keys__key_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KeyResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_key_auth_keys__key_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rotate_key_auth_keys__key_id__rotate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateKeyResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_all_connections_auth_connections_admin_all_get: {
+        parameters: {
+            query?: {
+                api_key_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminConnectionResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_connections_auth_connections_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionResponse"][];
+                };
+            };
+        };
+    };
+    create_connection_auth_connections_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateConnectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_connection_auth_connections__connection_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_connection_auth_connections__connection_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateConnectionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_connection_auth_connections__connection_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_default_connection_auth_connections__connection_id__default_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_connection_auth_connections__connection_id__test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                connection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestConnectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    health_check: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description API is healthy and operational */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "status": "ok",
+                     *       "instantiated_at": "2025-06-10T12:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    get_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OS configuration retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "demo",
+                     *       "description": "Example AgentOS configuration",
+                     *       "available_models": [],
+                     *       "databases": [
+                     *         "9c884dc4-9066-448c-9074-ef49ec7eb73c"
+                     *       ],
+                     *       "session": {
+                     *         "dbs": [
+                     *           {
+                     *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
+                     *             "domain_config": {
+                     *               "display_name": "Sessions"
+                     *             }
+                     *           }
+                     *         ]
+                     *       },
+                     *       "metrics": {
+                     *         "dbs": [
+                     *           {
+                     *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
+                     *             "domain_config": {
+                     *               "display_name": "Metrics"
+                     *             }
+                     *           }
+                     *         ]
+                     *       },
+                     *       "memory": {
+                     *         "dbs": [
+                     *           {
+                     *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
+                     *             "domain_config": {
+                     *               "display_name": "Memory"
+                     *             }
+                     *           }
+                     *         ]
+                     *       },
+                     *       "knowledge": {
+                     *         "dbs": [
+                     *           {
+                     *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
+                     *             "domain_config": {
+                     *               "display_name": "Knowledge"
+                     *             }
+                     *           }
+                     *         ]
+                     *       },
+                     *       "evals": {
+                     *         "dbs": [
+                     *           {
+                     *             "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c",
+                     *             "domain_config": {
+                     *               "display_name": "Evals"
+                     *             }
+                     *           }
+                     *         ]
+                     *       },
+                     *       "agents": [
+                     *         {
+                     *           "id": "main-agent",
+                     *           "name": "Main Agent",
+                     *           "db_id": "9c884dc4-9066-448c-9074-ef49ec7eb73c"
+                     *         }
+                     *       ],
+                     *       "teams": [],
+                     *       "workflows": [],
+                     *       "interfaces": []
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ConfigResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_models: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of models retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": "gpt-4",
+                     *         "provider": "openai"
+                     *       },
+                     *       {
+                     *         "id": "claude-3-sonnet",
+                     *         "provider": "anthropic"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["Model"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_agent_runs: {
+        parameters: {
+            query: {
+                /** @description Session ID to list runs for */
+                session_id: string;
+                /** @description Filter by run status (PENDING, RUNNING, COMPLETED, ERROR) */
+                status?: string | null;
+            };
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of runs retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_agent_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_create_agent_run"];
+            };
+        };
+        responses: {
+            /** @description Agent run executed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    "text/event-stream": unknown;
+                };
+            };
+            /** @description Invalid request or unsupported file type */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_agent_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to cancel run */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    continue_agent_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_continue_agent_run"];
+            };
+        };
+        responses: {
+            /** @description Agent run continued successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    /**
+                     * @example event: RunContent
+                     *     data: {"created_at": 1757348314, "run_id": "123..."}
+                     */
+                    "text/event-stream": unknown;
+                };
+            };
+            /** @description Invalid JSON in tools field or invalid tool structure */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Run has a pending admin approval and cannot be continued by the user yet. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Run is not paused (e.g. run is already running, continued, or errored). Only PAUSED runs can be continued. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_agents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of agents retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": "main-agent",
+                     *         "name": "Main Agent",
+                     *         "db_id": "c6bf0644-feb8-4930-a305-380dae5ad6aa",
+                     *         "model": {
+                     *           "name": "OpenAIChat",
+                     *           "model": "gpt-4o",
+                     *           "provider": "OpenAI"
+                     *         },
+                     *         "sessions": {
+                     *           "session_table": "agno_sessions"
+                     *         },
+                     *         "knowledge": {
+                     *           "knowledge_table": "main_knowledge"
+                     *         },
+                     *         "system_message": {
+                     *           "markdown": true,
+                     *           "add_datetime_to_context": true
+                     *         }
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["AgentResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_agent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Agent details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "main-agent",
+                     *       "name": "Main Agent",
+                     *       "db_id": "9e064c70-6821-4840-a333-ce6230908a70",
+                     *       "model": {
+                     *         "name": "OpenAIChat",
+                     *         "model": "gpt-4o",
+                     *         "provider": "OpenAI"
+                     *       },
+                     *       "sessions": {
+                     *         "session_table": "agno_sessions"
+                     *       },
+                     *       "knowledge": {
+                     *         "knowledge_table": "main_knowledge"
+                     *       },
+                     *       "system_message": {
+                     *         "markdown": true,
+                     *         "add_datetime_to_context": true
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["AgentResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Agent not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_agent_run: {
+        parameters: {
+            query: {
+                /** @description Session ID for the run */
+                session_id: string;
+            };
+            header?: never;
+            path: {
+                agent_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Run output retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Agent or run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_team_runs: {
+        parameters: {
+            query: {
+                /** @description Session ID to list runs for */
+                session_id: string;
+                /** @description Filter by run status (PENDING, RUNNING, COMPLETED, ERROR) */
+                status?: string | null;
+            };
+            header?: never;
+            path: {
+                team_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of runs retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Team not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_team_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                team_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_create_team_run"];
+            };
+        };
+        responses: {
+            /** @description Team run executed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    /**
+                     * @example event: RunStarted
+                     *     data: {"content": "Hello!", "run_id": "123..."}
+                     */
+                    "text/event-stream": unknown;
+                };
+            };
+            /** @description Invalid request or unsupported file type */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Team not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_team_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                team_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Team not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to cancel team run */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_teams: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of teams retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "team_id": "basic-team",
+                     *         "name": "Basic Team",
+                     *         "mode": "coordinate",
+                     *         "model": {
+                     *           "name": "OpenAIChat",
+                     *           "model": "gpt-4o",
+                     *           "provider": "OpenAI"
+                     *         },
+                     *         "tools": [
+                     *           {
+                     *             "name": "transfer_task_to_member",
+                     *             "description": "Use this function to transfer a task to the selected team member.\nYou must provide a clear and concise description of the task the member should achieve AND the expected output.",
+                     *             "parameters": {
+                     *               "type": "object",
+                     *               "properties": {
+                     *                 "member_id": {
+                     *                   "type": "string",
+                     *                   "description": "(str) The ID of the member to transfer the task to. Use only the ID of the member, not the ID of the team followed by the ID of the member."
+                     *                 },
+                     *                 "task_description": {
+                     *                   "type": "string",
+                     *                   "description": "(str) A clear and concise description of the task the member should achieve."
+                     *                 },
+                     *                 "expected_output": {
+                     *                   "type": "string",
+                     *                   "description": "(str) The expected output from the member (optional)."
+                     *                 }
+                     *               },
+                     *               "additionalProperties": false,
+                     *               "required": [
+                     *                 "member_id",
+                     *                 "task_description"
+                     *               ]
+                     *             }
+                     *           }
+                     *         ],
+                     *         "members": [
+                     *           {
+                     *             "agent_id": "basic-agent",
+                     *             "name": "Basic Agent",
+                     *             "model": {
+                     *               "name": "OpenAIChat",
+                     *               "model": "gpt-4o",
+                     *               "provider": "OpenAI gpt-4o"
+                     *             },
+                     *             "memory": {
+                     *               "app_name": "Memory",
+                     *               "model": {
+                     *                 "name": "OpenAIChat",
+                     *                 "model": "gpt-4o",
+                     *                 "provider": "OpenAI"
+                     *               }
+                     *             },
+                     *             "session_table": "agno_sessions",
+                     *             "memory_table": "agno_memories"
+                     *           }
+                     *         ],
+                     *         "enable_agentic_context": false,
+                     *         "memory": {
+                     *           "app_name": "agno_memories",
+                     *           "app_url": "/memory/1",
+                     *           "model": {
+                     *             "name": "OpenAIChat",
+                     *             "model": "gpt-4o",
+                     *             "provider": "OpenAI"
+                     *           }
+                     *         },
+                     *         "async_mode": false,
+                     *         "session_table": "agno_sessions",
+                     *         "memory_table": "agno_memories"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["TeamResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_team: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                team_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Team details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "team_id": "basic-team",
+                     *       "name": "Basic Team",
+                     *       "mode": "coordinate",
+                     *       "model": {
+                     *         "name": "OpenAIChat",
+                     *         "model": "gpt-4o",
+                     *         "provider": "OpenAI"
+                     *       },
+                     *       "tools": [
+                     *         {
+                     *           "name": "transfer_task_to_member",
+                     *           "description": "Use this function to transfer a task to the selected team member.\nYou must provide a clear and concise description of the task the member should achieve AND the expected output.",
+                     *           "parameters": {
+                     *             "type": "object",
+                     *             "properties": {
+                     *               "member_id": {
+                     *                 "type": "string",
+                     *                 "description": "(str) The ID of the member to transfer the task to. Use only the ID of the member, not the ID of the team followed by the ID of the member."
+                     *               },
+                     *               "task_description": {
+                     *                 "type": "string",
+                     *                 "description": "(str) A clear and concise description of the task the member should achieve."
+                     *               },
+                     *               "expected_output": {
+                     *                 "type": "string",
+                     *                 "description": "(str) The expected output from the member (optional)."
+                     *               }
+                     *             },
+                     *             "additionalProperties": false,
+                     *             "required": [
+                     *               "member_id",
+                     *               "task_description"
+                     *             ]
+                     *           }
+                     *         }
+                     *       ],
+                     *       "members": [
+                     *         {
+                     *           "agent_id": "basic-agent",
+                     *           "name": "Basic Agent",
+                     *           "model": {
+                     *             "name": "OpenAIChat",
+                     *             "model": "gpt-4o",
+                     *             "provider": "OpenAI gpt-4o"
+                     *           },
+                     *           "memory": {
+                     *             "app_name": "Memory",
+                     *             "model": {
+                     *               "name": "OpenAIChat",
+                     *               "model": "gpt-4o",
+                     *               "provider": "OpenAI"
+                     *             }
+                     *           },
+                     *           "session_table": "agno_sessions",
+                     *           "memory_table": "agno_memories"
+                     *         }
+                     *       ],
+                     *       "enable_agentic_context": false,
+                     *       "memory": {
+                     *         "app_name": "Memory",
+                     *         "model": {
+                     *           "name": "OpenAIChat",
+                     *           "model": "gpt-4o",
+                     *           "provider": "OpenAI"
+                     *         }
+                     *       },
+                     *       "async_mode": false,
+                     *       "session_table": "agno_sessions",
+                     *       "memory_table": "agno_memories"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["TeamResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Team not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_team_run: {
+        parameters: {
+            query: {
+                /** @description Session ID for the run */
+                session_id: string;
+            };
+            header?: never;
+            path: {
+                team_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Run output retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Team or run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_workflows: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of workflows retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": "content-creation-workflow",
+                     *         "name": "Content Creation Workflow",
+                     *         "description": "Automated content creation from blog posts to social media",
+                     *         "db_id": "123"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["WorkflowSummaryResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_workflow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workflow_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Workflow details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "content-creation-workflow",
+                     *       "name": "Content Creation Workflow",
+                     *       "description": "Automated content creation from blog posts to social media",
+                     *       "db_id": "123"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["WorkflowResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Workflow not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_workflow_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workflow_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_create_workflow_run"];
+            };
+        };
+        responses: {
+            /** @description Workflow executed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    /**
+                     * @example event: RunStarted
+                     *     data: {"content": "Hello!", "run_id": "123..."}
+                     */
+                    "text/event-stream": unknown;
+                };
+            };
+            /** @description Invalid input data or workflow configuration */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Workflow not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Workflow execution error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_workflow_run: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workflow_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Workflow or run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to cancel workflow run */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_workflow_run: {
+        parameters: {
+            query: {
+                /** @description Session ID for the run */
+                session_id: string;
+            };
+            header?: never;
+            path: {
+                workflow_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Run output retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Workflow or run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_sessions: {
+        parameters: {
+            query?: {
+                /** @description Type of sessions to retrieve (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description Filter sessions by component ID (agent/team/workflow ID) */
+                component_id?: string | null;
+                /** @description Filter sessions by user ID */
+                user_id?: string | null;
+                /** @description Filter sessions by name (partial match) */
+                session_name?: string | null;
+                /** @description Number of sessions to return per page */
+                limit?: number | null;
+                /** @description Page number for pagination */
+                page?: number | null;
+                /** @description Field to sort sessions by */
+                sort_by?: string | null;
+                /** @description Sort order (asc or desc) */
+                sort_order?: components["schemas"]["SortOrder"] | null;
+                /** @description Database ID to query sessions from */
+                db_id?: string | null;
+                /** @description The database table to use */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sessions retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "session_example": {
+                     *         "summary": "Example session response",
+                     *         "value": {
+                     *           "data": [
+                     *             {
+                     *               "session_id": "6f6cfbfd-9643-479a-ae47-b8f32eb4d710",
+                     *               "session_name": "What tools do you have?",
+                     *               "session_state": {},
+                     *               "created_at": "2025-09-05T16:02:09Z",
+                     *               "updated_at": "2025-09-05T16:02:09Z"
+                     *             }
+                     *           ]
+                     *         }
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_SessionSchema_"];
+                };
+            };
+            /** @description Invalid session type or filter parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation error in query parameters */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_session: {
+        parameters: {
+            query?: {
+                /** @description Type of session to create (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description Database ID to create session in */
+                db_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CreateSessionRequest"];
+            };
+        };
+        responses: {
+            /** @description Session created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSessionDetailSchema"] | components["schemas"]["TeamSessionDetailSchema"] | components["schemas"]["WorkflowSessionDetailSchema"];
+                };
+            };
+            /** @description Invalid request parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to create session */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_sessions: {
+        parameters: {
+            query?: {
+                /** @description User ID to scope deletion to */
+                user_id?: string | null;
+                /** @description Database ID to use for deletion */
+                db_id?: string | null;
+                /** @description Table to use for deletion */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteSessionRequest"];
+            };
+        };
+        responses: {
+            /** @description Sessions deleted successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid request - session IDs and types length mismatch */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete sessions */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_session_by_id: {
+        parameters: {
+            query?: {
+                /** @description Session type (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description User ID to query session from */
+                user_id?: string | null;
+                /** @description Database ID to query session from */
+                db_id?: string | null;
+                /** @description Table to query session from */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Session ID to retrieve */
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSessionDetailSchema"] | components["schemas"]["TeamSessionDetailSchema"] | components["schemas"]["WorkflowSessionDetailSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Invalid session type */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_session: {
+        parameters: {
+            query?: {
+                /** @description User ID to scope deletion to */
+                user_id?: string | null;
+                /** @description Database ID to use for deletion */
+                db_id?: string | null;
+                /** @description Table to use for deletion */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Session ID to delete */
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete session */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    update_session: {
+        parameters: {
+            query?: {
+                /** @description Session type (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description User ID */
+                user_id?: string | null;
+                /** @description Database ID to use for update operation */
+                db_id?: string | null;
+                /** @description Table to use for update operation */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Session ID to update */
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSessionRequest"];
+            };
+        };
+        responses: {
+            /** @description Session updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSessionDetailSchema"] | components["schemas"]["TeamSessionDetailSchema"] | components["schemas"]["WorkflowSessionDetailSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Invalid request */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to update session */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_session_runs: {
+        parameters: {
+            query?: {
+                /** @description Session type (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description User ID to query runs from */
+                user_id?: string | null;
+                /** @description Filter runs created after this Unix timestamp (epoch time in seconds) */
+                created_after?: number | null;
+                /** @description Filter runs created before this Unix timestamp (epoch time in seconds) */
+                created_before?: number | null;
+                /** @description Database ID to query runs from */
+                db_id?: string | null;
+                /** @description Table to query runs from */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Session ID to get runs from */
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session runs retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": (components["schemas"]["RunSchema"] | components["schemas"]["TeamRunSchema"] | components["schemas"]["WorkflowRunSchema"])[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Session not found or has no runs */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Invalid session type */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_session_run: {
+        parameters: {
+            query?: {
+                /** @description Session type (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description User ID to query run from */
+                user_id?: string | null;
+                /** @description Database ID to query run from */
+                db_id?: string | null;
+                /** @description Table to query run from */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Session ID to get run from */
+                session_id: string;
+                /** @description Run ID to retrieve */
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Run retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunSchema"] | components["schemas"]["TeamRunSchema"] | components["schemas"]["WorkflowRunSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Session or run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Invalid session type */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    rename_session: {
+        parameters: {
+            query?: {
+                /** @description Session type (agent, team, or workflow) */
+                type?: components["schemas"]["SessionType"];
+                /** @description User ID to scope rename to */
+                user_id?: string | null;
+                /** @description Database ID to use for rename operation */
+                db_id?: string | null;
+                /** @description Table to use for rename operation */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Session ID to rename */
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Body_rename_session"];
+            };
+        };
+        responses: {
+            /** @description Session renamed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentSessionDetailSchema"] | components["schemas"]["TeamSessionDetailSchema"] | components["schemas"]["WorkflowSessionDetailSchema"];
+                };
+            };
+            /** @description Invalid session name */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Invalid session type or validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_memories: {
+        parameters: {
+            query?: {
+                /** @description Filter memories by user ID */
+                user_id?: string | null;
+                /** @description Filter memories by agent ID */
+                agent_id?: string | null;
+                /** @description Filter memories by team ID */
+                team_id?: string | null;
+                /** @description Fuzzy search within memory content */
+                search_content?: string | null;
+                /** @description Number of memories to return per page */
+                limit?: number | null;
+                /** @description Page number for pagination */
+                page?: number | null;
+                /** @description Field to sort memories by */
+                sort_by?: string | null;
+                /** @description Sort order (asc or desc) */
+                sort_order?: components["schemas"]["SortOrder"] | null;
+                /** @description Database ID to query memories from */
+                db_id?: string | null;
+                /** @description The database table to use */
+                table?: string | null;
+                /** @description Comma-separated list of topics to filter by */
+                topics?: string[] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Memories retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
+                     *           "memory": "User likes coffee.",
+                     *           "topics": [
+                     *             "preferences"
+                     *           ],
+                     *           "user_id": "123",
+                     *           "updated_at": "2025-09-01T07:53:17Z"
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_UserMemorySchema_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_memory: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for memory storage */
+                db_id?: string | null;
+                /** @description Table to use for memory storage */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserMemoryCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Memory created successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "memory_id": "mem-123",
+                     *       "memory": "User prefers technical explanations with code examples",
+                     *       "topics": [
+                     *         "preferences",
+                     *         "communication_style",
+                     *         "technical"
+                     *       ],
+                     *       "user_id": "user-456",
+                     *       "created_at": "2024-01-15T10:30:00Z",
+                     *       "updated_at": "2024-01-15T10:30:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UserMemorySchema"];
+                };
+            };
+            /** @description Invalid request data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation error in payload */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to create memory */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_memories: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for deletion */
+                db_id?: string | null;
+                /** @description Table to use for deletion */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteMemoriesRequest"];
+            };
+        };
+        responses: {
+            /** @description Memories deleted successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid request - empty memory_ids list */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete memories */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_memory: {
+        parameters: {
+            query?: {
+                /** @description User ID to query memory for */
+                user_id?: string | null;
+                /** @description Database ID to query memory from */
+                db_id?: string | null;
+                /** @description Table to query memory from */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Memory ID to retrieve */
+                memory_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Memory retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
+                     *       "memory": "User likes coffee.",
+                     *       "topics": [
+                     *         "preferences"
+                     *       ],
+                     *       "user_id": "123",
+                     *       "updated_at": "2025-09-01T07:53:17Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UserMemorySchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Memory not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_memory: {
+        parameters: {
+            query?: {
+                /** @description User ID to delete memory for */
+                user_id?: string | null;
+                /** @description Database ID to use for deletion */
+                db_id?: string | null;
+                /** @description Table to use for deletion */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Memory ID to delete */
+                memory_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Memory deleted successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Memory not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete memory */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    update_memory: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for update */
+                db_id?: string | null;
+                /** @description Table to use for update */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Memory ID to update */
+                memory_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserMemoryCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Memory updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
+                     *       "memory": "User likes coffee.",
+                     *       "topics": [
+                     *         "preferences"
+                     *       ],
+                     *       "user_id": "123",
+                     *       "updated_at": "2025-09-01T07:53:17Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UserMemorySchema"];
+                };
+            };
+            /** @description Invalid request data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Memory not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation error in payload */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to update memory */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_memory_topics: {
+        parameters: {
+            query?: {
+                /** @description User ID to filter topics for */
+                user_id?: string | null;
+                /** @description Database ID to query topics from */
+                db_id?: string | null;
+                /** @description Table to query topics from */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Memory topics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       "preferences",
+                     *       "communication_style",
+                     *       "technical",
+                     *       "industry",
+                     *       "compliance",
+                     *       "code_examples",
+                     *       "requirements",
+                     *       "healthcare",
+                     *       "finance"
+                     *     ]
+                     */
+                    "application/json": string[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_user_memory_stats: {
+        parameters: {
+            query?: {
+                /** @description Number of user statistics to return per page */
+                limit?: number | null;
+                /** @description Page number for pagination */
+                page?: number | null;
+                /** @description User ID to filter statistics for */
+                user_id?: string | null;
+                /** @description Database ID to query statistics from */
+                db_id?: string | null;
+                /** @description Table to query statistics from */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User memory statistics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "user_id": "123",
+                     *           "total_memories": 3,
+                     *           "last_memory_updated_at": "2025-09-01T07:53:17Z"
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_UserStatsSchema_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to retrieve user statistics */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    optimize_memories: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for optimization */
+                db_id?: string | null;
+                /** @description Table to use for optimization */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OptimizeMemoriesRequest"];
+            };
+        };
+        responses: {
+            /** @description Memories optimized successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "memories": [
+                     *         {
+                     *           "memory_id": "f9361a69-2997-40c7-ae4e-a5861d434047",
+                     *           "memory": "User has a 3-year-old golden retriever named Max who loves fetch and walks. Lives in San Francisco's Mission district, works as a product manager in tech. Enjoys hiking Bay Area trails, trying new restaurants (especially Japanese, Thai, Mexican), and learning piano for 1.5 years.",
+                     *           "topics": [
+                     *             "pets",
+                     *             "location",
+                     *             "work",
+                     *             "hobbies",
+                     *             "food_preferences"
+                     *           ],
+                     *           "user_id": "user2",
+                     *           "updated_at": "2025-11-18T10:30:00Z"
+                     *         }
+                     *       ],
+                     *       "memories_before": 4,
+                     *       "memories_after": 1,
+                     *       "tokens_before": 450,
+                     *       "tokens_after": 180,
+                     *       "tokens_saved": 270,
+                     *       "reduction_percentage": 60
+                     *     }
+                     */
+                    "application/json": components["schemas"]["OptimizeMemoriesResponse"];
+                };
+            };
+            /** @description Bad request - User ID is required or invalid model string format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description No memories found for user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to optimize memories */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_eval_runs: {
+        parameters: {
+            query?: {
+                /** @description Agent ID */
+                agent_id?: string | null;
+                /** @description Team ID */
+                team_id?: string | null;
+                /** @description Workflow ID */
+                workflow_id?: string | null;
+                /** @description Model ID */
+                model_id?: string | null;
+                /** @description Filter type */
+                type?: components["schemas"]["EvalFilterType"] | null;
+                /** @description Number of eval runs to return */
+                limit?: number | null;
+                /** @description Page number */
+                page?: number | null;
+                /** @description Field to sort by */
+                sort_by?: string | null;
+                /** @description Sort order (asc or desc) */
+                sort_order?: components["schemas"]["SortOrder"] | null;
+                /** @description The ID of the database to use */
+                db_id?: string | null;
+                /** @description The database table to use */
+                table?: string | null;
+                /** @description Comma-separated eval types (accuracy,agent_as_judge,performance,reliability) */
+                eval_types?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Evaluation runs retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "id": "a03fa2f4-900d-482d-afe0-470d4cd8d1f4",
+                     *           "agent_id": "basic-agent",
+                     *           "model_id": "gpt-4o",
+                     *           "model_provider": "OpenAI",
+                     *           "name": "Test ",
+                     *           "eval_type": "reliability",
+                     *           "eval_data": {
+                     *             "eval_status": "PASSED",
+                     *             "failed_tool_calls": [],
+                     *             "passed_tool_calls": [
+                     *               "multiply"
+                     *             ]
+                     *           },
+                     *           "eval_input": {
+                     *             "expected_tool_calls": [
+                     *               "multiply"
+                     *             ]
+                     *           },
+                     *           "created_at": "2025-08-27T15:41:59Z",
+                     *           "updated_at": "2025-08-27T15:41:59Z"
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_EvalSchema_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    run_eval: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for evaluation */
+                db_id?: string | null;
+                /** @description Table to use for evaluation */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EvalRunInput"];
+            };
+        };
+        responses: {
+            /** @description Evaluation executed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "f2b2d72f-e9e2-4f0e-8810-0a7e1ff58614",
+                     *       "agent_id": "basic-agent",
+                     *       "model_id": "gpt-4o",
+                     *       "model_provider": "OpenAI",
+                     *       "eval_type": "reliability",
+                     *       "eval_data": {
+                     *         "eval_status": "PASSED",
+                     *         "failed_tool_calls": [],
+                     *         "passed_tool_calls": [
+                     *           "multiply"
+                     *         ]
+                     *       },
+                     *       "created_at": "2025-08-27T15:41:59Z",
+                     *       "updated_at": "2025-08-27T15:41:59Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["EvalSchema"];
+                };
+            };
+            /** @description Invalid request - provide either agent_id or team_id */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Agent or team not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_eval_runs: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for deletion */
+                db_id?: string | null;
+                /** @description Table to use for deletion */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteEvalRunsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete evaluation runs */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_eval_run: {
+        parameters: {
+            query?: {
+                /** @description The ID of the database to use */
+                db_id?: string | null;
+                /** @description Table to query eval run from */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                eval_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Evaluation run details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "a03fa2f4-900d-482d-afe0-470d4cd8d1f4",
+                     *       "agent_id": "basic-agent",
+                     *       "model_id": "gpt-4o",
+                     *       "model_provider": "OpenAI",
+                     *       "name": "Test ",
+                     *       "eval_type": "reliability",
+                     *       "eval_data": {
+                     *         "eval_status": "PASSED",
+                     *         "failed_tool_calls": [],
+                     *         "passed_tool_calls": [
+                     *           "multiply"
+                     *         ]
+                     *       },
+                     *       "eval_input": {
+                     *         "expected_tool_calls": [
+                     *           "multiply"
+                     *         ]
+                     *       },
+                     *       "created_at": "2025-08-27T15:41:59Z",
+                     *       "updated_at": "2025-08-27T15:41:59Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["EvalSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Evaluation run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    update_eval_run: {
+        parameters: {
+            query?: {
+                /** @description The ID of the database to use */
+                db_id?: string | null;
+                /** @description Table to use for rename operation */
+                table?: string | null;
+            };
+            header?: never;
+            path: {
+                eval_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEvalRunRequest"];
+            };
+        };
+        responses: {
+            /** @description Evaluation run updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "a03fa2f4-900d-482d-afe0-470d4cd8d1f4",
+                     *       "agent_id": "basic-agent",
+                     *       "model_id": "gpt-4o",
+                     *       "model_provider": "OpenAI",
+                     *       "name": "Test ",
+                     *       "eval_type": "reliability",
+                     *       "eval_data": {
+                     *         "eval_status": "PASSED",
+                     *         "failed_tool_calls": [],
+                     *         "passed_tool_calls": [
+                     *           "multiply"
+                     *         ]
+                     *       },
+                     *       "eval_input": {
+                     *         "expected_tool_calls": [
+                     *           "multiply"
+                     *         ]
+                     *       },
+                     *       "created_at": "2025-08-27T15:41:59Z",
+                     *       "updated_at": "2025-08-27T15:41:59Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["EvalSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Evaluation run not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to update evaluation run */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_metrics: {
+        parameters: {
+            query?: {
+                /** @description Starting date for metrics range (YYYY-MM-DD format) */
+                starting_date?: string | null;
+                /** @description Ending date for metrics range (YYYY-MM-DD format) */
+                ending_date?: string | null;
+                /** @description Database ID to query metrics from */
+                db_id?: string | null;
+                /** @description The database table to use */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Metrics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "metrics": [
+                     *         {
+                     *           "id": "7bf39658-a00a-484c-8a28-67fd8a9ddb2a",
+                     *           "agent_runs_count": 5,
+                     *           "agent_sessions_count": 5,
+                     *           "team_runs_count": 0,
+                     *           "team_sessions_count": 0,
+                     *           "workflow_runs_count": 0,
+                     *           "workflow_sessions_count": 0,
+                     *           "users_count": 1,
+                     *           "token_metrics": {
+                     *             "input_tokens": 448,
+                     *             "output_tokens": 148,
+                     *             "total_tokens": 596,
+                     *             "audio_tokens": 0,
+                     *             "input_audio_tokens": 0,
+                     *             "output_audio_tokens": 0,
+                     *             "cached_tokens": 0,
+                     *             "cache_write_tokens": 0,
+                     *             "reasoning_tokens": 0
+                     *           },
+                     *           "model_metrics": [
+                     *             {
+                     *               "model_id": "gpt-4o",
+                     *               "model_provider": "OpenAI",
+                     *               "count": 5
+                     *             }
+                     *           ],
+                     *           "date": "2025-07-31T00:00:00Z",
+                     *           "created_at": "2025-07-31T12:38:52Z",
+                     *           "updated_at": "2025-07-31T12:49:01Z"
+                     *         }
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["MetricsResponse"];
+                };
+            };
+            /** @description Invalid date range parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to retrieve metrics */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    refresh_metrics: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for metrics calculation */
+                db_id?: string | null;
+                /** @description Table to use for metrics calculation */
+                table?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Metrics refreshed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": "e77c9531-818b-47a5-99cd-59fed61e5403",
+                     *         "agent_runs_count": 2,
+                     *         "agent_sessions_count": 2,
+                     *         "team_runs_count": 0,
+                     *         "team_sessions_count": 0,
+                     *         "workflow_runs_count": 0,
+                     *         "workflow_sessions_count": 0,
+                     *         "users_count": 1,
+                     *         "token_metrics": {
+                     *           "input_tokens": 256,
+                     *           "output_tokens": 441,
+                     *           "total_tokens": 697,
+                     *           "audio_total_tokens": 0,
+                     *           "audio_input_tokens": 0,
+                     *           "audio_output_tokens": 0,
+                     *           "cache_read_tokens": 0,
+                     *           "cache_write_tokens": 0,
+                     *           "reasoning_tokens": 0
+                     *         },
+                     *         "model_metrics": [
+                     *           {
+                     *             "model_id": "gpt-4o",
+                     *             "model_provider": "OpenAI",
+                     *             "count": 2
+                     *           }
+                     *         ],
+                     *         "date": "2025-08-12T00:00:00Z",
+                     *         "created_at": "2025-08-12T08:01:47Z",
+                     *         "updated_at": "2025-08-12T08:01:47Z"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["DayAggregatedMetrics"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to refresh metrics */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_content: {
+        parameters: {
+            query?: {
+                /** @description Number of content entries to return */
+                limit?: number | null;
+                /** @description Page number */
+                page?: number | null;
+                /** @description Field to sort by */
+                sort_by?: string | null;
+                /** @description Sort order (asc or desc) */
+                sort_order?: components["schemas"]["SortOrder"] | null;
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Content list retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "id": "3c2fc685-d451-4d47-b0c0-b9a544c672b7",
+                     *           "name": "example.pdf",
+                     *           "description": "",
+                     *           "type": "application/pdf",
+                     *           "size": "251261",
+                     *           "metadata": {},
+                     *           "access_count": 1,
+                     *           "status": "completed",
+                     *           "status_message": "",
+                     *           "created_at": "2025-09-08T15:22:53Z",
+                     *           "updated_at": "2025-09-08T15:22:54Z"
+                     *         }
+                     *       ],
+                     *       "meta": {
+                     *         "page": 1,
+                     *         "limit": 20,
+                     *         "total_pages": 1,
+                     *         "total_count": 2
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_ContentResponseSchema_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    upload_content: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for content storage */
+                db_id?: string | null;
+                /** @description Knowledge base ID to upload to */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_content"];
+            };
+        };
+        responses: {
+            /** @description Content upload accepted for processing */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "content-123",
+                     *       "name": "example-document.pdf",
+                     *       "description": "Sample document for processing",
+                     *       "metadata": {
+                     *         "category": "documentation",
+                     *         "priority": "high"
+                     *       },
+                     *       "status": "processing"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ContentResponseSchema"];
+                };
+            };
+            /** @description Invalid request - malformed metadata or missing content */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation error in form data */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_all_content: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete all content */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    upload_remote_content: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use for content storage */
+                db_id?: string | null;
+                /** @description Knowledge base ID to upload to */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_upload_remote_content"];
+            };
+        };
+        responses: {
+            /** @description Remote content upload accepted for processing */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "content-456",
+                     *       "name": "reports/q1-2024.pdf",
+                     *       "description": "Q1 Report from S3",
+                     *       "metadata": {
+                     *         "source": "s3-docs"
+                     *       },
+                     *       "status": "processing"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ContentResponseSchema"];
+                };
+            };
+            /** @description Invalid request - unknown config or missing path */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation error in request body */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_content_by_id: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path: {
+                content_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Content details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "3c2fc685-d451-4d47-b0c0-b9a544c672b7",
+                     *       "name": "example.pdf",
+                     *       "description": "",
+                     *       "type": "application/pdf",
+                     *       "size": "251261",
+                     *       "metadata": {},
+                     *       "access_count": 1,
+                     *       "status": "completed",
+                     *       "status_message": "",
+                     *       "created_at": "2025-09-08T15:22:53Z",
+                     *       "updated_at": "2025-09-08T15:22:54Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ContentResponseSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Content not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_content_by_id: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path: {
+                content_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentResponseSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Content not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to delete content */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    update_content: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description Content ID */
+                content_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_update_content"];
+            };
+        };
+        responses: {
+            /** @description Content updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "id": "3c2fc685-d451-4d47-b0c0-b9a544c672b7",
+                     *       "name": "example.pdf",
+                     *       "description": "",
+                     *       "type": "application/pdf",
+                     *       "size": "251261",
+                     *       "metadata": {},
+                     *       "access_count": 1,
+                     *       "status": "completed",
+                     *       "status_message": "",
+                     *       "created_at": "2025-09-08T15:22:53Z",
+                     *       "updated_at": "2025-09-08T15:22:54Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ContentResponseSchema"];
+                };
+            };
+            /** @description Invalid request - malformed metadata or invalid reader_id */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Content not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_content_status: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path: {
+                content_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Content status retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentStatusResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Content not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    search_knowledge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VectorSearchRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description Search results retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "id": "doc_123",
+                     *           "content": "Jordan Mitchell - Software Engineer with skills in JavaScript, React, Python",
+                     *           "name": "cv_1",
+                     *           "meta_data": {
+                     *             "page": 1,
+                     *             "chunk": 1
+                     *           },
+                     *           "usage": {
+                     *             "total_tokens": 14
+                     *           },
+                     *           "reranking_score": 0.95,
+                     *           "content_id": "content_456"
+                     *         }
+                     *       ],
+                     *       "meta": {
+                     *         "page": 1,
+                     *         "limit": 20,
+                     *         "total_pages": 2,
+                     *         "total_count": 35
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_VectorSearchResult_"];
+                };
+            };
+            /** @description Invalid search parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description No documents found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_knowledge_config: {
+        parameters: {
+            query?: {
+                /** @description Database ID to use */
+                db_id?: string | null;
+                /** @description Knowledge base ID to use */
+                knowledge_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Knowledge configuration retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "readers": {
+                     *         "website": {
+                     *           "id": "website",
+                     *           "name": "WebsiteReader",
+                     *           "description": "Reads website files",
+                     *           "chunkers": [
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker",
+                     *             "FixedSizeChunker"
+                     *           ]
+                     *         },
+                     *         "firecrawl": {
+                     *           "id": "firecrawl",
+                     *           "name": "FirecrawlReader",
+                     *           "description": "Reads firecrawl files",
+                     *           "chunkers": [
+                     *             "SemanticChunker",
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker"
+                     *           ]
+                     *         },
+                     *         "youtube": {
+                     *           "id": "youtube",
+                     *           "name": "YoutubeReader",
+                     *           "description": "Reads youtube files",
+                     *           "chunkers": [
+                     *             "RecursiveChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "SemanticChunker",
+                     *             "FixedSizeChunker"
+                     *           ]
+                     *         },
+                     *         "web_search": {
+                     *           "id": "web_search",
+                     *           "name": "WebSearchReader",
+                     *           "description": "Reads web_search files",
+                     *           "chunkers": [
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker",
+                     *             "FixedSizeChunker"
+                     *           ]
+                     *         },
+                     *         "arxiv": {
+                     *           "id": "arxiv",
+                     *           "name": "ArxivReader",
+                     *           "description": "Reads arxiv files",
+                     *           "chunkers": [
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker"
+                     *           ]
+                     *         },
+                     *         "csv": {
+                     *           "id": "csv",
+                     *           "name": "CsvReader",
+                     *           "description": "Reads csv files",
+                     *           "chunkers": [
+                     *             "RowChunker",
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker"
+                     *           ]
+                     *         },
+                     *         "docx": {
+                     *           "id": "docx",
+                     *           "name": "DocxReader",
+                     *           "description": "Reads docx files",
+                     *           "chunkers": [
+                     *             "DocumentChunker",
+                     *             "FixedSizeChunker",
+                     *             "SemanticChunker",
+                     *             "AgenticChunker",
+                     *             "RecursiveChunker"
+                     *           ]
+                     *         },
+                     *         "gcs": {
+                     *           "id": "gcs",
+                     *           "name": "GcsReader",
+                     *           "description": "Reads gcs files",
+                     *           "chunkers": [
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker"
+                     *           ]
+                     *         },
+                     *         "json": {
+                     *           "id": "json",
+                     *           "name": "JsonReader",
+                     *           "description": "Reads json files",
+                     *           "chunkers": [
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker"
+                     *           ]
+                     *         },
+                     *         "markdown": {
+                     *           "id": "markdown",
+                     *           "name": "MarkdownReader",
+                     *           "description": "Reads markdown files",
+                     *           "chunkers": [
+                     *             "MarkdownChunker",
+                     *             "DocumentChunker",
+                     *             "AgenticChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker",
+                     *             "FixedSizeChunker"
+                     *           ]
+                     *         },
+                     *         "pdf": {
+                     *           "id": "pdf",
+                     *           "name": "PdfReader",
+                     *           "description": "Reads pdf files",
+                     *           "chunkers": [
+                     *             "DocumentChunker",
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "SemanticChunker",
+                     *             "RecursiveChunker"
+                     *           ]
+                     *         },
+                     *         "text": {
+                     *           "id": "text",
+                     *           "name": "TextReader",
+                     *           "description": "Reads text files",
+                     *           "chunkers": [
+                     *             "CodeChunker",
+                     *             "FixedSizeChunker",
+                     *             "AgenticChunker",
+                     *             "DocumentChunker",
+                     *             "RecursiveChunker",
+                     *             "SemanticChunker"
+                     *           ]
+                     *         }
+                     *       },
+                     *       "readersForType": {
+                     *         "url": [
+                     *           "url",
+                     *           "website",
+                     *           "firecrawl",
+                     *           "youtube",
+                     *           "web_search",
+                     *           "gcs"
+                     *         ],
+                     *         "youtube": [
+                     *           "youtube"
+                     *         ],
+                     *         "text": [
+                     *           "web_search"
+                     *         ],
+                     *         "topic": [
+                     *           "arxiv"
+                     *         ],
+                     *         "file": [
+                     *           "csv",
+                     *           "gcs"
+                     *         ],
+                     *         ".csv": [
+                     *           "csv",
+                     *           "field_labeled_csv"
+                     *         ],
+                     *         ".xlsx": [
+                     *           "excel"
+                     *         ],
+                     *         ".xls": [
+                     *           "excel"
+                     *         ],
+                     *         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+                     *           "excel"
+                     *         ],
+                     *         "application/vnd.ms-excel": [
+                     *           "excel"
+                     *         ],
+                     *         ".docx": [
+                     *           "docx"
+                     *         ],
+                     *         ".doc": [
+                     *           "docx"
+                     *         ],
+                     *         ".json": [
+                     *           "json"
+                     *         ],
+                     *         ".md": [
+                     *           "markdown"
+                     *         ],
+                     *         ".pdf": [
+                     *           "pdf"
+                     *         ],
+                     *         ".txt": [
+                     *           "text"
+                     *         ]
+                     *       },
+                     *       "chunkers": {
+                     *         "AgenticChunker": {
+                     *           "key": "AgenticChunker",
+                     *           "name": "AgenticChunker",
+                     *           "description": "Chunking strategy that uses an LLM to determine natural breakpoints in the text",
+                     *           "metadata": {
+                     *             "chunk_size": 5000
+                     *           }
+                     *         },
+                     *         "CodeChunker": {
+                     *           "key": "CodeChunker",
+                     *           "name": "CodeChunker",
+                     *           "description": "The CodeChunker splits code into chunks based on its structure, leveraging Abstract Syntax Trees (ASTs) to create contextually relevant segments",
+                     *           "metadata": {
+                     *             "chunk_size": 2048
+                     *           }
+                     *         },
+                     *         "DocumentChunker": {
+                     *           "key": "DocumentChunker",
+                     *           "name": "DocumentChunker",
+                     *           "description": "A chunking strategy that splits text based on document structure like paragraphs and sections",
+                     *           "metadata": {
+                     *             "chunk_size": 5000,
+                     *             "chunk_overlap": 0
+                     *           }
+                     *         },
+                     *         "FixedSizeChunker": {
+                     *           "key": "FixedSizeChunker",
+                     *           "name": "FixedSizeChunker",
+                     *           "description": "Chunking strategy that splits text into fixed-size chunks with optional overlap",
+                     *           "metadata": {
+                     *             "chunk_size": 5000,
+                     *             "chunk_overlap": 0
+                     *           }
+                     *         },
+                     *         "MarkdownChunker": {
+                     *           "key": "MarkdownChunker",
+                     *           "name": "MarkdownChunker",
+                     *           "description": "A chunking strategy that splits markdown based on structure like headers, paragraphs and sections",
+                     *           "metadata": {
+                     *             "chunk_size": 5000,
+                     *             "chunk_overlap": 0
+                     *           }
+                     *         },
+                     *         "RecursiveChunker": {
+                     *           "key": "RecursiveChunker",
+                     *           "name": "RecursiveChunker",
+                     *           "description": "Chunking strategy that recursively splits text into chunks by finding natural break points",
+                     *           "metadata": {
+                     *             "chunk_size": 5000,
+                     *             "chunk_overlap": 0
+                     *           }
+                     *         },
+                     *         "RowChunker": {
+                     *           "key": "RowChunker",
+                     *           "name": "RowChunker",
+                     *           "description": "RowChunking chunking strategy",
+                     *           "metadata": {}
+                     *         },
+                     *         "SemanticChunker": {
+                     *           "key": "SemanticChunker",
+                     *           "name": "SemanticChunker",
+                     *           "description": "Chunking strategy that splits text into semantic chunks using chonkie",
+                     *           "metadata": {
+                     *             "chunk_size": 5000
+                     *           }
+                     *         }
+                     *       },
+                     *       "vector_dbs": [
+                     *         {
+                     *           "id": "vector_db_1",
+                     *           "name": "Vector DB 1",
+                     *           "description": "Vector DB 1 description",
+                     *           "search_types": [
+                     *             "vector",
+                     *             "keyword",
+                     *             "hybrid"
+                     *           ]
+                     *         }
+                     *       ],
+                     *       "filters": [
+                     *         "filter_tag_1",
+                     *         "filter_tag2"
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ConfigResponseSchema"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_content_sources: {
+        parameters: {
+            query?: {
+                /** @description The ID of the database to use */
+                db_id?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description ID of the knowledge base */
+                knowledge_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Content sources retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example [
+                     *       {
+                     *         "id": "company-s3",
+                     *         "name": "Company Documents",
+                     *         "type": "s3",
+                     *         "prefix": "documents/"
+                     *       }
+                     *     ]
+                     */
+                    "application/json": components["schemas"]["RemoteContentSourceSchema"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Knowledge base not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_source_files: {
+        parameters: {
+            query?: {
+                /** @description Path prefix to filter files */
+                prefix?: string | null;
+                /** @description Number of files per page */
+                limit?: number;
+                /** @description Page number (1-indexed) */
+                page?: number;
+                /** @description Folder delimiter (enables folder grouping) */
+                delimiter?: string;
+                /** @description The ID of the database to use */
+                db_id?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description ID of the knowledge base */
+                knowledge_id: string;
+                /** @description ID of the content source */
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Files listed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "source_id": "company-s3",
+                     *       "source_name": "Company Documents",
+                     *       "prefix": "reports/",
+                     *       "folders": [
+                     *         {
+                     *           "prefix": "reports/2024/",
+                     *           "name": "2024",
+                     *           "is_empty": false
+                     *         }
+                     *       ],
+                     *       "files": [
+                     *         {
+                     *           "key": "reports/annual-summary.pdf",
+                     *           "name": "annual-summary.pdf",
+                     *           "size": 102400,
+                     *           "last_modified": "2024-01-15T10:30:00Z",
+                     *           "content_type": "application/pdf"
+                     *         }
+                     *       ],
+                     *       "meta": {
+                     *         "page": 1,
+                     *         "limit": 100,
+                     *         "total_pages": 1,
+                     *         "total_count": 1
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["SourceFilesResponseSchema"];
+                };
+            };
+            /** @description Unsupported source type */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Knowledge base or content source not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_traces: {
+        parameters: {
+            query?: {
+                /** @description Filter by run ID */
+                run_id?: string | null;
+                /** @description Filter by session ID */
+                session_id?: string | null;
+                /** @description Filter by user ID */
+                user_id?: string | null;
+                /** @description Filter by agent ID */
+                agent_id?: string | null;
+                /** @description Filter by team ID */
+                team_id?: string | null;
+                /** @description Filter by workflow ID */
+                workflow_id?: string | null;
+                /** @description Filter by status (OK, ERROR) */
+                status?: string | null;
+                /** @description Filter traces starting after this time (ISO 8601 format with timezone, e.g., '2025-11-19T10:00:00Z' or '2025-11-19T15:30:00+05:30'). Times are converted to UTC for comparison. */
+                start_time?: string | null;
+                /** @description Filter traces ending before this time (ISO 8601 format with timezone, e.g., '2025-11-19T11:00:00Z' or '2025-11-19T16:30:00+05:30'). Times are converted to UTC for comparison. */
+                end_time?: string | null;
+                /** @description Page number (1-indexed) */
+                page?: number;
+                /** @description Number of traces per page */
+                limit?: number;
+                /** @description Database ID to query traces from */
+                db_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of traces retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "trace_id": "a1b2c3d4",
+                     *           "name": "Stock_Price_Agent.run",
+                     *           "status": "OK",
+                     *           "duration": "1.2s",
+                     *           "start_time": "2025-11-19T10:30:00.000000+00:00",
+                     *           "total_spans": 4,
+                     *           "error_count": 0,
+                     *           "input": "What is the stock price of NVDA?",
+                     *           "run_id": "run123",
+                     *           "session_id": "session456",
+                     *           "user_id": "user789",
+                     *           "agent_id": "agent_stock",
+                     *           "created_at": "2025-11-19T10:30:00+00:00"
+                     *         }
+                     *       ],
+                     *       "meta": {
+                     *         "page": 1,
+                     *         "limit": 20,
+                     *         "total_pages": 5,
+                     *         "total_count": 95
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_TraceSummary_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_traces_filter_schema: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FilterSchemaResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_trace: {
+        parameters: {
+            query?: {
+                /** @description Optional: Span ID to retrieve specific span */
+                span_id?: string | null;
+                /** @description Optional: Run ID to retrieve trace for */
+                run_id?: string | null;
+                /** @description Database ID to query trace from */
+                db_id?: string | null;
+            };
+            header?: never;
+            path: {
+                trace_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Trace or span detail retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TraceDetail"] | components["schemas"]["TraceNode"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Trace or span not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_trace_stats: {
+        parameters: {
+            query?: {
+                /** @description Filter by user ID */
+                user_id?: string | null;
+                /** @description Filter by agent ID */
+                agent_id?: string | null;
+                /** @description Filter by team ID */
+                team_id?: string | null;
+                /** @description Filter by workflow ID */
+                workflow_id?: string | null;
+                /** @description Filter sessions with traces created after this time (ISO 8601 format with timezone, e.g., '2025-11-19T10:00:00Z' or '2025-11-19T15:30:00+05:30'). Times are converted to UTC for comparison. */
+                start_time?: string | null;
+                /** @description Filter sessions with traces created before this time (ISO 8601 format with timezone, e.g., '2025-11-19T11:00:00Z' or '2025-11-19T16:30:00+05:30'). Times are converted to UTC for comparison. */
+                end_time?: string | null;
+                /** @description Page number (1-indexed) */
+                page?: number;
+                /** @description Number of sessions per page */
+                limit?: number;
+                /** @description Database ID to query statistics from */
+                db_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Trace statistics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "data": [
+                     *         {
+                     *           "session_id": "37029bc6-1794-4ba8-a629-1efedc53dcad",
+                     *           "user_id": "kaustubh@agno.com",
+                     *           "agent_id": "hackernews-agent",
+                     *           "total_traces": 5,
+                     *           "first_trace_at": "2025-11-19T10:15:16+00:00",
+                     *           "last_trace_at": "2025-11-19T10:21:30+00:00"
+                     *         }
+                     *       ],
+                     *       "meta": {
+                     *         "page": 1,
+                     *         "limit": 20,
+                     *         "total_pages": 3,
+                     *         "total_count": 45
+                     *       }
+                     *     }
+                     */
+                    "application/json": components["schemas"]["PaginatedResponse_TraceSessionStats_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to retrieve statistics */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    search_traces: {
+        parameters: {
+            query?: {
+                /** @description Database ID to query traces from */
+                db_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TraceSearchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_TraceDetail_"] | components["schemas"]["PaginatedResponse_TraceSessionStats_"];
+                };
+            };
+            /** @description Invalid filter expression */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    migrate_all_databases: {
+        parameters: {
+            query?: {
+                target_version?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All databases migrated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "message": "All databases migrated successfully to version 3.0.0"
+                     *     }
+                     */
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to migrate databases */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    migrate_database: {
+        parameters: {
+            query?: {
+                target_version?: string | null;
+            };
+            header?: never;
+            path: {
+                db_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Database migrated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "message": "Database migrated successfully to version 3.0.0"
+                     *     }
+                     */
+                    "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Database not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Failed to migrate database */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_components: {
+        parameters: {
+            query?: {
+                /** @description Filter by type: agent, team, workflow */
+                component_type?: components["schemas"]["ComponentType"] | null;
+                /** @description Page number */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_ComponentResponse_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_component: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ComponentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_component: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_component: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    update_component: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ComponentUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_configs: {
+        parameters: {
+            query?: {
+                /** @description Include full config blob */
+                include_config?: boolean;
+            };
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentConfigResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    create_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfigCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentConfigResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_config_version: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+                /** @description Version number */
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentConfigResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+                /** @description Version number */
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    update_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+                /** @description Version number */
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfigUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentConfigResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    get_current_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentConfigResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    set_current_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Component ID */
+                component_id: string;
+                /** @description Version number */
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ComponentResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
+    list_schedules_schedules_get: {
+        parameters: {
+            query?: {
+                enabled?: boolean | null;
+                limit?: number;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_ScheduleResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_schedule_schedules_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_schedule_schedules__schedule_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_schedule_schedules__schedule_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_schedule_schedules__schedule_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    enable_schedule_schedules__schedule_id__enable_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleStateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    disable_schedule_schedules__schedule_id__disable_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleStateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trigger_schedule_schedules__schedule_id__trigger_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_schedule_runs_schedules__schedule_id__runs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                page?: number;
+            };
+            header?: never;
+            path: {
+                schedule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_ScheduleRunResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_schedule_run_schedules__schedule_id__runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schedule_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_approvals_approvals_get: {
+        parameters: {
+            query?: {
+                status?: ("pending" | "approved" | "rejected" | "expired" | "cancelled") | null;
+                source_type?: string | null;
+                approval_type?: ("required" | "audit") | null;
+                pause_type?: string | null;
+                agent_id?: string | null;
+                team_id?: string | null;
+                workflow_id?: string | null;
+                user_id?: string | null;
+                schedule_id?: string | null;
+                run_id?: string | null;
+                limit?: number;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_ApprovalResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_approval_count_approvals_count_get: {
+        parameters: {
+            query?: {
+                user_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApprovalCountResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_approval_status_approvals__approval_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApprovalStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_approval_approvals__approval_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApprovalResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_approval_approvals__approval_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_approval_approvals__approval_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                approval_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApprovalResolve"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApprovalResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_registry: {
+        parameters: {
+            query?: {
+                /** @description Filter by resource type */
+                resource_type?: components["schemas"]["RegistryResourceType"] | null;
+                /** @description Filter by name (partial match) */
+                name?: string | null;
+                /** @description Page number */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_RegistryContentResponse_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BadRequestResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnauthenticatedResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotFoundResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalServerErrorResponse"];
+                };
+            };
+        };
+    };
 }

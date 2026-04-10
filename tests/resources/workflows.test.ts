@@ -609,4 +609,39 @@ describe("WorkflowsResource", () => {
       expect(formData.getAll("audio").length).toBe(1);
     });
   });
+
+  describe("getRun()", () => {
+    it("calls GET /workflows/{workflowId}/runs/{runId}", async () => {
+      const mockRun = { run_id: "run-1", status: "completed" };
+      requestSpy.mockResolvedValueOnce(mockRun);
+
+      const result = await resource.getRun("workflow-1", "run-1");
+
+      expect(result).toEqual(mockRun);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/workflows/workflow-1/runs/run-1",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("URL-encodes workflowId and runId", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.getRun("workflow/special", "run/123");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/workflows/workflow%2Fspecial/runs/run%2F123",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.getRun("workflow-1", "run-1"),
+      ).rejects.toThrow("fail");
+    });
+  });
 });

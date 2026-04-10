@@ -5,7 +5,7 @@
  */
 
 // Version
-export const VERSION = "0.3.0";
+export const VERSION = "0.4.0";
 
 // Client
 export { AgentOSClient } from "./client";
@@ -23,17 +23,105 @@ export { AgentsResource } from "./resources/agents";
 export type {
   AgentRunResult,
   ContinueOptions,
+  ListAgentRunsOptions,
   RunOptions,
   StreamRunOptions,
 } from "./resources/agents";
 
+export { ApprovalsResource } from "./resources/approvals";
+export type {
+  CountApprovalsOptions,
+  ListApprovalsOptions,
+  ResolveApprovalOptions,
+} from "./resources/approvals";
+
+export { AuthResource } from "./resources/auth";
+export type {
+  CreateConnectionOptions,
+  CreateKeyOptions,
+  UpdateConnectionOptions,
+} from "./resources/auth";
+
+export { ComponentsResource } from "./resources/components";
+export type {
+  CreateComponentOptions,
+  CreateConfigOptions,
+  ListComponentsOptions,
+  UpdateComponentOptions,
+  UpdateConfigOptions,
+} from "./resources/components";
+
+export { DatabaseResource } from "./resources/database";
+export type { MigrateOptions } from "./resources/database";
+
+export { EvalsResource } from "./resources/evals";
+export type {
+  CreateEvalOptions,
+  DeleteEvalsOptions,
+  ListEvalsOptions,
+  UpdateEvalOptions,
+} from "./resources/evals";
+
+export { KnowledgeResource } from "./resources/knowledge";
+export type {
+  ListKnowledgeOptions,
+  ListSourceFilesOptions,
+  ListSourcesOptions,
+  SearchOptions,
+  UpdateContentOptions,
+  UploadOptions,
+  UploadRemoteOptions,
+} from "./resources/knowledge";
+
+export { MemoriesResource } from "./resources/memories";
+export type {
+  CreateMemoryOptions,
+  DeleteAllMemoriesOptions,
+  GetMemoryStatsOptions,
+  GetTopicsOptions,
+  ListMemoriesOptions,
+  OptimizeMemoriesOptions,
+  UpdateMemoryOptions,
+} from "./resources/memories";
+
+export { MetricsResource } from "./resources/metrics";
+export type { GetMetricsOptions } from "./resources/metrics";
+
+export { ModelsResource } from "./resources/models";
+
+export { RegistryResource } from "./resources/registry";
+export type { ListRegistryOptions } from "./resources/registry";
+
+export { SchedulesResource } from "./resources/schedules";
+export type {
+  CreateScheduleOptions,
+  ListSchedulesOptions,
+  UpdateScheduleOptions,
+} from "./resources/schedules";
+
+export { SessionsResource } from "./resources/sessions";
+export type {
+  CreateSessionOptions,
+  DeleteAllSessionsOptions,
+  ListSessionsOptions,
+  UpdateSessionOptions,
+} from "./resources/sessions";
+
 export { TeamsResource } from "./resources/teams";
 export type {
+  ListTeamRunsOptions,
   TeamContinueOptions,
   TeamRunOptions,
   TeamRunResult,
   TeamStreamRunOptions,
 } from "./resources/teams";
+
+export { TracesResource } from "./resources/traces";
+export type {
+  GetTraceStatsOptions,
+  ListTracesOptions,
+  SearchTracesOptions,
+} from "./resources/traces";
 
 export { WorkflowsResource } from "./resources/workflows";
 export type {
@@ -42,33 +130,6 @@ export type {
   WorkflowRunResult,
   WorkflowStreamRunOptions,
 } from "./resources/workflows";
-
-export { SessionsResource } from "./resources/sessions";
-export type {
-  ListSessionsOptions,
-  CreateSessionOptions,
-} from "./resources/sessions";
-
-export { MemoriesResource } from "./resources/memories";
-export type {
-  ListMemoriesOptions,
-  CreateMemoryOptions,
-  UpdateMemoryOptions,
-} from "./resources/memories";
-
-export { TracesResource } from "./resources/traces";
-export type { ListTracesOptions } from "./resources/traces";
-
-export { MetricsResource } from "./resources/metrics";
-export type { GetMetricsOptions } from "./resources/metrics";
-
-export { KnowledgeResource } from "./resources/knowledge";
-export type {
-  UploadOptions,
-  ListKnowledgeOptions,
-  SearchOptions,
-  UpdateContentOptions,
-} from "./resources/knowledge";
 
 // Generated types (re-export useful types)
 export type { components, paths } from "./generated/types";

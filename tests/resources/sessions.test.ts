@@ -492,4 +492,181 @@ describe("SessionsResource", () => {
       expect(Array.isArray(result)).toBe(true);
     });
   });
+
+  describe("update()", () => {
+    it("sends PATCH /sessions/{id} with JSON body", async () => {
+      const mockSession = {
+        session_id: "session-123",
+        session_name: "Updated",
+      };
+      requestSpy.mockResolvedValueOnce(mockSession);
+
+      const result = await resource.update("session-123", {
+        sessionName: "Updated",
+      });
+
+      expect(result).toEqual(mockSession);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "PATCH",
+        "/sessions/session-123",
+        {
+          body: JSON.stringify({ session_name: "Updated" }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("includes query params when provided", async () => {
+      requestSpy.mockResolvedValueOnce({ session_id: "session-123" });
+
+      await resource.update("session-123", {
+        type: "agent",
+        userId: "user-1",
+        dbId: "db-1",
+        table: "custom_table",
+        sessionName: "New Name",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "PATCH",
+        "/sessions/session-123?type=agent&user_id=user-1&db_id=db-1&table=custom_table",
+        {
+          body: JSON.stringify({ session_name: "New Name" }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("supports partial update with metadata and state", async () => {
+      requestSpy.mockResolvedValueOnce({ session_id: "session-123" });
+
+      await resource.update("session-123", {
+        sessionState: { step: 2 },
+        metadata: { key: "value" },
+        summary: "A summary",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "PATCH",
+        "/sessions/session-123",
+        {
+          body: JSON.stringify({
+            session_state: { step: 2 },
+            metadata: { key: "value" },
+            summary: "A summary",
+          }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("URL-encodes sessionId", async () => {
+      requestSpy.mockResolvedValueOnce({ session_id: "session/special" });
+
+      await resource.update("session/special", { sessionName: "test" });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "PATCH",
+        "/sessions/session%2Fspecial",
+        expect.any(Object),
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.update("session-123", { sessionName: "x" }),
+      ).rejects.toThrow("fail");
+    });
+  });
+
+  describe("deleteAll()", () => {
+    it("sends DELETE /sessions with JSON body containing session_ids and session_types", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.deleteAll({
+        sessionIds: ["s-1", "s-2"],
+        sessionTypes: ["agent", "team"],
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith("DELETE", "/sessions", {
+        body: JSON.stringify({
+          session_ids: ["s-1", "s-2"],
+          session_types: ["agent", "team"],
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    it("includes query params when provided", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.deleteAll({
+        sessionIds: ["s-1"],
+        sessionTypes: ["agent"],
+        userId: "user-1",
+        dbId: "db-1",
+        table: "custom_table",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "DELETE",
+        "/sessions?user_id=user-1&db_id=db-1&table=custom_table",
+        {
+          body: JSON.stringify({
+            session_ids: ["s-1"],
+            session_types: ["agent"],
+          }),
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.deleteAll({
+          sessionIds: ["s-1"],
+          sessionTypes: ["agent"],
+        }),
+      ).rejects.toThrow("fail");
+    });
+  });
+
+  describe("getRun()", () => {
+    it("calls GET /sessions/{sessionId}/runs/{runId}", async () => {
+      const mockRun = { run_id: "run-1", status: "completed" };
+      requestSpy.mockResolvedValueOnce(mockRun);
+
+      const result = await resource.getRun("session-123", "run-1");
+
+      expect(result).toEqual(mockRun);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/sessions/session-123/runs/run-1",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("URL-encodes sessionId and runId", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.getRun("session/special", "run/123");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/sessions/session%2Fspecial/runs/run%2F123",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.getRun("session-123", "run-1"),
+      ).rejects.toThrow("fail");
+    });
+  });
 });

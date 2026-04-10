@@ -27,6 +27,46 @@ export interface ListTracesOptions {
 }
 
 /**
+ * Options for getting trace statistics
+ */
+export interface GetTraceStatsOptions {
+  /** User ID filter */
+  userId?: string;
+  /** Agent ID filter */
+  agentId?: string;
+  /** Team ID filter */
+  teamId?: string;
+  /** Workflow ID filter */
+  workflowId?: string;
+  /** Start time filter */
+  startTime?: string;
+  /** End time filter */
+  endTime?: string;
+  /** Page number */
+  page?: number;
+  /** Results per page */
+  limit?: number;
+  /** Database ID */
+  dbId?: string;
+}
+
+/**
+ * Options for searching traces
+ */
+export interface SearchTracesOptions {
+  /** Filter expression */
+  filter?: Record<string, unknown>;
+  /** Group by field */
+  groupBy?: string;
+  /** Page number */
+  page?: number;
+  /** Results per page */
+  limit?: number;
+  /** Database ID */
+  dbId?: string;
+}
+
+/**
  * Resource class for trace operations
  *
  * Provides read-only access to trace data for monitoring and debugging.
@@ -118,5 +158,94 @@ export class TracesResource {
       "GET",
       `/traces/${encodeURIComponent(traceId)}`,
     );
+  }
+
+  /**
+   * Get trace session statistics
+   *
+   * @param options - Optional filtering and pagination options
+   * @returns Trace statistics
+   *
+   * @example
+   * ```typescript
+   * const stats = await client.traces.getStats({
+   *   agentId: 'agent-123',
+   *   startTime: '2025-01-01T00:00:00Z',
+   * });
+   * ```
+   */
+  async getStats(options?: GetTraceStatsOptions): Promise<unknown> {
+    const params = new URLSearchParams();
+
+    if (options?.userId) params.append("user_id", options.userId);
+    if (options?.agentId) params.append("agent_id", options.agentId);
+    if (options?.teamId) params.append("team_id", options.teamId);
+    if (options?.workflowId) params.append("workflow_id", options.workflowId);
+    if (options?.startTime) params.append("start_time", options.startTime);
+    if (options?.endTime) params.append("end_time", options.endTime);
+    if (options?.page !== undefined)
+      params.append("page", String(options.page));
+    if (options?.limit !== undefined)
+      params.append("limit", String(options.limit));
+    if (options?.dbId) params.append("db_id", options.dbId);
+
+    const queryString = params.toString();
+    const path = queryString
+      ? `/trace_session_stats?${queryString}`
+      : "/trace_session_stats";
+
+    return this.client.request<unknown>("GET", path);
+  }
+
+  /**
+   * Search traces with filters
+   *
+   * @param options - Search options with filter expression and pagination
+   * @returns Search results
+   *
+   * @example
+   * ```typescript
+   * const results = await client.traces.search({
+   *   filter: { status: 'error' },
+   *   groupBy: 'agent_id',
+   *   limit: 50,
+   * });
+   * ```
+   */
+  async search(options: SearchTracesOptions): Promise<unknown> {
+    const params = new URLSearchParams();
+    if (options.dbId) params.append("db_id", options.dbId);
+
+    const body: Record<string, unknown> = {};
+    if (options.filter) body.filter = options.filter;
+    if (options.groupBy) body.group_by = options.groupBy;
+    if (options.page !== undefined) body.page = options.page;
+    if (options.limit !== undefined) body.limit = options.limit;
+
+    const queryString = params.toString();
+    const path = queryString
+      ? `/traces/search?${queryString}`
+      : "/traces/search";
+
+    return this.client.request<unknown>("POST", path, {
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  /**
+   * Get the filter schema for trace searches
+   *
+   * Returns the available filter fields and operators for use with search().
+   *
+   * @returns Filter schema definition
+   *
+   * @example
+   * ```typescript
+   * const schema = await client.traces.getFilterSchema();
+   * ```
+   */
+  async getFilterSchema(): Promise<unknown> {
+    return this.client.request<unknown>("GET", "/traces/filter-schema");
   }
 }

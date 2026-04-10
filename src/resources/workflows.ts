@@ -314,4 +314,24 @@ export class WorkflowsResource {
       `/workflows/${encodeURIComponent(workflowId)}/runs/${encodeURIComponent(runId)}/cancel`,
     );
   }
+
+  /**
+   * Get a specific run for a workflow
+   *
+   * @param workflowId - The unique identifier for the workflow
+   * @param runId - The unique identifier for the run
+   * @returns The run result
+   *
+   * @example
+   * ```typescript
+   * const run = await client.workflows.getRun('workflow-id', 'run-id');
+   * console.log(run);
+   * ```
+   */
+  async getRun(workflowId: string, runId: string): Promise<unknown> {
+    return this.client.request<unknown>(
+      "GET",
+      `/workflows/${encodeURIComponent(workflowId)}/runs/${encodeURIComponent(runId)}`,
+    );
+  }
 }

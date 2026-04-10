@@ -103,6 +103,58 @@ export interface UpdateContentOptions {
 }
 
 /**
+ * Options for uploading remote content to knowledge base
+ */
+export interface UploadRemoteOptions {
+  /** Remote content config ID */
+  configId: string;
+  /** Path to remote content */
+  path: string;
+  /** Content name */
+  name?: string;
+  /** Content description */
+  description?: string;
+  /** JSON metadata */
+  metadata?: Record<string, unknown>;
+  /** Reader ID for processing */
+  readerId?: string;
+  /** Chunking strategy */
+  chunker?: string;
+  /** Chunk size */
+  chunkSize?: number;
+  /** Chunk overlap */
+  chunkOverlap?: number;
+  /** Database ID */
+  dbId?: string;
+  /** Knowledge base ID */
+  knowledgeId?: string;
+}
+
+/**
+ * Options for listing knowledge sources
+ */
+export interface ListSourcesOptions {
+  /** Database ID */
+  dbId?: string;
+}
+
+/**
+ * Options for listing source files
+ */
+export interface ListSourceFilesOptions {
+  /** Prefix filter */
+  prefix?: string;
+  /** Results per page */
+  limit?: number;
+  /** Page number */
+  page?: number;
+  /** Delimiter for path hierarchy */
+  delimiter?: string;
+  /** Database ID */
+  dbId?: string;
+}
+
+/**
  * Resource class for knowledge base operations
  *
  * Provides methods to:
@@ -350,5 +402,116 @@ export class KnowledgeResource {
         headers: { "Content-Type": "application/json" },
       },
     );
+  }
+
+  /**
+   * Upload remote content to knowledge base
+   *
+   * Submits remote content for processing via a configured remote content provider.
+   * Content is processed asynchronously - use getStatus() to check progress.
+   *
+   * @param options - Remote upload options (configId and path required)
+   * @returns The created content record
+   *
+   * @example
+   * ```typescript
+   * const content = await client.knowledge.uploadRemote({
+   *   configId: 'remote-config-1',
+   *   path: '/data/documents/report.pdf',
+   *   name: 'Quarterly Report',
+   * });
+   * ```
+   */
+  async uploadRemote(options: UploadRemoteOptions): Promise<ContentResponse> {
+    const formData = new FormData();
+
+    formData.append("config_id", options.configId);
+    formData.append("path", options.path);
+    if (options.name) formData.append("name", options.name);
+    if (options.description)
+      formData.append("description", options.description);
+    if (options.metadata)
+      formData.append("metadata", JSON.stringify(options.metadata));
+    if (options.readerId) formData.append("reader_id", options.readerId);
+    if (options.chunker) formData.append("chunker", options.chunker);
+    if (options.chunkSize !== undefined)
+      formData.append("chunk_size", String(options.chunkSize));
+    if (options.chunkOverlap !== undefined)
+      formData.append("chunk_overlap", String(options.chunkOverlap));
+
+    const params = new URLSearchParams();
+    if (options.dbId) params.append("db_id", options.dbId);
+    if (options.knowledgeId) params.append("knowledge_id", options.knowledgeId);
+    const query = params.toString();
+    const path = query
+      ? `/knowledge/remote-content?${query}`
+      : "/knowledge/remote-content";
+
+    return this.client.request<ContentResponse>("POST", path, {
+      body: formData,
+    });
+  }
+
+  /**
+   * List sources for a knowledge base
+   *
+   * @param knowledgeId - Knowledge base identifier
+   * @param options - Optional filtering options
+   * @returns List of sources
+   *
+   * @example
+   * ```typescript
+   * const sources = await client.knowledge.listSources('kb-123');
+   * ```
+   */
+  async listSources(
+    knowledgeId: string,
+    options?: ListSourcesOptions,
+  ): Promise<unknown> {
+    const params = new URLSearchParams();
+    if (options?.dbId) params.append("db_id", options.dbId);
+
+    const query = params.toString();
+    const basePath = `/knowledge/${encodeURIComponent(knowledgeId)}/sources`;
+    const path = query ? `${basePath}?${query}` : basePath;
+
+    return this.client.request<unknown>("GET", path);
+  }
+
+  /**
+   * List files for a knowledge source
+   *
+   * @param knowledgeId - Knowledge base identifier
+   * @param sourceId - Source identifier
+   * @param options - Optional filtering and pagination options
+   * @returns List of source files
+   *
+   * @example
+   * ```typescript
+   * const files = await client.knowledge.listSourceFiles('kb-123', 'src-456', {
+   *   prefix: 'reports/',
+   *   limit: 50,
+   * });
+   * ```
+   */
+  async listSourceFiles(
+    knowledgeId: string,
+    sourceId: string,
+    options?: ListSourceFilesOptions,
+  ): Promise<unknown> {
+    const params = new URLSearchParams();
+    if (options?.prefix) params.append("prefix", options.prefix);
+    if (options?.limit !== undefined)
+      params.append("limit", String(options.limit));
+    if (options?.page !== undefined)
+      params.append("page", String(options.page));
+    if (options?.delimiter) params.append("delimiter", options.delimiter);
+    if (options?.dbId) params.append("db_id", options.dbId);
+
+    const query = params.toString();
+    const basePath = `/knowledge/${encodeURIComponent(knowledgeId)}/sources/${encodeURIComponent(sourceId)}/files`;
+    const path = query ? `${basePath}?${query}` : basePath;
+
+    return this.client.request<unknown>("GET", path);
   }
 }

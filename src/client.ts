@@ -2,9 +2,17 @@ import { createErrorFromResponse } from "./errors";
 import { requestWithRetry } from "./http";
 import { VERSION } from "./index";
 import { AgentsResource } from "./resources/agents";
+import { ApprovalsResource } from "./resources/approvals";
+import { AuthResource } from "./resources/auth";
+import { ComponentsResource } from "./resources/components";
+import { DatabaseResource } from "./resources/database";
+import { EvalsResource } from "./resources/evals";
 import { KnowledgeResource } from "./resources/knowledge";
 import { MemoriesResource } from "./resources/memories";
 import { MetricsResource } from "./resources/metrics";
+import { ModelsResource } from "./resources/models";
+import { RegistryResource } from "./resources/registry";
+import { SchedulesResource } from "./resources/schedules";
 import { SessionsResource } from "./resources/sessions";
 import { TeamsResource } from "./resources/teams";
 import { TracesResource } from "./resources/traces";
@@ -33,13 +41,21 @@ import type {
 export class AgentOSClient {
   readonly version = VERSION;
   readonly agents: AgentsResource;
-  readonly teams: TeamsResource;
-  readonly workflows: WorkflowsResource;
-  readonly sessions: SessionsResource;
-  readonly memories: MemoriesResource;
-  readonly traces: TracesResource;
-  readonly metrics: MetricsResource;
+  readonly approvals: ApprovalsResource;
+  readonly auth: AuthResource;
+  readonly components: ComponentsResource;
+  readonly database: DatabaseResource;
+  readonly evals: EvalsResource;
   readonly knowledge: KnowledgeResource;
+  readonly memories: MemoriesResource;
+  readonly metrics: MetricsResource;
+  readonly models: ModelsResource;
+  readonly registry: RegistryResource;
+  readonly schedules: SchedulesResource;
+  readonly sessions: SessionsResource;
+  readonly teams: TeamsResource;
+  readonly traces: TracesResource;
+  readonly workflows: WorkflowsResource;
 
   private readonly baseUrl: string;
   private readonly apiKey?: string;
@@ -65,13 +81,21 @@ export class AgentOSClient {
 
     // Initialize resource namespaces - pass client instance
     this.agents = new AgentsResource(this);
-    this.teams = new TeamsResource(this);
-    this.workflows = new WorkflowsResource(this);
-    this.sessions = new SessionsResource(this);
-    this.memories = new MemoriesResource(this);
-    this.traces = new TracesResource(this);
-    this.metrics = new MetricsResource(this);
+    this.approvals = new ApprovalsResource(this);
+    this.auth = new AuthResource(this);
+    this.components = new ComponentsResource(this);
+    this.database = new DatabaseResource(this);
+    this.evals = new EvalsResource(this);
     this.knowledge = new KnowledgeResource(this);
+    this.memories = new MemoriesResource(this);
+    this.metrics = new MetricsResource(this);
+    this.models = new ModelsResource(this);
+    this.registry = new RegistryResource(this);
+    this.schedules = new SchedulesResource(this);
+    this.sessions = new SessionsResource(this);
+    this.teams = new TeamsResource(this);
+    this.traces = new TracesResource(this);
+    this.workflows = new WorkflowsResource(this);
   }
 
   /**

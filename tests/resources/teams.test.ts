@@ -600,4 +600,96 @@ describe("TeamsResource", () => {
       expect(formData.getAll("audio").length).toBe(1);
     });
   });
+
+  describe("listRuns()", () => {
+    it("calls GET /teams/{id}/runs with session_id query param", async () => {
+      const mockRuns = [{ run_id: "run-1" }, { run_id: "run-2" }];
+      requestSpy.mockResolvedValueOnce(mockRuns);
+
+      const result = await resource.listRuns("team-1", "session-123");
+
+      expect(result).toEqual(mockRuns);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/teams/team-1/runs?session_id=session-123",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("includes status filter when provided", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listRuns("team-1", "session-123", {
+        status: "completed",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/teams/team-1/runs?session_id=session-123&status=completed",
+      );
+    });
+
+    it("returns the response from client.request", async () => {
+      const mockRuns = [{ run_id: "run-1", status: "completed" }];
+      requestSpy.mockResolvedValueOnce(mockRuns);
+
+      const result = await resource.listRuns("team-1", "session-123");
+
+      expect(result).toEqual(mockRuns);
+    });
+
+    it("URL-encodes teamId", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listRuns("team/special", "session-123");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/teams/team%2Fspecial/runs?session_id=session-123",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.listRuns("team-1", "session-123"),
+      ).rejects.toThrow("fail");
+    });
+  });
+
+  describe("getRun()", () => {
+    it("calls GET /teams/{teamId}/runs/{runId} with session_id query param", async () => {
+      const mockRun = { run_id: "run-1", status: "completed" };
+      requestSpy.mockResolvedValueOnce(mockRun);
+
+      const result = await resource.getRun("team-1", "run-1", "session-123");
+
+      expect(result).toEqual(mockRun);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/teams/team-1/runs/run-1?session_id=session-123",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("URL-encodes teamId and runId", async () => {
+      requestSpy.mockResolvedValueOnce({});
+
+      await resource.getRun("team/special", "run/123", "session-1");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/teams/team%2Fspecial/runs/run%2F123?session_id=session-1",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.getRun("team-1", "run-1", "session-123"),
+      ).rejects.toThrow("fail");
+    });
+  });
 });

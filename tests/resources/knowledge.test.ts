@@ -369,4 +369,176 @@ describe("KnowledgeResource", () => {
       expect(body.vector_db_ids).toEqual(["db-1", "db-2"]);
     });
   });
+
+  describe("uploadRemote()", () => {
+    it("sends POST /knowledge/remote-content with FormData", async () => {
+      const mockContent = { id: "content-1", status: "processing" };
+      requestSpy.mockResolvedValueOnce(mockContent);
+
+      const result = await resource.uploadRemote({
+        configId: "remote-config-1",
+        path: "/data/documents/report.pdf",
+      });
+
+      expect(result).toEqual(mockContent);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/knowledge/remote-content",
+        expect.objectContaining({
+          body: expect.any(FormData),
+        }),
+      );
+
+      const formData = requestSpy.mock.calls[0][2].body as FormData;
+      expect(formData.get("config_id")).toBe("remote-config-1");
+      expect(formData.get("path")).toBe("/data/documents/report.pdf");
+    });
+
+    it("includes optional fields in FormData", async () => {
+      requestSpy.mockResolvedValueOnce({ id: "content-1" });
+
+      await resource.uploadRemote({
+        configId: "remote-config-1",
+        path: "/data/report.pdf",
+        name: "Quarterly Report",
+        description: "Q4 Report",
+        readerId: "pdf-reader",
+        chunker: "SemanticChunker",
+        chunkSize: 500,
+        chunkOverlap: 50,
+      });
+
+      const formData = requestSpy.mock.calls[0][2].body as FormData;
+      expect(formData.get("name")).toBe("Quarterly Report");
+      expect(formData.get("description")).toBe("Q4 Report");
+      expect(formData.get("reader_id")).toBe("pdf-reader");
+      expect(formData.get("chunker")).toBe("SemanticChunker");
+      expect(formData.get("chunk_size")).toBe("500");
+      expect(formData.get("chunk_overlap")).toBe("50");
+    });
+
+    it("includes dbId and knowledgeId as query params", async () => {
+      requestSpy.mockResolvedValueOnce({ id: "content-1" });
+
+      await resource.uploadRemote({
+        configId: "remote-config-1",
+        path: "/data/report.pdf",
+        dbId: "db-123",
+        knowledgeId: "kb-456",
+      });
+
+      const callPath = requestSpy.mock.calls[0][1];
+      expect(callPath).toContain("db_id=db-123");
+      expect(callPath).toContain("knowledge_id=kb-456");
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.uploadRemote({
+          configId: "remote-config-1",
+          path: "/data/report.pdf",
+        }),
+      ).rejects.toThrow("fail");
+    });
+  });
+
+  describe("listSources()", () => {
+    it("calls GET /knowledge/{id}/sources", async () => {
+      const mockSources = [{ id: "src-1", name: "Source One" }];
+      requestSpy.mockResolvedValueOnce(mockSources);
+
+      const result = await resource.listSources("kb-123");
+
+      expect(result).toEqual(mockSources);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/kb-123/sources",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("includes db_id query param when provided", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listSources("kb-123", { dbId: "db-456" });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/kb-123/sources?db_id=db-456",
+      );
+    });
+
+    it("URL-encodes knowledgeId", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listSources("kb/special");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/kb%2Fspecial/sources",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(resource.listSources("kb-123")).rejects.toThrow("fail");
+    });
+  });
+
+  describe("listSourceFiles()", () => {
+    it("calls GET /knowledge/{id}/sources/{sourceId}/files", async () => {
+      const mockFiles = [{ name: "file1.pdf" }];
+      requestSpy.mockResolvedValueOnce(mockFiles);
+
+      const result = await resource.listSourceFiles("kb-123", "src-456");
+
+      expect(result).toEqual(mockFiles);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/kb-123/sources/src-456/files",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("includes optional query params", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listSourceFiles("kb-123", "src-456", {
+        prefix: "reports/",
+        limit: 50,
+        page: 2,
+        delimiter: "/",
+        dbId: "db-1",
+      });
+
+      const callPath = requestSpy.mock.calls[0][1];
+      expect(callPath).toContain("prefix=reports%2F");
+      expect(callPath).toContain("limit=50");
+      expect(callPath).toContain("page=2");
+      expect(callPath).toContain("delimiter=%2F");
+      expect(callPath).toContain("db_id=db-1");
+    });
+
+    it("URL-encodes knowledgeId and sourceId", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.listSourceFiles("kb/special", "src/special");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/knowledge/kb%2Fspecial/sources/src%2Fspecial/files",
+      );
+    });
+
+    it("propagates errors", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("fail"));
+
+      await expect(
+        resource.listSourceFiles("kb-123", "src-456"),
+      ).rejects.toThrow("fail");
+    });
+  });
 });

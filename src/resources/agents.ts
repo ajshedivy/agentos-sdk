@@ -69,6 +69,14 @@ export interface ContinueOptions {
 }
 
 /**
+ * Options for listing agent runs
+ */
+export interface ListAgentRunsOptions {
+  /** Filter by run status */
+  status?: string;
+}
+
+/**
  * Resource class for agent operations
  *
  * Provides methods to:
@@ -309,6 +317,63 @@ export class AgentsResource {
     await this.client.request<void>(
       "POST",
       `/agents/${encodeURIComponent(agentId)}/runs/${encodeURIComponent(runId)}/cancel`,
+    );
+  }
+
+  /**
+   * List runs for an agent within a session
+   *
+   * @param agentId - The unique identifier for the agent
+   * @param sessionId - The session ID to filter runs by
+   * @param options - Optional filters for the run list
+   * @returns Array of run results
+   *
+   * @example
+   * ```typescript
+   * const runs = await client.agents.listRuns('agent-id', 'session-123');
+   * console.log(runs.length);
+   * ```
+   */
+  async listRuns(
+    agentId: string,
+    sessionId: string,
+    options?: ListAgentRunsOptions,
+  ): Promise<unknown[]> {
+    const params = new URLSearchParams();
+    params.append("session_id", sessionId);
+    if (options?.status) {
+      params.append("status", options.status);
+    }
+    return this.client.request<unknown[]>(
+      "GET",
+      `/agents/${encodeURIComponent(agentId)}/runs?${params.toString()}`,
+    );
+  }
+
+  /**
+   * Get a specific run for an agent
+   *
+   * @param agentId - The unique identifier for the agent
+   * @param runId - The unique identifier for the run
+   * @param sessionId - The session ID the run belongs to
+   * @returns The run result
+   *
+   * @example
+   * ```typescript
+   * const run = await client.agents.getRun('agent-id', 'run-id', 'session-123');
+   * console.log(run);
+   * ```
+   */
+  async getRun(
+    agentId: string,
+    runId: string,
+    sessionId: string,
+  ): Promise<unknown> {
+    const params = new URLSearchParams();
+    params.append("session_id", sessionId);
+    return this.client.request<unknown>(
+      "GET",
+      `/agents/${encodeURIComponent(agentId)}/runs/${encodeURIComponent(runId)}?${params.toString()}`,
     );
   }
 }

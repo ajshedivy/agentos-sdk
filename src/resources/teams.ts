@@ -69,6 +69,14 @@ export interface TeamContinueOptions {
 }
 
 /**
+ * Options for listing team runs
+ */
+export interface ListTeamRunsOptions {
+  /** Filter by run status */
+  status?: string;
+}
+
+/**
  * Resource class for team operations
  *
  * Provides methods to:
@@ -309,6 +317,63 @@ export class TeamsResource {
     await this.client.request<void>(
       "POST",
       `/teams/${encodeURIComponent(teamId)}/runs/${encodeURIComponent(runId)}/cancel`,
+    );
+  }
+
+  /**
+   * List runs for a team within a session
+   *
+   * @param teamId - The unique identifier for the team
+   * @param sessionId - The session ID to filter runs by
+   * @param options - Optional filters for the run list
+   * @returns Array of run results
+   *
+   * @example
+   * ```typescript
+   * const runs = await client.teams.listRuns('team-id', 'session-123');
+   * console.log(runs.length);
+   * ```
+   */
+  async listRuns(
+    teamId: string,
+    sessionId: string,
+    options?: ListTeamRunsOptions,
+  ): Promise<unknown[]> {
+    const params = new URLSearchParams();
+    params.append("session_id", sessionId);
+    if (options?.status) {
+      params.append("status", options.status);
+    }
+    return this.client.request<unknown[]>(
+      "GET",
+      `/teams/${encodeURIComponent(teamId)}/runs?${params.toString()}`,
+    );
+  }
+
+  /**
+   * Get a specific run for a team
+   *
+   * @param teamId - The unique identifier for the team
+   * @param runId - The unique identifier for the run
+   * @param sessionId - The session ID the run belongs to
+   * @returns The run result
+   *
+   * @example
+   * ```typescript
+   * const run = await client.teams.getRun('team-id', 'run-id', 'session-123');
+   * console.log(run);
+   * ```
+   */
+  async getRun(
+    teamId: string,
+    runId: string,
+    sessionId: string,
+  ): Promise<unknown> {
+    const params = new URLSearchParams();
+    params.append("session_id", sessionId);
+    return this.client.request<unknown>(
+      "GET",
+      `/teams/${encodeURIComponent(teamId)}/runs/${encodeURIComponent(runId)}?${params.toString()}`,
     );
   }
 }

@@ -85,6 +85,64 @@ export interface DeleteMemoryOptions {
 }
 
 /**
+ * Options for deleting all memories
+ */
+export interface DeleteAllMemoriesOptions {
+  /** Memory IDs to delete */
+  memoryIds: string[];
+  /** User ID filter */
+  userId?: string;
+  /** Database ID */
+  dbId?: string;
+  /** Table name */
+  table?: string;
+}
+
+/**
+ * Options for getting memory topics
+ */
+export interface GetTopicsOptions {
+  /** User ID filter */
+  userId?: string;
+  /** Database ID */
+  dbId?: string;
+  /** Table name */
+  table?: string;
+}
+
+/**
+ * Options for getting memory stats
+ */
+export interface GetMemoryStatsOptions {
+  /** User ID filter */
+  userId?: string;
+  /** Results per page */
+  limit?: number;
+  /** Page number */
+  page?: number;
+  /** Database ID */
+  dbId?: string;
+  /** Table name */
+  table?: string;
+}
+
+/**
+ * Options for optimizing memories
+ */
+export interface OptimizeMemoriesOptions {
+  /** User ID (required) */
+  userId: string;
+  /** Model to use for optimization */
+  model?: string;
+  /** Apply the optimization (vs dry run) */
+  apply?: boolean;
+  /** Database ID */
+  dbId?: string;
+  /** Table name */
+  table?: string;
+}
+
+/**
  * Resource class for memory operations
  *
  * Provides methods to:
@@ -343,5 +401,174 @@ export class MemoriesResource {
       : `/memories/${encodeURIComponent(memoryId)}`;
 
     await this.client.request<void>("DELETE", path);
+  }
+
+  /**
+   * Delete all memories matching the given IDs
+   *
+   * @param options - Memory IDs to delete and optional query params
+   * @returns void
+   *
+   * @example
+   * ```typescript
+   * await client.memories.deleteAll({
+   *   memoryIds: ['mem-1', 'mem-2'],
+   *   userId: 'user-123',
+   * });
+   * ```
+   */
+  async deleteAll(options: DeleteAllMemoriesOptions): Promise<void> {
+    const params = new URLSearchParams();
+
+    if (options.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    if (options.table !== undefined) {
+      params.append("table", options.table);
+    }
+
+    const body: Record<string, unknown> = {
+      memory_ids: options.memoryIds,
+    };
+
+    if (options.userId !== undefined) {
+      body.user_id = options.userId;
+    }
+
+    const queryString = params.toString();
+    const path = queryString ? `/memories?${queryString}` : "/memories";
+
+    await this.client.request<void>("DELETE", path, {
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  /**
+   * Get memory topics
+   *
+   * @param options - Optional filtering parameters
+   * @returns Topics response
+   *
+   * @example
+   * ```typescript
+   * const topics = await client.memories.getTopics({ userId: 'user-123' });
+   * console.log(topics);
+   * ```
+   */
+  async getTopics(options?: GetTopicsOptions): Promise<unknown> {
+    const params = new URLSearchParams();
+
+    if (options?.userId !== undefined) {
+      params.append("user_id", options.userId);
+    }
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    if (options?.table !== undefined) {
+      params.append("table", options.table);
+    }
+
+    const queryString = params.toString();
+    const path = queryString
+      ? `/memory_topics?${queryString}`
+      : "/memory_topics";
+
+    return this.client.request<unknown>("GET", path);
+  }
+
+  /**
+   * Get user memory stats
+   *
+   * @param options - Optional filtering and pagination parameters
+   * @returns Memory stats response
+   *
+   * @example
+   * ```typescript
+   * const stats = await client.memories.getStats({
+   *   userId: 'user-123',
+   *   limit: 10,
+   *   page: 1,
+   * });
+   * console.log(stats);
+   * ```
+   */
+  async getStats(options?: GetMemoryStatsOptions): Promise<unknown> {
+    const params = new URLSearchParams();
+
+    if (options?.userId !== undefined) {
+      params.append("user_id", options.userId);
+    }
+    if (options?.limit !== undefined) {
+      params.append("limit", String(options.limit));
+    }
+    if (options?.page !== undefined) {
+      params.append("page", String(options.page));
+    }
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    if (options?.table !== undefined) {
+      params.append("table", options.table);
+    }
+
+    const queryString = params.toString();
+    const path = queryString
+      ? `/user_memory_stats?${queryString}`
+      : "/user_memory_stats";
+
+    return this.client.request<unknown>("GET", path);
+  }
+
+  /**
+   * Optimize memories for a user
+   *
+   * @param options - Optimization options including required userId
+   * @returns Optimization response
+   *
+   * @example
+   * ```typescript
+   * const result = await client.memories.optimize({
+   *   userId: 'user-123',
+   *   model: 'gpt-4',
+   *   apply: true,
+   * });
+   * console.log(result);
+   * ```
+   */
+  async optimize(options: OptimizeMemoriesOptions): Promise<unknown> {
+    const params = new URLSearchParams();
+
+    if (options.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    if (options.table !== undefined) {
+      params.append("table", options.table);
+    }
+
+    const body: Record<string, unknown> = {
+      user_id: options.userId,
+    };
+
+    if (options.model !== undefined) {
+      body.model = options.model;
+    }
+    if (options.apply !== undefined) {
+      body.apply = options.apply;
+    }
+
+    const queryString = params.toString();
+    const path = queryString
+      ? `/optimize-memories?${queryString}`
+      : "/optimize-memories";
+
+    return this.client.request<unknown>("POST", path, {
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
