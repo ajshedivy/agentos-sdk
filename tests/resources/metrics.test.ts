@@ -101,10 +101,29 @@ describe("MetricsResource", () => {
 
       await expect(resource.get()).rejects.toThrow("Invalid date range");
     });
+
+    it("adds db_id query param when dbId provided", async () => {
+      const mockResponse = { metrics: [] };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.get({ dbId: "mydb" });
+
+      const callPath = requestSpy.mock.calls[0][1];
+      expect(callPath).toContain("db_id=mydb");
+    });
+
+    it("does not include db_id when dbId not provided", async () => {
+      const mockResponse = { metrics: [] };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.get();
+
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/metrics");
+    });
   });
 
   describe("refresh()", () => {
-    it("calls POST /metrics/refresh", async () => {
+    it("calls POST /metrics/refresh with no params", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.refresh();
@@ -125,6 +144,23 @@ describe("MetricsResource", () => {
       requestSpy.mockRejectedValueOnce(new Error("Service unavailable"));
 
       await expect(resource.refresh()).rejects.toThrow("Service unavailable");
+    });
+
+    it("adds db_id query param when dbId provided", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.refresh({ dbId: "mydb" });
+
+      const callPath = requestSpy.mock.calls[0][1];
+      expect(callPath).toContain("db_id=mydb");
+    });
+
+    it("calls POST /metrics/refresh with no query params when no options", async () => {
+      requestSpy.mockResolvedValueOnce(undefined);
+
+      await resource.refresh();
+
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/metrics/refresh");
     });
   });
 });

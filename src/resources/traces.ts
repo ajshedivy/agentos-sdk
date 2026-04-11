@@ -24,6 +24,8 @@ export interface ListTracesOptions {
   page?: number;
   /** Number of items per page */
   limit?: number;
+  /** Database ID */
+  dbId?: string;
 }
 
 /**
@@ -133,6 +135,9 @@ export class TracesResource {
     }
     if (options?.limit !== undefined) {
       params.append("limit", String(options.limit));
+    }
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
     }
 
     const queryString = params.toString();

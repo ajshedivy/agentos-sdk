@@ -12,6 +12,8 @@ export interface GetMetricsOptions {
   startingDate?: string;
   /** End date in YYYY-MM-DD format */
   endingDate?: string;
+  /** Database ID */
+  dbId?: string;
 }
 
 /**
@@ -66,6 +68,9 @@ export class MetricsResource {
     if (options?.endingDate) {
       params.append("ending_date", options.endingDate);
     }
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
 
     const queryString = params.toString();
     const path = queryString ? `/metrics?${queryString}` : "/metrics";
@@ -84,7 +89,16 @@ export class MetricsResource {
    * console.log('Metrics refresh triggered');
    * ```
    */
-  async refresh(): Promise<void> {
-    await this.client.request<void>("POST", "/metrics/refresh");
+  async refresh(options?: { dbId?: string }): Promise<void> {
+    const params = new URLSearchParams();
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    const queryString = params.toString();
+    const path = queryString
+      ? `/metrics/refresh?${queryString}`
+      : "/metrics/refresh";
+
+    await this.client.request<void>("POST", path);
   }
 }

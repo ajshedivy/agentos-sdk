@@ -26,6 +26,8 @@ export interface ListSessionsOptions {
   sortBy?: string;
   /** Sort order */
   sortOrder?: "asc" | "desc";
+  /** Database ID */
+  dbId?: string;
 }
 
 /**
@@ -167,6 +169,9 @@ export class SessionsResource {
     }
     if (options?.sortOrder !== undefined) {
       params.append("sort_order", options.sortOrder);
+    }
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
     }
 
     const queryString = params.toString();

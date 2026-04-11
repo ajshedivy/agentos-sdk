@@ -163,6 +163,25 @@ describe("TracesResource", () => {
       expect(Array.isArray(result.data)).toBe(true);
     });
 
+    it("adds db_id query param when dbId provided", async () => {
+      const mockResponse = { data: [], meta: { page: 1, limit: 20, total: 0 } };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.list({ dbId: "mydb" });
+
+      const callPath = requestSpy.mock.calls[0][1];
+      expect(callPath).toContain("db_id=mydb");
+    });
+
+    it("does not include db_id when dbId not provided", async () => {
+      const mockResponse = { data: [], meta: { page: 1, limit: 20, total: 0 } };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.list();
+
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/traces");
+    });
+
     it("propagates errors from client.request", async () => {
       requestSpy.mockRejectedValueOnce(new Error("Unauthorized"));
 
