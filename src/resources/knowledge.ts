@@ -48,6 +48,8 @@ export interface UploadOptions {
   chunkOverlap?: number;
   /** Database ID to use for storage */
   dbId?: string;
+  /** Knowledge base ID */
+  knowledgeId?: string;
 }
 
 /**
@@ -64,6 +66,8 @@ export interface ListKnowledgeOptions {
   sortOrder?: "asc" | "desc";
   /** Database ID to filter by */
   dbId?: string;
+  /** Knowledge base ID to filter by */
+  knowledgeId?: string;
 }
 
 /**
@@ -72,6 +76,8 @@ export interface ListKnowledgeOptions {
 export interface SearchOptions {
   /** Database ID to search in */
   dbId?: string;
+  /** Knowledge base ID to search in */
+  knowledgeId?: string;
   /** Vector database IDs to search in */
   vectorDbIds?: string[];
   /** Search type: 'vector', 'keyword', or 'hybrid' */
@@ -187,9 +193,13 @@ export class KnowledgeResource {
    *
    * Returns available readers, chunkers, and processing options.
    */
-  async getConfig(dbId?: string): Promise<ConfigResponse> {
+  async getConfig(
+    options?: { dbId?: string; knowledgeId?: string },
+  ): Promise<ConfigResponse> {
     const params = new URLSearchParams();
-    if (dbId) params.append("db_id", dbId);
+    if (options?.dbId) params.append("db_id", options.dbId);
+    if (options?.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
 
     const query = params.toString();
     const path = query ? `/knowledge/config?${query}` : "/knowledge/config";
@@ -214,6 +224,8 @@ export class KnowledgeResource {
     if (options?.sortBy) params.append("sort_by", options.sortBy);
     if (options?.sortOrder) params.append("sort_order", options.sortOrder);
     if (options?.dbId) params.append("db_id", options.dbId);
+    if (options?.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
 
     const query = params.toString();
     const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
@@ -256,9 +268,11 @@ export class KnowledgeResource {
     if (options.chunkOverlap !== undefined)
       formData.append("chunk_overlap", String(options.chunkOverlap));
 
-    // Add db_id as query param
+    // Add db_id and knowledge_id as query params
     const params = new URLSearchParams();
     if (options.dbId) params.append("db_id", options.dbId);
+    if (options.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
     const query = params.toString();
     const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
 
@@ -273,9 +287,14 @@ export class KnowledgeResource {
    * @param contentId - Content identifier
    * @param dbId - Optional database ID
    */
-  async get(contentId: string, dbId?: string): Promise<ContentResponse> {
+  async get(
+    contentId: string,
+    options?: { dbId?: string; knowledgeId?: string },
+  ): Promise<ContentResponse> {
     const params = new URLSearchParams();
-    if (dbId) params.append("db_id", dbId);
+    if (options?.dbId) params.append("db_id", options.dbId);
+    if (options?.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
 
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}`;
@@ -292,10 +311,12 @@ export class KnowledgeResource {
    */
   async getStatus(
     contentId: string,
-    dbId?: string,
+    options?: { dbId?: string; knowledgeId?: string },
   ): Promise<ContentStatusResponse> {
     const params = new URLSearchParams();
-    if (dbId) params.append("db_id", dbId);
+    if (options?.dbId) params.append("db_id", options.dbId);
+    if (options?.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
 
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}/status`;
@@ -340,9 +361,14 @@ export class KnowledgeResource {
    * @param contentId - Content identifier
    * @param dbId - Optional database ID
    */
-  async delete(contentId: string, dbId?: string): Promise<void> {
+  async delete(
+    contentId: string,
+    options?: { dbId?: string; knowledgeId?: string },
+  ): Promise<void> {
     const params = new URLSearchParams();
-    if (dbId) params.append("db_id", dbId);
+    if (options?.dbId) params.append("db_id", options.dbId);
+    if (options?.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
 
     const query = params.toString();
     const basePath = `/knowledge/content/${encodeURIComponent(contentId)}`;
@@ -358,9 +384,13 @@ export class KnowledgeResource {
    *
    * @param dbId - Optional database ID to scope deletion
    */
-  async deleteAll(dbId?: string): Promise<void> {
+  async deleteAll(
+    options?: { dbId?: string; knowledgeId?: string },
+  ): Promise<void> {
     const params = new URLSearchParams();
-    if (dbId) params.append("db_id", dbId);
+    if (options?.dbId) params.append("db_id", options.dbId);
+    if (options?.knowledgeId)
+      params.append("knowledge_id", options.knowledgeId);
 
     const query = params.toString();
     const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
@@ -383,6 +413,7 @@ export class KnowledgeResource {
     const body: Record<string, unknown> = { query };
 
     if (options?.dbId) body.db_id = options.dbId;
+    if (options?.knowledgeId) body.knowledge_id = options.knowledgeId;
     if (options?.vectorDbIds) body.vector_db_ids = options.vectorDbIds;
     if (options?.searchType) body.search_type = options.searchType;
     if (options?.maxResults) body.max_results = options.maxResults;
