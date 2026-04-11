@@ -251,7 +251,7 @@ describe("TracesResource", () => {
   });
 
   describe("search()", () => {
-    it("calls POST /traces/search with JSON body", async () => {
+    it("calls POST /traces/search with plain object body (no pre-stringify, no explicit headers)", async () => {
       const mockResponse = { data: [] };
       requestSpy.mockResolvedValueOnce(mockResponse);
 
@@ -264,13 +264,12 @@ describe("TracesResource", () => {
 
       expect(result).toEqual(mockResponse);
       expect(requestSpy).toHaveBeenCalledWith("POST", "/traces/search", {
-        body: JSON.stringify({
+        body: {
           filter: { status: "completed" },
           group_by: "run",
           page: 1,
           limit: 20,
-        }),
-        headers: { "Content-Type": "application/json" },
+        },
       });
     });
 
@@ -283,8 +282,7 @@ describe("TracesResource", () => {
         "POST",
         "/traces/search?db_id=db-1",
         {
-          body: JSON.stringify({}),
-          headers: { "Content-Type": "application/json" },
+          body: {},
         },
       );
     });

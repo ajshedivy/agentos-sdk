@@ -397,10 +397,7 @@ export class KnowledgeResource {
     return this.client.request<PaginatedResponse<VectorSearchResult>>(
       "POST",
       "/knowledge/search",
-      {
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      },
+      { body },
     );
   }
 

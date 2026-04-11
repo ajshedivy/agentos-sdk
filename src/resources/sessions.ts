@@ -223,23 +223,22 @@ export class SessionsResource {
    * ```
    */
   async create(options: CreateSessionOptions): Promise<SessionSchema> {
-    const formData = new FormData();
-    formData.append("type", options.type);
-    formData.append("component_id", options.componentId);
+    const body: Record<string, unknown> = {
+      type: options.type,
+      component_id: options.componentId,
+    };
 
     if (options.name !== undefined) {
-      formData.append("name", options.name);
+      body.name = options.name;
     }
     if (options.userId !== undefined) {
-      formData.append("user_id", options.userId);
+      body.user_id = options.userId;
     }
     if (options.dbId !== undefined) {
-      formData.append("db_id", options.dbId);
+      body.db_id = options.dbId;
     }
 
-    return this.client.request<SessionSchema>("POST", "/sessions", {
-      body: formData,
-    });
+    return this.client.request<SessionSchema>("POST", "/sessions", { body });
   }
 
   /**
@@ -254,13 +253,12 @@ export class SessionsResource {
    * ```
    */
   async rename(sessionId: string, name: string): Promise<void> {
-    const formData = new FormData();
-    formData.append("name", name);
+    const body = { name };
 
     await this.client.request<void>(
       "POST",
       `/sessions/${encodeURIComponent(sessionId)}/rename`,
-      { body: formData },
+      { body },
     );
   }
 
@@ -364,12 +362,7 @@ export class SessionsResource {
       ? `/sessions/${encodeURIComponent(sessionId)}?${queryString}`
       : `/sessions/${encodeURIComponent(sessionId)}`;
 
-    return this.client.request<SessionSchema>("PATCH", path, {
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return this.client.request<SessionSchema>("PATCH", path, { body });
   }
 
   /**
@@ -407,12 +400,7 @@ export class SessionsResource {
     const queryString = params.toString();
     const path = queryString ? `/sessions?${queryString}` : "/sessions";
 
-    await this.client.request<void>("DELETE", path, {
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    await this.client.request<void>("DELETE", path, { body });
   }
 
   /**

@@ -227,10 +227,7 @@ export class TracesResource {
       ? `/traces/search?${queryString}`
       : "/traces/search";
 
-    return this.client.request<unknown>("POST", path, {
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    });
+    return this.client.request<unknown>("POST", path, { body });
   }
 
   /**

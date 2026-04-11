@@ -313,7 +313,7 @@ describe("KnowledgeResource", () => {
   });
 
   describe("search()", () => {
-    it("searches knowledge base with query", async () => {
+    it("searches knowledge base with query using plain object body (no pre-stringify, no explicit headers)", async () => {
       const searchResponse = {
         data: [
           { id: "doc-1", content: "Result content", reranking_score: 0.95 },
@@ -328,17 +328,13 @@ describe("KnowledgeResource", () => {
       expect(requestSpy).toHaveBeenCalledWith(
         "POST",
         "/knowledge/search",
-        expect.objectContaining({
-          body: expect.any(String),
-          headers: { "Content-Type": "application/json" },
-        }),
+        {
+          body: { query: "JavaScript best practices" },
+        },
       );
-
-      const body = JSON.parse(requestSpy.mock.calls[0][2].body);
-      expect(body.query).toBe("JavaScript best practices");
     });
 
-    it("includes search options", async () => {
+    it("includes search options in plain object body", async () => {
       requestSpy.mockResolvedValueOnce({ data: [], meta: {} });
 
       await resource.search("query", {
@@ -350,12 +346,13 @@ describe("KnowledgeResource", () => {
         limit: 25,
       });
 
-      const body = JSON.parse(requestSpy.mock.calls[0][2].body);
-      expect(body.db_id).toBe("db-123");
-      expect(body.search_type).toBe("hybrid");
-      expect(body.max_results).toBe(50);
-      expect(body.filters).toEqual({ category: "docs" });
-      expect(body.meta).toEqual({ page: 2, limit: 25 });
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody.query).toBe("query");
+      expect(callBody.db_id).toBe("db-123");
+      expect(callBody.search_type).toBe("hybrid");
+      expect(callBody.max_results).toBe(50);
+      expect(callBody.filters).toEqual({ category: "docs" });
+      expect(callBody.meta).toEqual({ page: 2, limit: 25 });
     });
 
     it("includes vectorDbIds array", async () => {
@@ -365,8 +362,17 @@ describe("KnowledgeResource", () => {
         vectorDbIds: ["db-1", "db-2"],
       });
 
-      const body = JSON.parse(requestSpy.mock.calls[0][2].body);
-      expect(body.vector_db_ids).toEqual(["db-1", "db-2"]);
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody.vector_db_ids).toEqual(["db-1", "db-2"]);
+    });
+
+    it("does not include explicit headers property", async () => {
+      requestSpy.mockResolvedValueOnce({ data: [], meta: {} });
+
+      await resource.search("test query");
+
+      const callOptions = requestSpy.mock.calls[0][2];
+      expect(callOptions).not.toHaveProperty("headers");
     });
   });
 

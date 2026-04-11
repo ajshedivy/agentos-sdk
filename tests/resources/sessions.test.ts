@@ -262,7 +262,7 @@ describe("SessionsResource", () => {
   });
 
   describe("create()", () => {
-    it("sends POST /sessions with FormData", async () => {
+    it("sends POST /sessions with JSON body (not FormData)", async () => {
       const mockSession = {
         session_id: "new-session",
         session_name: "New Session",
@@ -277,16 +277,11 @@ describe("SessionsResource", () => {
       expect(result).toEqual(mockSession);
       expect(requestSpy).toHaveBeenCalledTimes(1);
       expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions", {
-        body: expect.any(FormData),
+        body: { type: "agent", component_id: "agent-123" },
       });
-
-      // Verify FormData contents
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("type")).toBe("agent");
-      expect(formData.get("component_id")).toBe("agent-123");
     });
 
-    it("includes type and component_id in FormData", async () => {
+    it("includes type and component_id in body object", async () => {
       requestSpy.mockResolvedValueOnce({ session_id: "s1" });
 
       await resource.create({
@@ -294,9 +289,9 @@ describe("SessionsResource", () => {
         componentId: "team-456",
       });
 
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("type")).toBe("team");
-      expect(formData.get("component_id")).toBe("team-456");
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions", {
+        body: { type: "team", component_id: "team-456" },
+      });
     });
 
     it("includes optional name when provided", async () => {
@@ -308,8 +303,10 @@ describe("SessionsResource", () => {
         name: "My Workflow Session",
       });
 
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("name")).toBe("My Workflow Session");
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody.name).toBe("My Workflow Session");
+      expect(callBody.type).toBe("workflow");
+      expect(callBody.component_id).toBe("workflow-789");
     });
 
     it("includes optional user_id when provided", async () => {
@@ -321,8 +318,8 @@ describe("SessionsResource", () => {
         userId: "user-999",
       });
 
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("user_id")).toBe("user-999");
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody.user_id).toBe("user-999");
     });
 
     it("includes optional db_id when provided", async () => {
@@ -334,8 +331,30 @@ describe("SessionsResource", () => {
         dbId: "db-888",
       });
 
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("db_id")).toBe("db-888");
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody.db_id).toBe("db-888");
+    });
+
+    it("includes name, user_id, db_id in body when all provided", async () => {
+      requestSpy.mockResolvedValueOnce({ session_id: "s1" });
+
+      await resource.create({
+        type: "agent",
+        componentId: "agent-123",
+        name: "Test Session",
+        userId: "user-999",
+        dbId: "db-888",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions", {
+        body: {
+          type: "agent",
+          component_id: "agent-123",
+          name: "Test Session",
+          user_id: "user-999",
+          db_id: "db-888",
+        },
+      });
     });
 
     it("does not include optional fields when undefined", async () => {
@@ -349,17 +368,17 @@ describe("SessionsResource", () => {
         dbId: undefined,
       });
 
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("type")).toBe("agent");
-      expect(formData.get("component_id")).toBe("agent-123");
-      expect(formData.get("name")).toBeNull();
-      expect(formData.get("user_id")).toBeNull();
-      expect(formData.get("db_id")).toBeNull();
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody.type).toBe("agent");
+      expect(callBody.component_id).toBe("agent-123");
+      expect(callBody).not.toHaveProperty("name");
+      expect(callBody).not.toHaveProperty("user_id");
+      expect(callBody).not.toHaveProperty("db_id");
     });
   });
 
   describe("rename()", () => {
-    it("sends POST /sessions/{id}/rename with FormData", async () => {
+    it("sends POST /sessions/{id}/rename with JSON body (not FormData)", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.rename("session-123", "Updated Name");
@@ -368,20 +387,17 @@ describe("SessionsResource", () => {
       expect(requestSpy).toHaveBeenCalledWith(
         "POST",
         "/sessions/session-123/rename",
-        { body: expect.any(FormData) },
+        { body: { name: "Updated Name" } },
       );
-
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("name")).toBe("Updated Name");
     });
 
-    it("FormData contains name field", async () => {
+    it("body contains name field as plain object", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.rename("session-456", "New Session Name");
 
-      const formData = requestSpy.mock.calls[0][2].body;
-      expect(formData.get("name")).toBe("New Session Name");
+      const callBody = requestSpy.mock.calls[0][2].body;
+      expect(callBody).toEqual({ name: "New Session Name" });
     });
 
     it("URL-encodes sessionId", async () => {
@@ -392,7 +408,7 @@ describe("SessionsResource", () => {
       expect(requestSpy).toHaveBeenCalledWith(
         "POST",
         "/sessions/session%2Fspecial/rename",
-        expect.any(Object),
+        { body: { name: "Name" } },
       );
     });
   });
@@ -494,7 +510,7 @@ describe("SessionsResource", () => {
   });
 
   describe("update()", () => {
-    it("sends PATCH /sessions/{id} with JSON body", async () => {
+    it("sends PATCH /sessions/{id} with plain object body (no pre-stringify, no explicit headers)", async () => {
       const mockSession = {
         session_id: "session-123",
         session_name: "Updated",
@@ -510,8 +526,7 @@ describe("SessionsResource", () => {
         "PATCH",
         "/sessions/session-123",
         {
-          body: JSON.stringify({ session_name: "Updated" }),
-          headers: { "Content-Type": "application/json" },
+          body: { session_name: "Updated" },
         },
       );
     });
@@ -531,8 +546,7 @@ describe("SessionsResource", () => {
         "PATCH",
         "/sessions/session-123?type=agent&user_id=user-1&db_id=db-1&table=custom_table",
         {
-          body: JSON.stringify({ session_name: "New Name" }),
-          headers: { "Content-Type": "application/json" },
+          body: { session_name: "New Name" },
         },
       );
     });
@@ -550,12 +564,11 @@ describe("SessionsResource", () => {
         "PATCH",
         "/sessions/session-123",
         {
-          body: JSON.stringify({
+          body: {
             session_state: { step: 2 },
             metadata: { key: "value" },
             summary: "A summary",
-          }),
-          headers: { "Content-Type": "application/json" },
+          },
         },
       );
     });
@@ -582,7 +595,7 @@ describe("SessionsResource", () => {
   });
 
   describe("deleteAll()", () => {
-    it("sends DELETE /sessions with JSON body containing session_ids and session_types", async () => {
+    it("sends DELETE /sessions with plain object body (no pre-stringify, no explicit headers)", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.deleteAll({
@@ -591,11 +604,10 @@ describe("SessionsResource", () => {
       });
 
       expect(requestSpy).toHaveBeenCalledWith("DELETE", "/sessions", {
-        body: JSON.stringify({
+        body: {
           session_ids: ["s-1", "s-2"],
           session_types: ["agent", "team"],
-        }),
-        headers: { "Content-Type": "application/json" },
+        },
       });
     });
 
@@ -614,11 +626,10 @@ describe("SessionsResource", () => {
         "DELETE",
         "/sessions?user_id=user-1&db_id=db-1&table=custom_table",
         {
-          body: JSON.stringify({
+          body: {
             session_ids: ["s-1"],
             session_types: ["agent"],
-          }),
-          headers: { "Content-Type": "application/json" },
+          },
         },
       );
     });
