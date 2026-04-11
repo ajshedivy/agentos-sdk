@@ -305,11 +305,18 @@ export class SessionsResource {
    * console.log(runs.length);
    * ```
    */
-  async getRuns(sessionId: string): Promise<unknown[]> {
-    return this.client.request<unknown[]>(
-      "GET",
-      `/sessions/${encodeURIComponent(sessionId)}/runs`,
-    );
+  async getRuns(
+    sessionId: string,
+    options?: { dbId?: string },
+  ): Promise<unknown[]> {
+    const params = new URLSearchParams();
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    const queryString = params.toString();
+    const basePath = `/sessions/${encodeURIComponent(sessionId)}/runs`;
+    const path = queryString ? `${basePath}?${queryString}` : basePath;
+    return this.client.request<unknown[]>("GET", path);
   }
 
   /**

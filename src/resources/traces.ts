@@ -158,11 +158,19 @@ export class TracesResource {
    * console.log(trace.spans);
    * ```
    */
-  async get(traceId: string): Promise<TraceDetail> {
-    return this.client.request<TraceDetail>(
-      "GET",
-      `/traces/${encodeURIComponent(traceId)}`,
-    );
+  async get(
+    traceId: string,
+    options?: { dbId?: string },
+  ): Promise<TraceDetail> {
+    const params = new URLSearchParams();
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    const queryString = params.toString();
+    const path = queryString
+      ? `/traces/${encodeURIComponent(traceId)}?${queryString}`
+      : `/traces/${encodeURIComponent(traceId)}`;
+    return this.client.request<TraceDetail>("GET", path);
   }
 
   /**

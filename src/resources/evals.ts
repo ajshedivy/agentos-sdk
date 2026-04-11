@@ -283,11 +283,19 @@ export class EvalsResource {
    * console.log(evalRun.eval_type, evalRun.input);
    * ```
    */
-  async get(evalRunId: string): Promise<EvalSchema> {
-    return this.client.request<EvalSchema>(
-      "GET",
-      `/eval-runs/${encodeURIComponent(evalRunId)}`,
-    );
+  async get(
+    evalRunId: string,
+    options?: { dbId?: string },
+  ): Promise<EvalSchema> {
+    const params = new URLSearchParams();
+    if (options?.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+    const queryString = params.toString();
+    const path = queryString
+      ? `/eval-runs/${encodeURIComponent(evalRunId)}?${queryString}`
+      : `/eval-runs/${encodeURIComponent(evalRunId)}`;
+    return this.client.request<EvalSchema>("GET", path);
   }
 
   /**
