@@ -2,7 +2,7 @@ import type { AgentOSClient } from "../client";
 import type { components } from "../generated/types";
 
 // Extract types from generated schemas
-type ModelResponse = components["schemas"]["ModelResponse"];
+type Model = components["schemas"]["Model"];
 
 /**
  * Resource class for model operations
@@ -15,7 +15,7 @@ type ModelResponse = components["schemas"]["ModelResponse"];
  *
  * // List all models
  * const models = await client.models.list();
- * console.log(models.map(m => m.name));
+ * console.log(models.map(m => m.id));
  * ```
  */
 export class ModelsResource {
@@ -29,10 +29,10 @@ export class ModelsResource {
    * @example
    * ```typescript
    * const models = await client.models.list();
-   * console.log(models.map(m => m.name));
+   * console.log(models.map(m => m.id));
    * ```
    */
-  async list(): Promise<ModelResponse[]> {
-    return this.client.request<ModelResponse[]>("GET", "/models");
+  async list(): Promise<Model[]> {
+    return this.client.request<Model[]>("GET", "/models");
   }
 }
