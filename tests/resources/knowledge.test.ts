@@ -43,7 +43,7 @@ describe("KnowledgeResource", () => {
     it("includes db_id query param when provided", async () => {
       requestSpy.mockResolvedValueOnce({});
 
-      await resource.getConfig("db-123");
+      await resource.getConfig({ dbId: "db-123" });
 
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
@@ -195,7 +195,7 @@ describe("KnowledgeResource", () => {
     it("includes db_id query param when provided", async () => {
       requestSpy.mockResolvedValueOnce({});
 
-      await resource.get("content-123", "db-456");
+      await resource.get("content-123", { dbId: "db-456" });
 
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
@@ -221,7 +221,7 @@ describe("KnowledgeResource", () => {
     it("includes db_id query param when provided", async () => {
       requestSpy.mockResolvedValueOnce({ status: "processing" });
 
-      await resource.getStatus("content-123", "db-456");
+      await resource.getStatus("content-123", { dbId: "db-456" });
 
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
@@ -282,7 +282,7 @@ describe("KnowledgeResource", () => {
     it("includes db_id query param when provided", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
-      await resource.delete("content-123", "db-456");
+      await resource.delete("content-123", { dbId: "db-456" });
 
       expect(requestSpy).toHaveBeenCalledWith(
         "DELETE",
@@ -303,7 +303,7 @@ describe("KnowledgeResource", () => {
     it("scopes deletion to database ID", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
-      await resource.deleteAll("db-123");
+      await resource.deleteAll({ dbId: "db-123" });
 
       expect(requestSpy).toHaveBeenCalledWith(
         "DELETE",
