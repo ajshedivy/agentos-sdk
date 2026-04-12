@@ -193,9 +193,10 @@ export class KnowledgeResource {
    *
    * Returns available readers, chunkers, and processing options.
    */
-  async getConfig(
-    options?: { dbId?: string; knowledgeId?: string },
-  ): Promise<ConfigResponse> {
+  async getConfig(options?: {
+    dbId?: string;
+    knowledgeId?: string;
+  }): Promise<ConfigResponse> {
     const params = new URLSearchParams();
     if (options?.dbId) params.append("db_id", options.dbId);
     if (options?.knowledgeId)
@@ -271,8 +272,7 @@ export class KnowledgeResource {
     // Add db_id and knowledge_id as query params
     const params = new URLSearchParams();
     if (options.dbId) params.append("db_id", options.dbId);
-    if (options.knowledgeId)
-      params.append("knowledge_id", options.knowledgeId);
+    if (options.knowledgeId) params.append("knowledge_id", options.knowledgeId);
     const query = params.toString();
     const path = query ? `/knowledge/content?${query}` : "/knowledge/content";
 
@@ -384,9 +384,10 @@ export class KnowledgeResource {
    *
    * @param dbId - Optional database ID to scope deletion
    */
-  async deleteAll(
-    options?: { dbId?: string; knowledgeId?: string },
-  ): Promise<void> {
+  async deleteAll(options?: {
+    dbId?: string;
+    knowledgeId?: string;
+  }): Promise<void> {
     const params = new URLSearchParams();
     if (options?.dbId) params.append("db_id", options.dbId);
     if (options?.knowledgeId)
