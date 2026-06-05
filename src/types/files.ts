@@ -3,9 +3,9 @@ import type { ReadStream } from "node:fs";
 /**
  * Flexible file input type supporting multiple formats.
  *
- * - string: File path (Node.js only, converted to ReadStream)
+ * - string: File path (Node.js only, read into a File for upload)
  * - Buffer: In-memory binary data (converted to Blob)
- * - ReadStream: Node.js file stream (passed directly)
+ * - ReadStream: Node.js file stream (read into a File via its backing path)
  * - Blob: Browser Blob or Node.js Blob
  * - File: Browser File object
  */

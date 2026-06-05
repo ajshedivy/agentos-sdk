@@ -1,28 +1,56 @@
-import type * as fs from "node:fs";
+import { type ReadStream, createReadStream } from "node:fs";
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { normalizeFileInput } from "../../src/utils/files";
 
 describe("normalizeFileInput", () => {
   describe("string path input (Node.js)", () => {
-    it("converts file path to ReadStream", () => {
-      // Use test fixture file
-      const testFilePath = path.join(__dirname, "../fixtures/test-file.txt");
+    const testFilePath = path.join(__dirname, "../fixtures/test-file.txt");
+
+    it("reads file path into a File/Blob (not a ReadStream)", () => {
       const result = normalizeFileInput(testFilePath);
 
-      // Result should be a ReadStream (will have stream properties)
-      expect(result).toBeDefined();
-      // biome-ignore lint/suspicious/noExplicitAny: ReadStream type assertion for testing
-      expect(typeof (result as any).pipe).toBe("function");
-      // biome-ignore lint/suspicious/noExplicitAny: ReadStream type assertion for testing
-      expect(typeof (result as any).on).toBe("function");
+      // Must be a Blob/File so web FormData accepts it. A ReadStream would be
+      // coerced to the string "[object Object]" by global FormData.
+      expect(result).toBeInstanceOf(Blob);
+      // biome-ignore lint/suspicious/noExplicitAny: assert it is NOT a stream
+      expect((result as any).pipe).toBeUndefined();
+    });
 
-      // Clean up the stream
-      // biome-ignore lint/suspicious/noExplicitAny: ReadStream type assertion for testing
-      if (typeof (result as any).destroy === "function") {
-        // biome-ignore lint/suspicious/noExplicitAny: ReadStream type assertion for testing
-        (result as any).destroy();
+    it("preserves the basename as the File name", () => {
+      const result = normalizeFileInput(testFilePath);
+
+      if (typeof File !== "undefined") {
+        expect(result).toBeInstanceOf(File);
+        expect((result as File).name).toBe("test-file.txt");
       }
+    });
+
+    it("honors an explicit filename override", () => {
+      const result = normalizeFileInput(testFilePath, "renamed.txt");
+
+      if (typeof File !== "undefined") {
+        expect((result as File).name).toBe("renamed.txt");
+      }
+    });
+
+    it("serializes into a multipart file part, not a string field", async () => {
+      // Regression: a string path appended to a web FormData must produce a
+      // real file part (with filename), not the coerced string "[object Object]".
+      const formData = new FormData();
+      formData.append("file", normalizeFileInput(testFilePath));
+
+      const value = formData.get("file");
+      expect(value).toBeInstanceOf(Blob);
+      expect(value).not.toBe("[object Object]");
+
+      // Confirm the wire body carries a filename header (=> UploadFile, not str).
+      const body = await new Request("http://test/", {
+        method: "POST",
+        body: formData,
+      }).text();
+      expect(body).toContain('filename="test-file.txt"');
+      expect(body).not.toContain("[object Object]");
     });
   });
 
@@ -76,12 +104,31 @@ describe("normalizeFileInput", () => {
   });
 
   describe("ReadStream input", () => {
-    it("passes ReadStream through unchanged", () => {
-      const mockStream = { pipe: vi.fn() } as unknown as fs.ReadStream;
+    const testFilePath = path.join(__dirname, "../fixtures/test-file.txt");
 
-      const result = normalizeFileInput(mockStream as unknown as fs.ReadStream);
+    it("materializes a file-backed ReadStream into a File/Blob (not a stream)", () => {
+      const stream = createReadStream(testFilePath);
+      const result = normalizeFileInput(stream);
 
-      expect(result).toBe(mockStream);
+      // The web FormData transport cannot consume a Node stream, so it must be
+      // read into a Blob/File. A passed-through stream serializes as
+      // "[object Object]" and the server rejects it.
+      expect(result).toBeInstanceOf(Blob);
+      // biome-ignore lint/suspicious/noExplicitAny: assert it is NOT a stream
+      expect((result as any).pipe).toBeUndefined();
+      if (typeof File !== "undefined") {
+        expect((result as File).name).toBe("test-file.txt");
+      }
+      stream.destroy();
+    });
+
+    it("throws for a ReadStream with no backing file path", () => {
+      // e.g. a stream created from a file descriptor has no `.path`.
+      const pathless = { pipe: vi.fn() } as unknown as ReadStream;
+
+      expect(() => normalizeFileInput(pathless)).toThrow(
+        /without a backing file path/,
+      );
     });
   });
 });

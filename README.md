@@ -396,9 +396,9 @@ The SDK supports multiple file input formats for maximum flexibility:
 import type { FileInput, Image, Audio, Video, FileType } from '@worksofadam/agentos-sdk';
 
 // FileInput accepts:
-// - string: File path (Node.js only - converted to ReadStream)
+// - string: File path (Node.js only - read into a File for upload)
 // - Buffer: In-memory binary data
-// - ReadStream: Node.js file stream
+// - ReadStream: Node.js file stream (read into a File via its backing path)
 // - Blob: Browser Blob or Node.js Blob
 // - File: Browser File object
 ```
@@ -439,16 +439,16 @@ For advanced use cases, use the `normalizeFileInput` utility:
 ```typescript
 import { normalizeFileInput } from '@worksofadam/agentos-sdk';
 
-// Normalize any file input to FormData-compatible format
-const normalized = await normalizeFileInput('/path/to/file.pdf', 'document.pdf');
-// Returns: { data: Blob | ReadStream, filename: string }
+// Normalize any file input to a FormData-compatible value
+const normalized = normalizeFileInput('/path/to/file.pdf', 'document.pdf');
+// Returns: Blob | File (a File preserving the filename when available)
 ```
 
 ### Runtime Limitations
 
 **Node.js:**
 - All file input types supported
-- File paths converted to `ReadStream` for efficient streaming
+- File paths and file-backed `ReadStream`s read into a `File` (filename preserved)
 - `Buffer` converted to `Blob` for FormData compatibility
 
 **Browser (future support):**

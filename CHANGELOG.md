@@ -6,6 +6,21 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-06-05
+
+### Fixed
+
+- File uploads from a string path or `ReadStream` now serialize correctly.
+  `normalizeFileInput` returned a Node `ReadStream` for string paths (and passed
+  raw `ReadStream` inputs through unchanged), but uploads are transported via the
+  global (web) `FormData` + `fetch`, which coerce a `ReadStream` to the string
+  `"[object Object]"`. The server therefore received a string instead of a file
+  (FastAPI: `Expected UploadFile, received: <class 'str'>`). String paths and
+  file-backed `ReadStream`s are now read into a `File` (preserving the basename as
+  the multipart filename), fixing uploads across `knowledge.upload` and
+  `agents`/`teams`/`workflows` file inputs. A `ReadStream` with no backing file
+  path now throws an actionable error instead of silently uploading a corrupt part.
+
 ## [0.3.0] - 2026-02-07
 
 ### Added
