@@ -608,3 +608,47 @@ describe("Package Exports", () => {
     });
   });
 });
+
+describe("JSON body serialization (full request path)", () => {
+  // Regression test for a double-encoding bug: resource methods pre-serialize
+  // their JSON body and pass a string to client.request, so the HTTP layer must
+  // not stringify it again. Every other test mocks client.request and never
+  // exercised this path, which let a double-encode ship (the server received a
+  // JSON string instead of an object and rejected it with "Input should be a
+  // valid dictionary or object to extract fields from"). This drives the full
+  // stack with only global fetch stubbed.
+  it("sends a schedules.create body the server parses as an object, not a string", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ id: "sched-1" }),
+      headers: new Headers(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    try {
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        maxRetries: 0,
+      });
+
+      await client.schedules.create({
+        name: "Hourly tables audit",
+        cronExpr: "0 * * * *",
+        endpoint: "/agents/ibmi-agent--default/run",
+        method: "POST",
+        payload: { message: "list largest tables" },
+      });
+
+      const sentBody = fetchMock.mock.calls[0][1].body as string;
+      // A single parse (what the server does) must yield the object, not a string.
+      const parsed = JSON.parse(sentBody);
+      expect(typeof parsed).toBe("object");
+      expect(parsed.name).toBe("Hourly tables audit");
+      expect(parsed.cron_expr).toBe("0 * * * *");
+      expect(parsed.payload).toEqual({ message: "list largest tables" });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});

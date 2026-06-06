@@ -174,6 +174,28 @@ describe("HTTP Module", () => {
       );
     });
 
+    it("should not re-stringify an already-serialized string body", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ success: true }),
+        headers: new Headers(),
+      });
+
+      // Resource methods pre-serialize their bodies and pass a string.
+      const serialized = JSON.stringify({ name: "test" });
+      await request("https://api.test.com/endpoint", {
+        method: "POST",
+        body: serialized,
+      });
+
+      const sentBody = mockFetch.mock.calls[0][1].body as string;
+      // Sent verbatim, not wrapped in another layer of JSON quoting.
+      expect(sentBody).toBe(serialized);
+      // A single parse yields the object the server expects (not a string).
+      expect(JSON.parse(sentBody)).toEqual({ name: "test" });
+    });
+
     it("should include custom headers", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,

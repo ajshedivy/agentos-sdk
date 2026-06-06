@@ -98,8 +98,13 @@ export async function request<T>(
   };
 
   if (body !== undefined) {
-    // Pass FormData directly, stringify other body types
-    fetchOptions.body = body instanceof FormData ? body : JSON.stringify(body);
+    // Pass FormData and already-serialized strings through directly; only
+    // stringify plain values. Resource methods pre-serialize their JSON
+    // bodies, so re-stringifying a string here would double-encode it.
+    fetchOptions.body =
+      body instanceof FormData || typeof body === "string"
+        ? body
+        : JSON.stringify(body);
   }
 
   const response = await fetch(url, fetchOptions);
