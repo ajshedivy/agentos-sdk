@@ -11,7 +11,11 @@ This project follows [Semantic Versioning](https://semver.org/).
 - Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
   agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
   117 paths and 187 schemas. No route was removed and no schema key used by
-  `src/resources/*` disappeared, so the regeneration is additive for callers.
+  `src/resources/*` disappeared, so every hand-written resource method keeps
+  working unchanged. It is **not** additive for consumers, though: `src/index.ts`
+  re-exports `components` and `paths`, so the schema changes below are part of
+  this package's public type surface. See **Breaking** for the source-breaking
+  subset.
   - New routes: `/info`, `/toolsets`, `/toolsets/{name}`, `/learnings*`,
     `/service-accounts*`, agent/team/workflow `runs/{run_id}/resume` and
     `runs/{run_id}/checkpoints`, `sessions/{session_id}/fork`,
@@ -31,6 +35,28 @@ This project follows [Semantic Versioning](https://semver.org/).
     `ComponentResponse`; `ScheduleResponse` also gained `managed_by`, `target_type`,
     `target_id` and `disabled_reason`.
   - `Body_create_agent_run.version` changed from `string` to `integer`.
+
+### Breaking
+
+Consumers that type-reference the re-exported `components`/`paths` are affected
+by the regeneration. Under `strict` TypeScript these are compile errors, not
+warnings:
+
+- `error_code` is gone from every error schema; read `error_id` / `error_type`
+  instead (`ValidationErrorResponse` carries neither).
+- `ConfigResponse.available_models` is `Model[]` (`{ id, provider }`), not
+  `string[] | null` — element member access changes.
+- `VectorSearchResult.id` is now optional and nullable (`string | null`) rather
+  than a required `string`. This is the element type of `knowledge.search()`
+  results, so `r.id` needs a null guard.
+- `EvalsConfig` and `EvalsDomainConfig` no longer carry `available_models`.
+- `Body_create_agent_run.version` is `integer`, not `string`.
+- `ValidationErrorResponse.detail` widened to `string | ValidationErrorDetail[]`.
+- Enums grew, which breaks exhaustive `switch`/never-checks: `RunStatus` gained
+  `REGENERATED`; `RegistryResourceType` gained `workflow`, `knowledge`,
+  `memory_manager`, `session_summary_manager` and `learning`.
+
+Release note: this warrants a minor bump (0.7.0), not a patch.
 
 ### Added
 

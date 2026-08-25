@@ -545,7 +545,13 @@ type ListAgentsPath = paths['/agents']['get'];
 The SDK generates TypeScript types directly from the AgentOS OpenAPI specification:
 
 - Capture the spec from a running AgentOS: `curl -s $BASE_URL/openapi.json`,
-  written to `openapi.json` as JSON with 2-space indentation
+  written to `openapi.json` as JSON with 2-space indentation. **Capture from a
+  stack that also mounts the auth, models, registry and agent-builder routers**
+  (an ixora stack does) — a stock agno AgentOS does not serve `/auth/*`,
+  `GET /models`, `/registry/*`, `/toolsets*` or `POST /agents:apply`, and
+  capturing from one drops the schemas that `src/resources/auth.ts`,
+  `models.ts` and `registry.ts` reference, so `npm run typecheck` then fails on
+  hand-written code that was never touched.
 - Run `npm run generate:types` to regenerate types from `openapi.json`
 - Types are committed to git in `src/generated/types.ts`
 - All resource methods use generated types for request/response bodies
