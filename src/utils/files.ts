@@ -10,14 +10,17 @@ import type { FileInput } from "../types/files";
  * a plain Blob carries no name and the multipart part would be sent as
  * `filename="blob"`, losing the extension the server uses to detect the type.
  *
- * Resolved lazily so Node 18 only emits its `buffer.File` experimental warning
- * when a file is actually normalized.
+ * Node 18 prints `ExperimentalWarning: buffer.File` the first time one of these
+ * is constructed, so only consumers that actually upload a file ever see it.
  */
 function getFileCtor(): typeof File | undefined {
   if (typeof File !== "undefined") {
     return File;
   }
-  // Typed as always present, but absent before Node 18.13 - hence `| undefined`.
+  // Namespace import, not `import { File }`: `node:buffer` only exports File
+  // from Node 18.13 on, and a named import of a missing export fails at link
+  // time. Typed as always present, but undefined before 18.13 - hence the
+  // `| undefined`, which falls back to an unnamed Blob as it did before.
   return nodeBuffer.File;
 }
 
