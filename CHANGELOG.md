@@ -132,3 +132,5 @@ Initial release of the AgentOS TypeScript SDK.
 [0.1.2]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ajshedivy/agentos-sdk/releases/tag/v0.1.0
+
+<!-- ci baseline probe -->
