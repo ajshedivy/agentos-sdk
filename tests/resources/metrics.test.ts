@@ -81,6 +81,15 @@ describe("MetricsResource", () => {
       );
     });
 
+    it("adds user_id query param when userId provided", async () => {
+      const mockResponse = { metrics: [] };
+      requestSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.get({ userId: "u1" });
+
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/metrics?user_id=u1");
+    });
+
     it("only includes defined params", async () => {
       const mockResponse = { metrics: [] };
       requestSpy.mockResolvedValueOnce(mockResponse);

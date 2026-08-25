@@ -6,6 +6,63 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
+  agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
+  117 paths and 187 schemas. No route was removed and no schema key used by
+  `src/resources/*` disappeared, so every hand-written resource method keeps
+  working unchanged. It is **not** additive for consumers, though: `src/index.ts`
+  re-exports `components` and `paths`, so the schema changes below are part of
+  this package's public type surface. See **Breaking** for the source-breaking
+  subset.
+  - New routes: `/info`, `/toolsets`, `/toolsets/{name}`, `/learnings*`,
+    `/service-accounts*`, agent/team/workflow `runs/{run_id}/resume` and
+    `runs/{run_id}/checkpoints`, `sessions/{session_id}/fork`,
+    `teams|workflows/{id}/runs/{run_id}/continue`, `PATCH /agents/{agent_id}/model`,
+    `PATCH /teams/{team_id}/model`, `POST /agents:apply`, `DELETE /agents/{component_id}`,
+    `POST /components/{component_id}/restore`, `GET /metrics/refresh/status`,
+    `GET /sessions/{session_id}/media/{storage_key}`, `GET /workflows/{workflow_id}/runs`,
+    the `/a2a/*` interface routes, and the `/queue` stub routes.
+  - Error payloads: `error_code` is gone from `BadRequestResponse`,
+    `NotFoundResponse`, `UnauthenticatedResponse`, `InternalServerErrorResponse`
+    and `ValidationErrorResponse`; the first four now carry `error_id` and
+    `error_type`. `ValidationErrorResponse.detail` widened to
+    `string | ValidationErrorDetail[]`.
+  - `ConfigResponse.available_models` changed from `string[] | null` to `Model[]`
+    (`{ id, provider }`).
+  - `user_id` added to `EvalSchema`, `ScheduleResponse`, `ScheduleRunResponse` and
+    `ComponentResponse`; `ScheduleResponse` also gained `managed_by`, `target_type`,
+    `target_id` and `disabled_reason`.
+  - `Body_create_agent_run.version` changed from `string` to `integer`.
+
+### Breaking
+
+Consumers that type-reference the re-exported `components`/`paths` are affected
+by the regeneration. Under `strict` TypeScript these are compile errors, not
+warnings:
+
+- `error_code` is gone from every error schema; read `error_id` / `error_type`
+  instead (`ValidationErrorResponse` carries neither).
+- `ConfigResponse.available_models` is `Model[]` (`{ id, provider }`), not
+  `string[] | null` — element member access changes.
+- `VectorSearchResult.id` is now optional and nullable (`string | null`) rather
+  than a required `string`. This is the element type of `knowledge.search()`
+  results, so `r.id` needs a null guard.
+- `EvalsConfig` and `EvalsDomainConfig` no longer carry `available_models`.
+- `Body_create_agent_run.version` is `integer`, not `string`.
+- `ValidationErrorResponse.detail` widened to `string | ValidationErrorDetail[]`.
+- Enums grew, which breaks exhaustive `switch`/never-checks: `RunStatus` gained
+  `REGENERATED`; `RegistryResourceType` gained `workflow`, `knowledge`,
+  `memory_manager`, `session_summary_manager` and `learning`.
+
+Release note: this warrants a minor bump (0.7.0), not a patch.
+
+### Added
+
+- `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
+
+
 ## [0.6.1] - 2026-06-05
 
 ### Fixed
