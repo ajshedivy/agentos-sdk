@@ -36,6 +36,15 @@ This project follows [Semantic Versioning](https://semver.org/).
     `target_id` and `disabled_reason`.
   - `Body_create_agent_run.version` changed from `string` to `integer`.
 
+- `client.models.list()` now falls back to `GET /config` -> `available_models`
+  when `GET /models` answers 404. agno 3.0 removed the `/models` route, so
+  `models.list()` threw `NotFoundError` against a vanilla agno >= 3.0 server;
+  `/models` is still the first attempt, and ixora stacks (which keep their own
+  `/models` serving a superset catalog) are unaffected.
+- `AgentOSClient.getConfig()` returns `components["schemas"]["ConfigResponse"]`
+  instead of the hand-written `OSConfig`, so `available_models` typechecks as
+  `Model[]`.
+
 ### Breaking
 
 Consumers that type-reference the re-exported `components`/`paths` are affected
@@ -55,6 +64,9 @@ warnings:
 - Enums grew, which breaks exhaustive `switch`/never-checks: `RunStatus` gained
   `REGENERATED`; `RegistryResourceType` gained `workflow`, `knowledge`,
   `memory_manager`, `session_summary_manager` and `learning`.
+- The hand-written `OSConfig` type is no longer exported. It never matched the
+  server's `/config` payload; use `components["schemas"]["ConfigResponse"]`
+  instead. `AgentOSClient.getConfig()` returns that type now.
 
 Release note: this warrants a minor bump (0.7.0), not a patch.
 

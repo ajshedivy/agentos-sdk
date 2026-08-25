@@ -14,7 +14,6 @@ export { AgentOSClient } from "./client";
 export type {
   AgentOSClientOptions,
   HealthStatus,
-  OSConfig,
   RequestOptions,
 } from "./types";
 

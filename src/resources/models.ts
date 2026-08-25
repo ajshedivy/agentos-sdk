@@ -1,4 +1,5 @@
 import type { AgentOSClient } from "../client";
+import { NotFoundError } from "../errors";
 import type { components } from "../generated/types";
 
 // Extract types from generated schemas
@@ -24,6 +25,12 @@ export class ModelsResource {
   /**
    * List all available models
    *
+   * Calls `GET /models` first. agno removed that route in 3.0, so a vanilla
+   * agno >= 3.0 server answers 404 and this falls back to `available_models`
+   * on `GET /config` — the models actually in use by the registered agents and
+   * teams. ixora keeps its own `/models` route and serves the full catalog, so
+   * the fallback never runs against an ixora stack.
+   *
    * @returns Array of model configurations
    *
    * @example
@@ -33,6 +40,13 @@ export class ModelsResource {
    * ```
    */
   async list(): Promise<Model[]> {
-    return this.client.request<Model[]>("GET", "/models");
+    try {
+      return await this.client.request<Model[]>("GET", "/models");
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return (await this.client.getConfig()).available_models ?? [];
+      }
+      throw error;
+    }
   }
 }
