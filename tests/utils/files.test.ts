@@ -63,6 +63,19 @@ describe("normalizeFileInput", () => {
       expect(result).toBeInstanceOf(Blob);
     });
 
+    it("serializes a named Buffer into a multipart file part", async () => {
+      // Regression: on Node 18 there is no global File, so the filename used to
+      // be dropped and the part was sent as filename="blob".
+      const formData = new FormData();
+      formData.append("file", normalizeFileInput(Buffer.from("x"), "n.txt"));
+
+      const body = await new Request("http://test/", {
+        method: "POST",
+        body: formData,
+      }).text();
+      expect(body).toContain('filename="n.txt"');
+    });
+
     it("converts Buffer to File when filename provided and File exists", () => {
       const buffer = Buffer.from("test content");
 

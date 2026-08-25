@@ -1,7 +1,25 @@
+import * as nodeBuffer from "node:buffer";
 import * as fs from "node:fs";
 import type { ReadStream } from "node:fs";
 import * as path from "node:path";
 import type { FileInput } from "../types/files";
+
+/**
+ * Resolve the File constructor. Node 18 has no global `File` (it became global
+ * in Node 20) but exposes the same class on `node:buffer`, so fall back to it:
+ * a plain Blob carries no name and the multipart part would be sent as
+ * `filename="blob"`, losing the extension the server uses to detect the type.
+ *
+ * Resolved lazily so Node 18 only emits its `buffer.File` experimental warning
+ * when a file is actually normalized.
+ */
+function getFileCtor(): typeof File | undefined {
+  if (typeof File !== "undefined") {
+    return File;
+  }
+  // Typed as always present, but absent before Node 18.13 - hence `| undefined`.
+  return nodeBuffer.File;
+}
 
 /**
  * Read a file from disk into a File (or Blob when the File constructor is
@@ -11,9 +29,10 @@ import type { FileInput } from "../types/files";
 function readPathToFile(p: fs.PathLike, filename?: string): Blob | File {
   const data = fs.readFileSync(p);
   const name = filename ?? path.basename(String(p));
-  if (typeof File !== "undefined") {
+  const FileCtor = getFileCtor();
+  if (FileCtor) {
     // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
-    return new File([data as any], name);
+    return new FileCtor([data as any], name);
   }
   // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
   return new Blob([data as any]);
@@ -76,9 +95,12 @@ export function normalizeFileInput(
   if (Buffer.isBuffer(input)) {
     // Create Blob with optional filename via File constructor if available
     // Note: Buffer extends Uint8Array, safe to use in Blob/File constructors
-    if (filename && typeof File !== "undefined") {
-      // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
-      return new File([input as any], filename);
+    if (filename) {
+      const FileCtor = getFileCtor();
+      if (FileCtor) {
+        // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
+        return new FileCtor([input as any], filename);
+      }
     }
     // biome-ignore lint/suspicious/noExplicitAny: Buffer ArrayBufferLike incompatibility workaround
     return new Blob([input as any]);
