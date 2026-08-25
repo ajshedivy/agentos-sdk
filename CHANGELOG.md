@@ -6,6 +6,37 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
+  agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
+  117 paths and 187 schemas. No route was removed and no schema key used by
+  `src/resources/*` disappeared, so the regeneration is additive for callers.
+  - New routes: `/info`, `/toolsets`, `/toolsets/{name}`, `/learnings*`,
+    `/service-accounts*`, agent/team/workflow `runs/{run_id}/resume` and
+    `runs/{run_id}/checkpoints`, `sessions/{session_id}/fork`,
+    `teams|workflows/{id}/runs/{run_id}/continue`, `PATCH /agents/{agent_id}/model`,
+    `PATCH /teams/{team_id}/model`, `POST /agents:apply`, `DELETE /agents/{component_id}`,
+    `POST /components/{component_id}/restore`, `GET /metrics/refresh/status`,
+    `GET /sessions/{session_id}/media/{storage_key}`, `GET /workflows/{workflow_id}/runs`,
+    the `/a2a/*` interface routes, and the `/queue` stub routes.
+  - Error payloads: `error_code` is gone from `BadRequestResponse`,
+    `NotFoundResponse`, `UnauthenticatedResponse`, `InternalServerErrorResponse`
+    and `ValidationErrorResponse`; the first four now carry `error_id` and
+    `error_type`. `ValidationErrorResponse.detail` widened to
+    `string | ValidationErrorDetail[]`.
+  - `ConfigResponse.available_models` changed from `string[] | null` to `Model[]`
+    (`{ id, provider }`).
+  - `user_id` added to `EvalSchema`, `ScheduleResponse`, `ScheduleRunResponse` and
+    `ComponentResponse`; `ScheduleResponse` also gained `managed_by`, `target_type`,
+    `target_id` and `disabled_reason`.
+  - `Body_create_agent_run.version` changed from `string` to `integer`.
+
+### Added
+
+- `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
+
+
 ## [0.6.1] - 2026-06-05
 
 ### Fixed

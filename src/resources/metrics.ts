@@ -12,6 +12,8 @@ export interface GetMetricsOptions {
   startingDate?: string;
   /** End date in YYYY-MM-DD format */
   endingDate?: string;
+  /** Filter metrics to a single user */
+  userId?: string;
   /** Database ID */
   dbId?: string;
 }
@@ -67,6 +69,9 @@ export class MetricsResource {
     }
     if (options?.endingDate) {
       params.append("ending_date", options.endingDate);
+    }
+    if (options?.userId !== undefined) {
+      params.append("user_id", options.userId);
     }
     if (options?.dbId !== undefined) {
       params.append("db_id", options.dbId);

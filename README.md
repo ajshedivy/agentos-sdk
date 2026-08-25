@@ -544,9 +544,18 @@ type ListAgentsPath = paths['/agents']['get'];
 
 The SDK generates TypeScript types directly from the AgentOS OpenAPI specification:
 
+- Capture the spec from a running AgentOS: `curl -s $BASE_URL/openapi.json`,
+  written to `openapi.json` as JSON with 2-space indentation
 - Run `npm run generate:types` to regenerate types from `openapi.json`
 - Types are committed to git in `src/generated/types.ts`
 - All resource methods use generated types for request/response bodies
+
+One normalization is applied to the captured spec by hand and must be reapplied
+after each capture: agno 3.0.0 gives both `GET /config` and
+`GET /components/{component_id}/configs/{version}` the `operation_id` `get_config`,
+which makes `openapi-typescript` emit a duplicate `operations` key and fails
+`npm run typecheck`. The second one is renamed to `get_config_version` (the name
+of its handler) in `openapi.json`.
 
 ## API Reference
 
