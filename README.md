@@ -579,7 +579,7 @@ new AgentOSClient(options: AgentOSClientOptions)
 - `maxRetries?: number` - Maximum retry attempts (default: 3)
 
 **Methods:**
-- `getConfig(): Promise<OSConfig>` - Get server configuration
+- `getConfig(): Promise<ConfigResponse>` - Get server configuration (`components['schemas']['ConfigResponse']`)
 - `health(): Promise<HealthStatus>` - Check API health status
 
 ### Resource Namespaces

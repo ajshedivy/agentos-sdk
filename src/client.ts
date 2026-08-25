@@ -1,4 +1,5 @@
 import { createErrorFromResponse } from "./errors";
+import type { components } from "./generated/types";
 import { requestWithRetry } from "./http";
 import { VERSION } from "./index";
 import { AgentsResource } from "./resources/agents";
@@ -20,9 +21,10 @@ import { WorkflowsResource } from "./resources/workflows";
 import type {
   AgentOSClientOptions,
   HealthStatus,
-  OSConfig,
   RequestOptions,
 } from "./types";
+
+type ConfigResponse = components["schemas"]["ConfigResponse"];
 
 /**
  * AgentOS API client
@@ -101,8 +103,8 @@ export class AgentOSClient {
   /**
    * Get OS configuration
    */
-  async getConfig(): Promise<OSConfig> {
-    return this.request<OSConfig>("GET", "/config");
+  async getConfig(): Promise<ConfigResponse> {
+    return this.request<ConfigResponse>("GET", "/config");
   }
 
   /**

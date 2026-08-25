@@ -74,9 +74,13 @@ describe("AgentOSClient", () => {
   describe("getConfig", () => {
     it("should fetch config from /config endpoint", async () => {
       const mockConfig = {
-        version: "1.0.0",
-        environment: "production",
-        features: { streaming: true },
+        os_id: "test-os",
+        available_models: [{ id: "gpt-4", provider: "OpenAI" }],
+        databases: [],
+        agents: [],
+        teams: [],
+        workflows: [],
+        interfaces: [],
       };
       mockRequestWithRetry.mockResolvedValueOnce(mockConfig);
 
@@ -96,7 +100,7 @@ describe("AgentOSClient", () => {
     });
 
     it("should include default headers in getConfig request", async () => {
-      mockRequestWithRetry.mockResolvedValueOnce({ version: "1.0.0" });
+      mockRequestWithRetry.mockResolvedValueOnce({ os_id: "test-os" });
 
       const client = new AgentOSClient({
         baseUrl: "https://api.example.com",

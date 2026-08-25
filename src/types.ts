@@ -43,15 +43,6 @@ export interface RequestOptions {
 }
 
 /**
- * OS configuration response from /config endpoint
- */
-export interface OSConfig {
-  version: string;
-  environment: string;
-  features: Record<string, boolean>;
-}
-
-/**
  * Health status response from /health endpoint
  */
 export interface HealthStatus {
