@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentOSClient } from "../../src/client";
+import { MigrationFailedError } from "../../src/errors";
 import { DatabaseResource } from "../../src/resources/database";
 
 describe("DatabaseResource", () => {
@@ -46,12 +47,16 @@ describe("DatabaseResource", () => {
       );
     });
 
-    it("returns void", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+    it("returns the server's migration summary", async () => {
+      requestSpy.mockResolvedValueOnce({
+        message: "Database migrated successfully to latest version",
+      });
 
       const result = await resource.migrate("my-db");
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual({
+        message: "Database migrated successfully to latest version",
+      });
     });
 
     it("propagates errors", async () => {
@@ -64,8 +69,10 @@ describe("DatabaseResource", () => {
   });
 
   describe("migrateAll()", () => {
+    const ok = { message: "All databases migrated successfully to latest version" };
+
     it("calls POST /databases/all/migrate", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+      requestSpy.mockResolvedValueOnce(ok);
 
       await resource.migrateAll();
 
@@ -77,7 +84,7 @@ describe("DatabaseResource", () => {
     });
 
     it("adds target_version query param when provided", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+      requestSpy.mockResolvedValueOnce(ok);
 
       await resource.migrateAll({ targetVersion: "3" });
 
@@ -85,6 +92,42 @@ describe("DatabaseResource", () => {
         "POST",
         "/databases/all/migrate?target_version=3",
       );
+    });
+
+    it("resolves the 200 body, including skipped remote databases", async () => {
+      requestSpy.mockResolvedValueOnce({ ...ok, skipped: ["remote-db"] });
+
+      const result = await resource.migrateAll();
+
+      expect(result).toEqual({ ...ok, skipped: ["remote-db"] });
+    });
+
+    it("rejects with MigrationFailedError on a 207 body with failed databases", async () => {
+      // 207 Multi-Status satisfies response.ok, so the transport resolves it
+      requestSpy.mockResolvedValueOnce({
+        message: "Migrated 0/1 databases to latest version",
+        failed: { "agentos-db": "relation already exists" },
+        skipped: ["remote-db"],
+      });
+
+      const promise = resource.migrateAll();
+
+      await expect(promise).rejects.toThrow(MigrationFailedError);
+      await expect(promise).rejects.toMatchObject({
+        status: 207,
+        message: "Migrated 0/1 databases to latest version",
+        failed: { "agentos-db": "relation already exists" },
+        skipped: ["remote-db"],
+      });
+    });
+
+    it("does not throw on an empty failed map", async () => {
+      requestSpy.mockResolvedValueOnce({ ...ok, failed: {} });
+
+      await expect(resource.migrateAll()).resolves.toEqual({
+        ...ok,
+        failed: {},
+      });
     });
 
     it("propagates errors", async () => {

@@ -466,9 +466,11 @@ import {
   APIError,
   AuthenticationError,
   BadRequestError,
+  ConflictError,
   NotFoundError,
   RateLimitError,
   InternalServerError,
+  MigrationFailedError,
   RemoteServerUnavailableError,
   UnprocessableEntityError
 } from '@worksofadam/agentos-sdk';
@@ -504,7 +506,51 @@ All API errors extend `APIError` and include:
 - `status`: HTTP status code
 - `message`: Error message from API
 - `requestId`: X-Request-ID header value (for support)
-- `body`: Raw response body
+- `headers`: Response headers
+- `errorId`: Stable error identifier from the response body (agno >= 3.0), e.g.
+  `"migration_required_error"`; `undefined` when the body carries none
+- `errorType`: Server-side error type (agno >= 3.0). agno currently sets it to
+  the same snake_case value as `error_id`, so branch on `errorId` and treat this
+  as informational; `undefined` when the body carries none
+
+Streaming and non-streaming requests parse error bodies the same way.
+
+### Branching on `errorId`
+
+agno 3.0 stamps typed failures with a machine-readable identity, so you can
+branch on `errorId` instead of matching `message` text:
+
+```typescript
+try {
+  await client.agents.run('agent-id', { message: 'Hello!' });
+} catch (error) {
+  if (error instanceof APIError && error.errorId === 'migration_required_error') {
+    await client.database.migrateAll();
+  } else {
+    throw error;
+  }
+}
+```
+
+### Migration results
+
+`client.database.migrate()` and `client.database.migrateAll()` return the
+server's `MigrateResult` (`{ message, failed?, skipped? }`). `migrateAll()`
+throws `MigrationFailedError` when the server answers 207 Multi-Status because
+at least one database failed; `failed` maps each database id to its reason:
+
+```typescript
+try {
+  const { message, skipped } = await client.database.migrateAll();
+  console.log(message, skipped ?? []);
+} catch (error) {
+  if (error instanceof MigrationFailedError) {
+    for (const [dbId, reason] of Object.entries(error.failed)) {
+      console.error(`${dbId}: ${reason}`);
+    }
+  }
+}
+```
 
 ## TypeScript
 

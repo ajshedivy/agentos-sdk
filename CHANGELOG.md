@@ -44,6 +44,19 @@ This project follows [Semantic Versioning](https://semver.org/).
 - `AgentOSClient.getConfig()` returns `components["schemas"]["ConfigResponse"]`
   instead of the hand-written `OSConfig`, so `available_models` typechecks as
   `Model[]`.
+- `database.migrate()` / `database.migrateAll()` return `Promise<MigrateResult>`
+  instead of `Promise<void>`, and `migrateAll()` throws `MigrationFailedError`
+  on a 207 Multi-Status instead of resolving as success. A 207 satisfies
+  `response.ok`, so a failed migration — which a stack that registers every
+  database under one id always reports as 207, never 5xx — was previously
+  reported to the caller as a clean success.
+- Streaming requests (`agents.runStream()`, `teams.runStream()`, ...) parse a
+  non-2xx body the same way non-streaming ones do: `message` is the JSON
+  `detail` (or `message` / `error`) rather than the raw body text, and
+  `errorId` / `errorType` are populated.
+- Error bodies are read once as text and then parsed. Previously a non-JSON
+  error body surfaced as `HTTP <status>`: the `text()` fallback ran after a
+  failed `json()` had already consumed the stream.
 
 ### Breaking
 
@@ -73,6 +86,21 @@ Release note: this warrants a minor bump (0.7.0), not a patch.
 ### Added
 
 - `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
+- `APIError.errorId` / `APIError.errorType`: the `error_id` / `error_type` that
+  agno >= 3.0 puts in typed error bodies (`migration_required_error`,
+  `schema_mismatch_error`, ...), so callers can branch on identity instead of
+  `message` text. Both are optional — a plain `{ detail }` body leaves them
+  `undefined`. Every error class accepts them through a trailing `options`
+  argument (`APIErrorOptions`, exported) and `createErrorFromResponse` threads
+  them through, on both the `request()` and `requestStream()` paths.
+- `ConflictError` (409). agno 3.0 answers 409 for a reused idempotency key and
+  for continuing a run that is not paused. Not retried by `requestWithRetry`.
+- `MigrateResult` (`{ message, failed?, skipped? }`): the body of
+  `POST /databases/{db_id}/migrate` and `POST /databases/all/migrate`.
+- `MigrationFailedError` (status 207), thrown by `database.migrateAll()` when
+  the server answers 207 Multi-Status with a non-empty `failed` map (database
+  id -> failure reason); `skipped` lists the remote databases the server left
+  alone.
 
 
 ## [0.6.1] - 2026-06-05

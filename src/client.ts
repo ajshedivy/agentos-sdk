@@ -1,6 +1,6 @@
 import { createErrorFromResponse } from "./errors";
 import type { components } from "./generated/types";
-import { requestWithRetry } from "./http";
+import { parseErrorBody, requestWithRetry } from "./http";
 import { VERSION } from "./index";
 import { AgentsResource } from "./resources/agents";
 import { ApprovalsResource } from "./resources/approvals";
@@ -182,13 +182,14 @@ export class AgentOSClient {
     const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
-      const message = await response.text();
+      const { message, errorId, errorType } = await parseErrorBody(response);
       const requestId = response.headers.get("x-request-id") ?? undefined;
       throw createErrorFromResponse(
         response.status,
         message,
         requestId,
         this.extractHeaders(response.headers),
+        { errorId, errorType },
       );
     }
 
