@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import type {
-  StreamEvent,
-  RunCompletedEvent,
-  RunContentEvent,
-  RunStartedEvent,
+import {
+  RunEventType,
+  TeamEventType,
+  type StreamEvent,
+  type RunCompletedEvent,
+  type RunContentEvent,
+  type RunStartedEvent,
 } from "../../src/streaming/events";
 import { AgentStream } from "../../src/streaming/stream";
 
@@ -542,6 +544,35 @@ describe("AgentStream", () => {
         .start();
 
       expect(received).toBe(true);
+    });
+
+    it("dispatches a team custom event to TeamEventType.TeamCustomEvent", async () => {
+      // agno's TeamRunEvent.custom_event is "CustomEvent": nothing ever
+      // arrives named "TeamCustomEvent", so the constant has to carry the
+      // string the wire uses for the handler to fire at all.
+      const response = createMockSSEResponse([
+        {
+          event: "CustomEvent",
+          data: { created_at: 1000, run_id: "run-1", team_id: "team-1" },
+        },
+      ]);
+      const controller = new AbortController();
+      const stream = AgentStream.fromSSEResponse(response, controller);
+
+      const seen: string[] = [];
+      await stream
+        .on(TeamEventType.TeamCustomEvent, (e) => {
+          seen.push(`team:${e.team_id}`);
+        })
+        .on(RunEventType.CustomEvent, (e) => {
+          seen.push(`run:${e.event}`);
+        })
+        .on("TeamCustomEvent", () => {
+          seen.push("never");
+        })
+        .start();
+
+      expect(seen).toEqual(["team:team-1", "run:CustomEvent"]);
     });
   });
 });
