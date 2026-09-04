@@ -71,6 +71,20 @@ This project follows [Semantic Versioning](https://semver.org/).
   reads no `AGENTOS_API_KEY` env var), `timeout` defaults to 30000 and
   `maxRetries` to 2, `headers` is documented, and the `metrics.get()` /
   `traces.list()` snippets use the camelCase option keys the resources take.
+- `TeamEventType.TeamCustomEvent` matches the custom events a team stream
+  carries. Its value was `"TeamCustomEvent"`, a string agno never sends:
+  `TeamRunEvent.custom_event` is `"CustomEvent"`, the same value `RunEvent`
+  and `WorkflowRunEvent` use (`agno/run/team.py`, unchanged since 2.0), so
+  `stream.on(TeamEventType.TeamCustomEvent, ...)` never fired on a team run.
+  The constant now carries `"CustomEvent"` and is deprecated in favour of
+  `RunEventType.CustomEvent`, which covers all three emitters. `CustomEvent`
+  is one domain-neutral shape (`event: "CustomEvent"` plus the optional
+  agent, team and workflow base fields; the user-defined payload comes
+  through as extra keys) that is a member of `AgentRunEvent`, `TeamRunEvent`
+  and `WorkflowRunEvent` — the workflow union had no custom-event member —
+  and `TeamCustomEvent` is a deprecated alias of it. `EventMap["CustomEvent"]`
+  resolves to that shape; the `"TeamCustomEvent"` key `EventMap` used to
+  carry is gone, since no event with that name exists.
 
 ### Changed
 

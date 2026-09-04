@@ -7,6 +7,7 @@
 import type {
   AudioData,
   BaseTeamRunEvent,
+  CustomEvent,
   ExtraData,
   ImageData,
   Metrics,
@@ -550,11 +551,12 @@ export interface TeamTaskUpdatedEvent extends BaseTeamRunEvent {
 /**
  * Team custom user-defined event.
  *
+ * @deprecated agno emits team custom events as `event: "CustomEvent"`, the
+ * same string agent and workflow custom events use, so this is the shared
+ * {@link CustomEvent} shape. Kept as an alias so existing imports compile.
  * @public
  */
-export interface TeamCustomEvent extends BaseTeamRunEvent {
-  event: "TeamCustomEvent";
-}
+export type TeamCustomEvent = CustomEvent;
 
 // ---------------------------------------------------------------------------
 // Discriminated union
@@ -605,4 +607,4 @@ export type TeamRunEvent =
   | TeamTaskStateUpdatedEvent
   | TeamTaskCreatedEvent
   | TeamTaskUpdatedEvent
-  | TeamCustomEvent;
+  | CustomEvent;

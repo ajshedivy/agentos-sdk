@@ -582,3 +582,22 @@ export interface BaseWorkflowRunEvent extends StreamEvent {
   step_id?: string;
   parent_step_id?: string;
 }
+
+/**
+ * Custom user-defined event (a `CustomEvent` subclass yielded from a tool or
+ * hook).
+ *
+ * agno emits the same `event: "CustomEvent"` string for agent, team and
+ * workflow custom events (`RunEvent`, `TeamRunEvent` and `WorkflowRunEvent`
+ * all define `custom_event = "CustomEvent"`), so one shape carries the
+ * optional base fields of all three domains and is a member of every run
+ * event union. The user-defined payload arrives as extra keys.
+ *
+ * @public
+ */
+export interface CustomEvent
+  extends BaseAgentRunEvent,
+    BaseTeamRunEvent,
+    BaseWorkflowRunEvent {
+  event: "CustomEvent";
+}
