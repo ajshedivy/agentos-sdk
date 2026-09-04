@@ -7,6 +7,7 @@
 import type {
   AudioData,
   BaseAgentRunEvent,
+  CustomEvent,
   ExtraData,
   ImageData,
   Metrics,
@@ -490,24 +491,13 @@ export interface FollowupsCompletedEvent extends BaseAgentRunEvent {
 }
 
 // ---------------------------------------------------------------------------
-// Custom event
-// ---------------------------------------------------------------------------
-
-/**
- * Custom user-defined event.
- *
- * @public
- */
-export interface CustomEvent extends BaseAgentRunEvent {
-  event: "CustomEvent";
-}
-
-// ---------------------------------------------------------------------------
 // Discriminated union
 // ---------------------------------------------------------------------------
 
 /**
  * Discriminated union of all agent run streaming events (37 types).
+ * `CustomEvent` (from `./shared`) is the domain-neutral custom event agno
+ * emits on agent, team and workflow streams alike.
  *
  * Use the `event` field to narrow the type:
  * ```typescript

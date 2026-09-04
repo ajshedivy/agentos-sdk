@@ -1,5 +1,6 @@
 /**
- * Workflow streaming event interfaces (30 event types).
+ * Workflow streaming event interfaces (31 event types, counting the shared
+ * `CustomEvent`).
  *
  * @packageDocumentation
  */
@@ -7,6 +8,7 @@
 import type {
   AudioData,
   BaseWorkflowRunEvent,
+  CustomEvent,
   ImageData,
   ResponseAudio,
   RunRequirement,
@@ -478,7 +480,9 @@ export interface StepsExecutionCompletedEvent extends BaseWorkflowRunEvent {
 // ---------------------------------------------------------------------------
 
 /**
- * Discriminated union of all workflow run streaming events (30 types).
+ * Discriminated union of all workflow run streaming events (31 types).
+ * `CustomEvent` (from `./shared`) is the domain-neutral custom event agno
+ * emits on agent, team and workflow streams alike.
  *
  * @public
  */
@@ -512,4 +516,5 @@ export type WorkflowRunEvent =
   | RouterExecutionCompletedEvent
   | RouterPausedEvent
   | StepsExecutionStartedEvent
-  | StepsExecutionCompletedEvent;
+  | StepsExecutionCompletedEvent
+  | CustomEvent;

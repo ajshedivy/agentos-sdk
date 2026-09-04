@@ -429,7 +429,10 @@ describe("streaming event types", () => {
       expect(TeamEventType.TeamParserModelResponseCompleted).toBe("TeamParserModelResponseCompleted");
       expect(TeamEventType.TeamOutputModelResponseStarted).toBe("TeamOutputModelResponseStarted");
       expect(TeamEventType.TeamOutputModelResponseCompleted).toBe("TeamOutputModelResponseCompleted");
-      expect(TeamEventType.TeamCustomEvent).toBe("TeamCustomEvent");
+      // agno's TeamRunEvent.custom_event is "CustomEvent"; nothing emits
+      // a "TeamCustomEvent" string.
+      expect(TeamEventType.TeamCustomEvent).toBe("CustomEvent");
+      expect(TeamEventType.TeamCustomEvent).toBe(RunEventType.CustomEvent);
       // agno 3.0
       expect(TeamEventType.TeamRunPaused).toBe("TeamRunPaused");
       expect(TeamEventType.TeamRunContinued).toBe("TeamRunContinued");
@@ -808,13 +811,15 @@ describe("streaming event types", () => {
       expect(event.session_summary?.summary).toBe("Team discussed project plan");
     });
 
-    it("TeamCustomEvent is constructible", () => {
+    it("TeamCustomEvent is the shared CustomEvent shape", () => {
       const event: TeamCustomEvent = {
-        event: "TeamCustomEvent",
+        event: "CustomEvent",
         created_at: Date.now(),
+        team_id: "team-1",
       };
 
-      expect(event.event).toBe("TeamCustomEvent");
+      expect(event.event).toBe("CustomEvent");
+      expect(event.team_id).toBe("team-1");
     });
   });
 
@@ -1396,6 +1401,31 @@ describe("streaming event types", () => {
       expect(events[0].event).toBe("RunStarted");
       expect(events[1].event).toBe("TeamRunStarted");
       expect(events[2].event).toBe("WorkflowStarted");
+    });
+  });
+
+  describe("CustomEvent", () => {
+    it("is one shape shared by agent, team and workflow streams", () => {
+      // agno's RunEvent, TeamRunEvent and WorkflowRunEvent enums all set
+      // custom_event = "CustomEvent", so a single interface sits in every
+      // union and carries the optional base fields of all three domains.
+      const event: CustomEvent = {
+        event: "CustomEvent",
+        created_at: 1,
+        agent_id: "a1",
+        team_id: "t1",
+        workflow_id: "w1",
+        payload: { progress: 0.5 },
+      };
+      const asAgent: AgentRunEvent = event;
+      const asTeam: TeamRunEvent = event;
+      const asWorkflow: WorkflowRunEvent = event;
+      const viaMap: EventMap["CustomEvent"] = event;
+
+      expect(asAgent.event).toBe("CustomEvent");
+      expect(asTeam.event).toBe("CustomEvent");
+      expect(asWorkflow.event).toBe("CustomEvent");
+      expect(viaMap.payload).toEqual({ progress: 0.5 });
     });
   });
 
