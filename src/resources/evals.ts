@@ -82,7 +82,7 @@ export interface UpdateEvalOptions {
  * Options for deleting eval runs
  */
 export interface DeleteEvalsOptions {
-  /** Array of eval run IDs to delete */
+  /** Array of eval run IDs to delete (sent as `eval_run_ids`) */
   ids: string[];
   /** Database ID */
   dbId?: string;
@@ -354,8 +354,9 @@ export class EvalsResource {
       params.append("table", options.table);
     }
 
+    // DELETE /eval-runs validates DeleteEvalRunsRequest: { eval_run_ids: string[] }
     const body: Record<string, unknown> = {
-      ids: options.ids,
+      eval_run_ids: options.ids,
     };
 
     const queryString = params.toString();
