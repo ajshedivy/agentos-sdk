@@ -8,6 +8,15 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- `metrics.refresh()` now returns the response body instead of discarding it:
+  `DayAggregatedMetrics[]` on the default synchronous path (the server has
+  returned this list since 2.8.5), or `MetricsRefreshResponse`
+  (`{ status, message }`) when the server reports `already_running` or when
+  `background: true` is passed. Discriminate with `Array.isArray()`. Callers
+  that ignored the old `void` result are unaffected.
+- `components.delete()` is documented as an archive (soft delete): the server
+  stamps `deleted_at` and keeps the id reserved. It has behaved this way since
+  2.8.5; the JSDoc said "delete".
 - Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
   agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
   117 paths and 187 schemas. No route was removed and no schema key used by
@@ -44,15 +53,6 @@ This project follows [Semantic Versioning](https://semver.org/).
 - `AgentOSClient.getConfig()` returns `components["schemas"]["ConfigResponse"]`
   instead of the hand-written `OSConfig`, so `available_models` typechecks as
   `Model[]`.
-- `metrics.refresh()` now returns the response body instead of discarding it:
-  `DayAggregatedMetrics[]` on the default synchronous path (the server has
-  returned this list since 2.8.5), or `MetricsRefreshResponse`
-  (`{ status, message }`) when the server reports `already_running` or when
-  `background: true` is passed. Discriminate with `Array.isArray()`. Callers
-  that ignored the old `void` result are unaffected.
-- `components.delete()` is documented as an archive (soft delete): the server
-  stamps `deleted_at` and keeps the id reserved. It has behaved this way since
-  2.8.5; the JSDoc said "delete".
 
 ### Breaking
 
@@ -89,7 +89,6 @@ Release note: this warrants a minor bump (0.7.0), not a patch.
 
 ### Added
 
-- `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
 - `client.info()` -> `GET /info`, typed as `components["schemas"]["InfoResponse"]`
   (`os_id`, `name`, `os_version`, `agno_version`, `agent_count`, `team_count`,
   `workflow_count`, `mcp`, `auth_mode`). The only route that reports the running
@@ -109,6 +108,7 @@ Release note: this warrants a minor bump (0.7.0), not a patch.
   running | completed | failed`, `started_at`, `finished_at`, `error`).
 - Exported option types `GetComponentOptions`, `RefreshMetricsOptions` and
   `RefreshStatusOptions`.
+- `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
 
 
 ## [0.6.1] - 2026-06-05
