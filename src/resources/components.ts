@@ -22,6 +22,22 @@ export interface ListComponentsOptions {
   page?: number;
   /** Number of items per page */
   limit?: number;
+  /**
+   * Also list archived (soft-deleted) components. Archived rows carry a
+   * `deleted_at` timestamp and are omitted by default.
+   */
+  includeDeleted?: boolean;
+}
+
+/**
+ * Options for fetching a single component
+ */
+export interface GetComponentOptions {
+  /**
+   * Also return the component if it is archived (soft-deleted). Archived
+   * components 404 by default.
+   */
+  includeDeleted?: boolean;
 }
 
 /**
@@ -104,7 +120,7 @@ export interface UpdateConfigOptions {
  * Resource class for component operations
  *
  * Provides methods to:
- * - List, create, get, update, and delete components
+ * - List, create, get, update, archive (delete) and restore components
  * - Manage component configurations and versioning
  *
  * @example
@@ -156,6 +172,9 @@ export class ComponentsResource {
     }
     if (options?.limit !== undefined) {
       params.append("limit", String(options.limit));
+    }
+    if (options?.includeDeleted) {
+      params.append("include_deleted", "true");
     }
 
     const queryString = params.toString();
@@ -216,19 +235,30 @@ export class ComponentsResource {
    * Get component details by ID
    *
    * @param componentId - The unique identifier for the component
+   * @param options - Pass `includeDeleted: true` to also return an archived component
    * @returns Component details
    *
    * @example
    * ```typescript
    * const component = await client.components.get('component-123');
    * console.log(component.name, component.component_type);
+   *
+   * // Fetch an archived component (404 without the flag)
+   * const archived = await client.components.get('component-123', {
+   *   includeDeleted: true,
+   * });
+   * console.log(archived.deleted_at);
    * ```
    */
-  async get(componentId: string): Promise<ComponentResponse> {
-    return this.client.request<ComponentResponse>(
-      "GET",
-      `/components/${encodeURIComponent(componentId)}`,
-    );
+  async get(
+    componentId: string,
+    options?: GetComponentOptions,
+  ): Promise<ComponentResponse> {
+    const base = `/components/${encodeURIComponent(componentId)}`;
+    const path = options?.includeDeleted
+      ? `${base}?include_deleted=true`
+      : base;
+    return this.client.request<ComponentResponse>("GET", path);
   }
 
   /**
@@ -276,7 +306,12 @@ export class ComponentsResource {
   }
 
   /**
-   * Delete a component
+   * Archive a component
+   *
+   * The server soft-deletes: the row is stamped with `deleted_at` and its
+   * `component_id` stays reserved. Archived components disappear from
+   * `list()` and 404 on `get()` unless `includeDeleted: true` is passed.
+   * Undo with {@link restore}.
    *
    * @param componentId - The unique identifier for the component
    *
@@ -289,6 +324,29 @@ export class ComponentsResource {
     await this.client.request<void>(
       "DELETE",
       `/components/${encodeURIComponent(componentId)}`,
+    );
+  }
+
+  /**
+   * Restore an archived (soft-deleted) component
+   *
+   * Clears `deleted_at` and returns the component. The server answers 404 for
+   * an unknown id and 409 (surfaced as `APIError` with `status: 409`) when the
+   * component is not archived.
+   *
+   * @param componentId - The unique identifier for the component
+   * @returns The restored component
+   *
+   * @example
+   * ```typescript
+   * const component = await client.components.restore('component-123');
+   * console.log(component.deleted_at); // null
+   * ```
+   */
+  async restore(componentId: string): Promise<ComponentResponse> {
+    return this.client.request<ComponentResponse>(
+      "POST",
+      `/components/${encodeURIComponent(componentId)}/restore`,
     );
   }
 

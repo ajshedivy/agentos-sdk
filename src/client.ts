@@ -25,6 +25,7 @@ import type {
 } from "./types";
 
 type ConfigResponse = components["schemas"]["ConfigResponse"];
+type InfoResponse = components["schemas"]["InfoResponse"];
 
 /**
  * AgentOS API client
@@ -112,6 +113,23 @@ export class AgentOSClient {
    */
   async health(): Promise<HealthStatus> {
     return this.request<HealthStatus>("GET", "/health");
+  }
+
+  /**
+   * Get lightweight OS metadata from `GET /info`
+   *
+   * Returns `os_id`, `name`, `os_version`, `agno_version`, component counts,
+   * MCP availability and the effective `auth_mode`. This is the only route
+   * that reports which AgentOS version is running.
+   *
+   * @example
+   * ```typescript
+   * const info = await client.info();
+   * console.log(info.os_version, info.agno_version);
+   * ```
+   */
+  async info(): Promise<InfoResponse> {
+    return this.request<InfoResponse>("GET", "/info");
   }
 
   /**

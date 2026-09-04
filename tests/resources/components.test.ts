@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentOSClient } from "../../src/client";
+import { APIError } from "../../src/errors";
 import { ComponentsResource } from "../../src/resources/components";
 
 describe("ComponentsResource", () => {
@@ -57,6 +58,47 @@ describe("ComponentsResource", () => {
         "GET",
         "/components?page=2&limit=10",
       );
+    });
+
+    it("adds include_deleted=true when includeDeleted is set", async () => {
+      const archived = {
+        component_id: "comp-1",
+        component_type: "agent",
+        created_at: 1_700_000_000,
+        deleted_at: 1_700_000_100,
+      };
+      requestSpy.mockResolvedValueOnce({ data: [archived] });
+
+      const result = await resource.list({ includeDeleted: true });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/components?include_deleted=true",
+      );
+      // deleted_at typechecks as number | null | undefined on ComponentResponse
+      const deletedAt: number | null | undefined = result.data[0]?.deleted_at;
+      expect(deletedAt).toBe(1_700_000_100);
+    });
+
+    it("combines include_deleted with other params", async () => {
+      requestSpy.mockResolvedValueOnce({ data: [] });
+
+      await resource.list({ componentType: "agent", includeDeleted: true });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/components?component_type=agent&include_deleted=true",
+      );
+    });
+
+    it("omits include_deleted when includeDeleted is false or unset", async () => {
+      requestSpy.mockResolvedValue({ data: [] });
+
+      await resource.list({ includeDeleted: false });
+      await resource.list({});
+
+      expect(requestSpy).toHaveBeenNthCalledWith(1, "GET", "/components");
+      expect(requestSpy).toHaveBeenNthCalledWith(2, "GET", "/components");
     });
 
     it("combines all query params", async () => {
@@ -199,6 +241,40 @@ describe("ComponentsResource", () => {
       );
     });
 
+    it("adds include_deleted=true when includeDeleted is set", async () => {
+      requestSpy.mockResolvedValueOnce({
+        component_id: "comp-1",
+        deleted_at: 1_700_000_100,
+      });
+
+      const result = await resource.get("comp-1", { includeDeleted: true });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/components/comp-1?include_deleted=true",
+      );
+      expect(result.deleted_at).toBe(1_700_000_100);
+    });
+
+    it("keeps URL-encoding when include_deleted is appended", async () => {
+      requestSpy.mockResolvedValueOnce({ component_id: "comp/special" });
+
+      await resource.get("comp/special", { includeDeleted: true });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/components/comp%2Fspecial?include_deleted=true",
+      );
+    });
+
+    it("omits include_deleted when includeDeleted is false", async () => {
+      requestSpy.mockResolvedValueOnce({ component_id: "comp-1" });
+
+      await resource.get("comp-1", { includeDeleted: false });
+
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/components/comp-1");
+    });
+
     it("propagates errors from client.request", async () => {
       requestSpy.mockRejectedValueOnce(new Error("Not found"));
 
@@ -300,6 +376,58 @@ describe("ComponentsResource", () => {
       requestSpy.mockRejectedValueOnce(new Error("Not found"));
 
       await expect(resource.delete("nonexistent")).rejects.toThrow("Not found");
+    });
+  });
+
+  describe("restore()", () => {
+    it("sends POST /components/{component_id}/restore and returns the component", async () => {
+      const mockComponent = {
+        component_id: "comp-1",
+        component_type: "agent",
+        name: "My Agent",
+        created_at: 1_700_000_000,
+        deleted_at: null,
+      };
+      requestSpy.mockResolvedValueOnce(mockComponent);
+
+      const result = await resource.restore("comp-1");
+
+      expect(result).toEqual(mockComponent);
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/components/comp-1/restore",
+      );
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("URL-encodes component ID", async () => {
+      requestSpy.mockResolvedValueOnce({ component_id: "comp/special" });
+
+      await resource.restore("comp/special");
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/components/comp%2Fspecial/restore",
+      );
+    });
+
+    it("surfaces a 409 (not archived) as APIError with status 409", async () => {
+      requestSpy.mockRejectedValueOnce(
+        new APIError(409, "Component is not archived"),
+      );
+
+      const promise = resource.restore("comp-1");
+
+      await expect(promise).rejects.toBeInstanceOf(APIError);
+      await expect(promise).rejects.toMatchObject({ status: 409 });
+    });
+
+    it("propagates errors from client.request", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("Not found"));
+
+      await expect(resource.restore("nonexistent")).rejects.toThrow(
+        "Not found",
+      );
     });
   });
 
