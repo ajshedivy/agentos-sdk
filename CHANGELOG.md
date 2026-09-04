@@ -8,6 +8,15 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- `metrics.refresh()` now returns the response body instead of discarding it:
+  `DayAggregatedMetrics[]` on the default synchronous path (the server has
+  returned this list since 2.8.5), or `MetricsRefreshResponse`
+  (`{ status, message }`) when the server reports `already_running` or when
+  `background: true` is passed. Discriminate with `Array.isArray()`. Callers
+  that ignored the old `void` result are unaffected.
+- `components.delete()` is documented as an archive (soft delete): the server
+  stamps `deleted_at` and keeps the id reserved. It has behaved this way since
+  2.8.5; the JSDoc said "delete".
 - Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
   agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
   117 paths and 187 schemas. No route was removed and no schema key used by
@@ -51,6 +60,14 @@ Consumers that type-reference the re-exported `components`/`paths` are affected
 by the regeneration. Under `strict` TypeScript these are compile errors, not
 warnings:
 
+- `HealthStatus` (the return type of `client.health()`) is now an alias of
+  `components["schemas"]["HealthResponse"]`: `{ status: string;
+  instantiated_at: string }`. The previous hand-written shape
+  (`status: "healthy" | "degraded" | "unhealthy"`, `timestamp`, `details`)
+  never matched what `GET /health` returns. Code that read `.timestamp` or
+  `.details`, or narrowed `.status` against those literals, no longer compiles;
+  code that cast the result through `unknown` to reach `instantiated_at` can
+  drop the cast.
 - `error_code` is gone from every error schema; read `error_id` / `error_type`
   instead (`ValidationErrorResponse` carries neither).
 - `ConfigResponse.available_models` is `Model[]` (`{ id, provider }`), not
@@ -72,6 +89,25 @@ Release note: this warrants a minor bump (0.7.0), not a patch.
 
 ### Added
 
+- `client.info()` -> `GET /info`, typed as `components["schemas"]["InfoResponse"]`
+  (`os_id`, `name`, `os_version`, `agno_version`, `agent_count`, `team_count`,
+  `workflow_count`, `mcp`, `auth_mode`). The only route that reports the running
+  AgentOS version now that `GET /` left the OpenAPI schema.
+- `components.restore(componentId)` -> `POST /components/{id}/restore`, returns
+  the restored `ComponentResponse`. A non-archived component answers 409, which
+  surfaces as `APIError` with `status: 409`.
+- `includeDeleted?: boolean` on `ListComponentsOptions` and a new
+  `GetComponentOptions` second argument on `components.get()`. When `true`,
+  `include_deleted=true` is sent and archived components (with an integer
+  `deleted_at`) are returned instead of being omitted / 404ing.
+- `RefreshMetricsOptions.background` on `metrics.refresh()`, sent as
+  `background=true`; the server returns 202 with `{ status: "started" |
+  "already_running", message }` instead of blocking on the recalculation.
+- `metrics.refreshStatus({ dbId? })` -> `GET /metrics/refresh/status`, typed as
+  `components["schemas"]["MetricsRefreshStatusResponse"]` (`status: idle |
+  running | completed | failed`, `started_at`, `finished_at`, `error`).
+- Exported option types `GetComponentOptions`, `RefreshMetricsOptions` and
+  `RefreshStatusOptions`.
 - `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
 
 
