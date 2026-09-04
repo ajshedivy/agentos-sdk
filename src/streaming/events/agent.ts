@@ -1,5 +1,5 @@
 /**
- * Agent streaming event interfaces (29 event types).
+ * Agent streaming event interfaces (37 event types).
  *
  * @packageDocumentation
  */
@@ -11,6 +11,7 @@ import type {
   ImageData,
   Metrics,
   ResponseAudio,
+  RunRequirement,
   SessionSummary,
   ToolCallData,
   VideoData,
@@ -117,6 +118,11 @@ export interface RunCompletedEvent extends BaseAgentRunEvent {
 export interface RunPausedEvent extends BaseAgentRunEvent {
   event: "RunPaused";
   tools?: ToolCallData[];
+  /**
+   * Requirements to resolve before the run can continue (agno >= 3.0).
+   * See `RunRequirement`.
+   */
+  requirements?: RunRequirement[];
 }
 
 /**
@@ -245,6 +251,17 @@ export interface ReasoningStepEvent extends BaseAgentRunEvent {
 }
 
 /**
+ * A chunk of reasoning content, streamed as it arrives.
+ *
+ * @public
+ */
+export interface ReasoningContentDeltaEvent extends BaseAgentRunEvent {
+  event: "ReasoningContentDelta";
+  /** The delta of reasoning content */
+  reasoning_content: string;
+}
+
+/**
  * Reasoning completed event.
  *
  * @public
@@ -282,6 +299,17 @@ export interface ToolCallCompletedEvent extends BaseAgentRunEvent {
   images?: ImageData[];
   videos?: VideoData[];
   audio?: AudioData[];
+}
+
+/**
+ * Tool call failed.
+ *
+ * @public
+ */
+export interface ToolCallErrorEvent extends BaseAgentRunEvent {
+  event: "ToolCallError";
+  tool?: ToolCallData;
+  error?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -379,6 +407,89 @@ export interface OutputModelResponseCompletedEvent extends BaseAgentRunEvent {
 }
 
 // ---------------------------------------------------------------------------
+// Model request events
+// ---------------------------------------------------------------------------
+
+/**
+ * A model request is about to be made. Emitted before every model call in
+ * the run, including the follow-up calls after tool execution.
+ *
+ * @public
+ */
+export interface ModelRequestStartedEvent extends BaseAgentRunEvent {
+  event: "ModelRequestStarted";
+  model?: string;
+  model_provider?: string;
+}
+
+/**
+ * A model request completed, with the token usage of that single request.
+ *
+ * @public
+ */
+export interface ModelRequestCompletedEvent extends BaseAgentRunEvent {
+  event: "ModelRequestCompleted";
+  model?: string;
+  model_provider?: string;
+  input_tokens?: number;
+  output_tokens?: number;
+  total_tokens?: number;
+  time_to_first_token?: number;
+  reasoning_tokens?: number;
+  cache_read_tokens?: number;
+  cache_write_tokens?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Tool-result compression events
+// ---------------------------------------------------------------------------
+
+/**
+ * Tool-result compression is about to start.
+ *
+ * @public
+ */
+export interface CompressionStartedEvent extends BaseAgentRunEvent {
+  event: "CompressionStarted";
+}
+
+/**
+ * Tool-result compression completed.
+ *
+ * @public
+ */
+export interface CompressionCompletedEvent extends BaseAgentRunEvent {
+  event: "CompressionCompleted";
+  tool_results_compressed?: number;
+  original_size?: number;
+  compressed_size?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Followup suggestion events
+// ---------------------------------------------------------------------------
+
+/**
+ * Followup prompt generation started.
+ *
+ * @public
+ */
+export interface FollowupsStartedEvent extends BaseAgentRunEvent {
+  event: "FollowupsStarted";
+}
+
+/**
+ * Followup prompt generation completed.
+ *
+ * @public
+ */
+export interface FollowupsCompletedEvent extends BaseAgentRunEvent {
+  event: "FollowupsCompleted";
+  /** Short, action-oriented followup prompts */
+  followups?: string[];
+}
+
+// ---------------------------------------------------------------------------
 // Custom event
 // ---------------------------------------------------------------------------
 
@@ -396,7 +507,7 @@ export interface CustomEvent extends BaseAgentRunEvent {
 // ---------------------------------------------------------------------------
 
 /**
- * Discriminated union of all agent run streaming events (29 types).
+ * Discriminated union of all agent run streaming events (37 types).
  *
  * Use the `event` field to narrow the type:
  * ```typescript
@@ -431,9 +542,11 @@ export type AgentRunEvent =
   | PostHookCompletedEvent
   | ReasoningStartedEvent
   | ReasoningStepEvent
+  | ReasoningContentDeltaEvent
   | ReasoningCompletedEvent
   | ToolCallStartedEvent
   | ToolCallCompletedEvent
+  | ToolCallErrorEvent
   | UpdatingMemoryEvent
   | MemoryUpdateStartedEvent
   | MemoryUpdateCompletedEvent
@@ -443,4 +556,10 @@ export type AgentRunEvent =
   | ParserModelResponseCompletedEvent
   | OutputModelResponseStartedEvent
   | OutputModelResponseCompletedEvent
+  | ModelRequestStartedEvent
+  | ModelRequestCompletedEvent
+  | CompressionStartedEvent
+  | CompressionCompletedEvent
+  | FollowupsStartedEvent
+  | FollowupsCompletedEvent
   | CustomEvent;

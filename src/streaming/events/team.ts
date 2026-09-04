@@ -1,5 +1,5 @@
 /**
- * Team streaming event interfaces (25 event types).
+ * Team streaming event interfaces (40 event types).
  *
  * @packageDocumentation
  */
@@ -11,7 +11,9 @@ import type {
   ImageData,
   Metrics,
   ResponseAudio,
+  RunRequirement,
   SessionSummary,
+  TeamTaskData,
   ToolCallData,
   VideoData,
 } from "./shared";
@@ -104,6 +106,32 @@ export interface TeamRunCompletedEvent extends BaseTeamRunEvent {
   tools?: ToolCallData[];
   extra_data?: ExtraData;
   metrics?: Metrics;
+}
+
+/**
+ * Team run paused for human input (HITL, agno >= 3.0).
+ *
+ * `requirements` is the array a client resolves and sends back: the team
+ * continue route (`POST /teams/{id}/runs/{run_id}/continue`) reads it as its
+ * `requirements` form field. See `RunRequirement`. A requirement raised by a
+ * team member carries `member_agent_id` / `member_run_id`.
+ *
+ * @public
+ */
+export interface TeamRunPausedEvent extends BaseTeamRunEvent {
+  event: "TeamRunPaused";
+  tools?: ToolCallData[];
+  /** Requirements to resolve before the run can continue */
+  requirements?: RunRequirement[];
+}
+
+/**
+ * Paused team run continued.
+ *
+ * @public
+ */
+export interface TeamRunContinuedEvent extends BaseTeamRunEvent {
+  event: "TeamRunContinued";
 }
 
 /**
@@ -209,6 +237,17 @@ export interface TeamToolCallCompletedEvent extends BaseTeamRunEvent {
   audio?: AudioData[];
 }
 
+/**
+ * Team tool call failed.
+ *
+ * @public
+ */
+export interface TeamToolCallErrorEvent extends BaseTeamRunEvent {
+  event: "TeamToolCallError";
+  tool?: ToolCallData;
+  error?: string;
+}
+
 // ---------------------------------------------------------------------------
 // Reasoning events
 // ---------------------------------------------------------------------------
@@ -234,6 +273,17 @@ export interface TeamReasoningStepEvent extends BaseTeamRunEvent {
   content_type?: string;
   reasoning_content?: string;
   extra_data?: ExtraData;
+}
+
+/**
+ * A chunk of team reasoning content, streamed as it arrives.
+ *
+ * @public
+ */
+export interface TeamReasoningContentDeltaEvent extends BaseTeamRunEvent {
+  event: "TeamReasoningContentDelta";
+  /** The delta of reasoning content */
+  reasoning_content: string;
 }
 
 /**
@@ -336,6 +386,164 @@ export interface TeamOutputModelResponseCompletedEvent
 }
 
 // ---------------------------------------------------------------------------
+// Model request events
+// ---------------------------------------------------------------------------
+
+/**
+ * A team-leader model request is about to be made. Emitted before every
+ * model call in the run, including the follow-up calls after tool execution.
+ *
+ * @public
+ */
+export interface TeamModelRequestStartedEvent extends BaseTeamRunEvent {
+  event: "TeamModelRequestStarted";
+  model?: string;
+  model_provider?: string;
+}
+
+/**
+ * A team-leader model request completed, with the token usage of that
+ * single request.
+ *
+ * @public
+ */
+export interface TeamModelRequestCompletedEvent extends BaseTeamRunEvent {
+  event: "TeamModelRequestCompleted";
+  model?: string;
+  model_provider?: string;
+  input_tokens?: number;
+  output_tokens?: number;
+  total_tokens?: number;
+  time_to_first_token?: number;
+  reasoning_tokens?: number;
+  cache_read_tokens?: number;
+  cache_write_tokens?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Tool-result compression events
+// ---------------------------------------------------------------------------
+
+/**
+ * Team tool-result compression is about to start.
+ *
+ * @public
+ */
+export interface TeamCompressionStartedEvent extends BaseTeamRunEvent {
+  event: "TeamCompressionStarted";
+}
+
+/**
+ * Team tool-result compression completed.
+ *
+ * @public
+ */
+export interface TeamCompressionCompletedEvent extends BaseTeamRunEvent {
+  event: "TeamCompressionCompleted";
+  tool_results_compressed?: number;
+  original_size?: number;
+  compressed_size?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Followup suggestion events
+// ---------------------------------------------------------------------------
+
+/**
+ * Team followup prompt generation started.
+ *
+ * @public
+ */
+export interface TeamFollowupsStartedEvent extends BaseTeamRunEvent {
+  event: "TeamFollowupsStarted";
+}
+
+/**
+ * Team followup prompt generation completed.
+ *
+ * @public
+ */
+export interface TeamFollowupsCompletedEvent extends BaseTeamRunEvent {
+  event: "TeamFollowupsCompleted";
+  /** Short, action-oriented followup prompts */
+  followups?: string[];
+}
+
+// ---------------------------------------------------------------------------
+// Tasks mode events
+// ---------------------------------------------------------------------------
+
+/**
+ * A task iteration started (team tasks mode).
+ *
+ * @public
+ */
+export interface TeamTaskIterationStartedEvent extends BaseTeamRunEvent {
+  event: "TeamTaskIterationStarted";
+  iteration: number;
+  max_iterations: number;
+}
+
+/**
+ * A task iteration completed (team tasks mode).
+ *
+ * @public
+ */
+export interface TeamTaskIterationCompletedEvent extends BaseTeamRunEvent {
+  event: "TeamTaskIterationCompleted";
+  iteration: number;
+  max_iterations: number;
+  task_summary?: string;
+}
+
+/**
+ * The task state changed (team tasks mode). Carries the full task list so a
+ * client can re-render it without merging the per-task events.
+ *
+ * @public
+ */
+export interface TeamTaskStateUpdatedEvent extends BaseTeamRunEvent {
+  event: "TeamTaskStateUpdated";
+  task_summary?: string;
+  goal_complete: boolean;
+  /** Full structured task list */
+  tasks: TeamTaskData[];
+  completion_summary?: string;
+}
+
+/**
+ * A task was created (team tasks mode).
+ *
+ * @public
+ */
+export interface TeamTaskCreatedEvent extends BaseTeamRunEvent {
+  event: "TeamTaskCreated";
+  task_id: string;
+  title: string;
+  description: string;
+  assignee?: string;
+  /** `"pending"` | `"in_progress"` | `"completed"` | `"failed"` | `"blocked"` */
+  status: string;
+  dependencies: string[];
+}
+
+/**
+ * A task's status changed (team tasks mode).
+ *
+ * @public
+ */
+export interface TeamTaskUpdatedEvent extends BaseTeamRunEvent {
+  event: "TeamTaskUpdated";
+  task_id: string;
+  title: string;
+  /** `"pending"` | `"in_progress"` | `"completed"` | `"failed"` | `"blocked"` */
+  status: string;
+  previous_status?: string;
+  result?: string;
+  assignee?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Custom event
 // ---------------------------------------------------------------------------
 
@@ -353,7 +561,7 @@ export interface TeamCustomEvent extends BaseTeamRunEvent {
 // ---------------------------------------------------------------------------
 
 /**
- * Discriminated union of all team run streaming events (25 types).
+ * Discriminated union of all team run streaming events (40 types).
  *
  * @public
  */
@@ -363,6 +571,8 @@ export type TeamRunEvent =
   | TeamRunContentCompletedEvent
   | TeamRunIntermediateContentEvent
   | TeamRunCompletedEvent
+  | TeamRunPausedEvent
+  | TeamRunContinuedEvent
   | TeamRunErrorEvent
   | TeamRunCancelledEvent
   | TeamPreHookStartedEvent
@@ -371,8 +581,10 @@ export type TeamRunEvent =
   | TeamPostHookCompletedEvent
   | TeamToolCallStartedEvent
   | TeamToolCallCompletedEvent
+  | TeamToolCallErrorEvent
   | TeamReasoningStartedEvent
   | TeamReasoningStepEvent
+  | TeamReasoningContentDeltaEvent
   | TeamReasoningCompletedEvent
   | TeamMemoryUpdateStartedEvent
   | TeamMemoryUpdateCompletedEvent
@@ -382,4 +594,15 @@ export type TeamRunEvent =
   | TeamParserModelResponseCompletedEvent
   | TeamOutputModelResponseStartedEvent
   | TeamOutputModelResponseCompletedEvent
+  | TeamModelRequestStartedEvent
+  | TeamModelRequestCompletedEvent
+  | TeamCompressionStartedEvent
+  | TeamCompressionCompletedEvent
+  | TeamFollowupsStartedEvent
+  | TeamFollowupsCompletedEvent
+  | TeamTaskIterationStartedEvent
+  | TeamTaskIterationCompletedEvent
+  | TeamTaskStateUpdatedEvent
+  | TeamTaskCreatedEvent
+  | TeamTaskUpdatedEvent
   | TeamCustomEvent;

@@ -26,9 +26,23 @@ import {
   type RunContentEvent,
   type RunStartedEvent,
   type RunErrorEvent,
+  type RunPausedEvent,
   type ToolCallStartedEvent,
   type ToolCallCompletedEvent,
+  type ToolCallErrorEvent,
   type ReasoningStepEvent,
+  type ReasoningContentDeltaEvent,
+  type ModelRequestCompletedEvent,
+  type FollowupsCompletedEvent,
+  type TeamRunPausedEvent,
+  type TeamTaskStateUpdatedEvent,
+  type TeamTaskCreatedEvent,
+  type WorkflowPausedEvent,
+  type StepPausedEvent,
+  type StepExecutorPausedEvent,
+  type RouterPausedEvent,
+  type RunRequirement,
+  type StepRequirement,
   type RunContentCompletedEvent,
   type RunIntermediateContentEvent,
   type PreHookStartedEvent,
@@ -333,8 +347,8 @@ describe("streaming event types", () => {
   });
 
   describe("AgentEventType constants", () => {
-    it("has 29 agent event type constants", () => {
-      expect(Object.keys(AgentEventType)).toHaveLength(29);
+    it("has 37 agent event type constants", () => {
+      expect(Object.keys(AgentEventType)).toHaveLength(37);
     });
 
     it("values match keys", () => {
@@ -373,12 +387,21 @@ describe("streaming event types", () => {
       expect(AgentEventType.OutputModelResponseStarted).toBe("OutputModelResponseStarted");
       expect(AgentEventType.OutputModelResponseCompleted).toBe("OutputModelResponseCompleted");
       expect(AgentEventType.CustomEvent).toBe("CustomEvent");
+      // agno 3.0
+      expect(AgentEventType.ToolCallError).toBe("ToolCallError");
+      expect(AgentEventType.ReasoningContentDelta).toBe("ReasoningContentDelta");
+      expect(AgentEventType.ModelRequestStarted).toBe("ModelRequestStarted");
+      expect(AgentEventType.ModelRequestCompleted).toBe("ModelRequestCompleted");
+      expect(AgentEventType.CompressionStarted).toBe("CompressionStarted");
+      expect(AgentEventType.CompressionCompleted).toBe("CompressionCompleted");
+      expect(AgentEventType.FollowupsStarted).toBe("FollowupsStarted");
+      expect(AgentEventType.FollowupsCompleted).toBe("FollowupsCompleted");
     });
   });
 
   describe("TeamEventType constants", () => {
-    it("has 25 team event type constants", () => {
-      expect(Object.keys(TeamEventType)).toHaveLength(25);
+    it("has 40 team event type constants", () => {
+      expect(Object.keys(TeamEventType)).toHaveLength(40);
     });
 
     it("includes all expected team event types", () => {
@@ -407,12 +430,28 @@ describe("streaming event types", () => {
       expect(TeamEventType.TeamOutputModelResponseStarted).toBe("TeamOutputModelResponseStarted");
       expect(TeamEventType.TeamOutputModelResponseCompleted).toBe("TeamOutputModelResponseCompleted");
       expect(TeamEventType.TeamCustomEvent).toBe("TeamCustomEvent");
+      // agno 3.0
+      expect(TeamEventType.TeamRunPaused).toBe("TeamRunPaused");
+      expect(TeamEventType.TeamRunContinued).toBe("TeamRunContinued");
+      expect(TeamEventType.TeamToolCallError).toBe("TeamToolCallError");
+      expect(TeamEventType.TeamReasoningContentDelta).toBe("TeamReasoningContentDelta");
+      expect(TeamEventType.TeamModelRequestStarted).toBe("TeamModelRequestStarted");
+      expect(TeamEventType.TeamModelRequestCompleted).toBe("TeamModelRequestCompleted");
+      expect(TeamEventType.TeamCompressionStarted).toBe("TeamCompressionStarted");
+      expect(TeamEventType.TeamCompressionCompleted).toBe("TeamCompressionCompleted");
+      expect(TeamEventType.TeamFollowupsStarted).toBe("TeamFollowupsStarted");
+      expect(TeamEventType.TeamFollowupsCompleted).toBe("TeamFollowupsCompleted");
+      expect(TeamEventType.TeamTaskIterationStarted).toBe("TeamTaskIterationStarted");
+      expect(TeamEventType.TeamTaskIterationCompleted).toBe("TeamTaskIterationCompleted");
+      expect(TeamEventType.TeamTaskStateUpdated).toBe("TeamTaskStateUpdated");
+      expect(TeamEventType.TeamTaskCreated).toBe("TeamTaskCreated");
+      expect(TeamEventType.TeamTaskUpdated).toBe("TeamTaskUpdated");
     });
   });
 
   describe("WorkflowEventType constants", () => {
-    it("has 19 workflow event type constants", () => {
-      expect(Object.keys(WorkflowEventType)).toHaveLength(19);
+    it("has 30 workflow event type constants", () => {
+      expect(Object.keys(WorkflowEventType)).toHaveLength(30);
     });
 
     it("includes all expected workflow event types", () => {
@@ -435,6 +474,85 @@ describe("streaming event types", () => {
       expect(WorkflowEventType.RouterExecutionCompleted).toBe("RouterExecutionCompleted");
       expect(WorkflowEventType.StepsExecutionStarted).toBe("StepsExecutionStarted");
       expect(WorkflowEventType.StepsExecutionCompleted).toBe("StepsExecutionCompleted");
+      // agno 3.0
+      expect(WorkflowEventType.WorkflowPaused).toBe("WorkflowPaused");
+      expect(WorkflowEventType.WorkflowAgentStarted).toBe("WorkflowAgentStarted");
+      expect(WorkflowEventType.WorkflowAgentCompleted).toBe("WorkflowAgentCompleted");
+      expect(WorkflowEventType.StepPaused).toBe("StepPaused");
+      expect(WorkflowEventType.StepContinued).toBe("StepContinued");
+      expect(WorkflowEventType.StepExecutorPaused).toBe("StepExecutorPaused");
+      expect(WorkflowEventType.StepExecutorContinued).toBe("StepExecutorContinued");
+      expect(WorkflowEventType.StepOutputReview).toBe("StepOutputReview");
+      expect(WorkflowEventType.StepError).toBe("StepError");
+      expect(WorkflowEventType.ConditionPaused).toBe("ConditionPaused");
+      expect(WorkflowEventType.RouterPaused).toBe("RouterPaused");
+    });
+  });
+
+  describe("agno 3.0.0 enum coverage", () => {
+    // String values of agno 3.0.0's RunEvent / TeamRunEvent / WorkflowRunEvent
+    // enums (libs/agno/agno/run/{agent,team,workflow}.py). Every value the
+    // server can put in `event` must resolve to a constant so that
+    // `stream.on(<name>)` typechecks and `for await` consumers can narrow.
+    const agnoRunEvent = [
+      "RunStarted", "RunContent", "RunContentCompleted", "RunIntermediateContent",
+      "RunCompleted", "RunError", "RunCancelled", "RunPaused", "RunContinued",
+      "PreHookStarted", "PreHookCompleted", "PostHookStarted", "PostHookCompleted",
+      "ToolCallStarted", "ToolCallCompleted", "ToolCallError",
+      "ReasoningStarted", "ReasoningStep", "ReasoningContentDelta", "ReasoningCompleted",
+      "MemoryUpdateStarted", "MemoryUpdateCompleted",
+      "SessionSummaryStarted", "SessionSummaryCompleted",
+      "ParserModelResponseStarted", "ParserModelResponseCompleted",
+      "OutputModelResponseStarted", "OutputModelResponseCompleted",
+      "ModelRequestStarted", "ModelRequestCompleted",
+      "CompressionStarted", "CompressionCompleted",
+      "FollowupsStarted", "FollowupsCompleted",
+      "CustomEvent",
+    ];
+    const agnoTeamRunEvent = [
+      "TeamRunStarted", "TeamRunContent", "TeamRunIntermediateContent", "TeamRunContentCompleted",
+      "TeamRunCompleted", "TeamRunError", "TeamRunCancelled",
+      "TeamPreHookStarted", "TeamPreHookCompleted", "TeamPostHookStarted", "TeamPostHookCompleted",
+      "TeamToolCallStarted", "TeamToolCallCompleted", "TeamToolCallError",
+      "TeamReasoningStarted", "TeamReasoningStep", "TeamReasoningContentDelta", "TeamReasoningCompleted",
+      "TeamMemoryUpdateStarted", "TeamMemoryUpdateCompleted",
+      "TeamSessionSummaryStarted", "TeamSessionSummaryCompleted",
+      "TeamParserModelResponseStarted", "TeamParserModelResponseCompleted",
+      "TeamOutputModelResponseStarted", "TeamOutputModelResponseCompleted",
+      "TeamModelRequestStarted", "TeamModelRequestCompleted",
+      "TeamCompressionStarted", "TeamCompressionCompleted",
+      "TeamFollowupsStarted", "TeamFollowupsCompleted",
+      "TeamRunPaused", "TeamRunContinued",
+      "TeamTaskIterationStarted", "TeamTaskIterationCompleted", "TeamTaskStateUpdated",
+      "TeamTaskCreated", "TeamTaskUpdated",
+      "CustomEvent",
+    ];
+    const agnoWorkflowRunEvent = [
+      "WorkflowStarted", "WorkflowCompleted", "WorkflowPaused", "WorkflowCancelled", "WorkflowError",
+      "WorkflowAgentStarted", "WorkflowAgentCompleted",
+      "StepStarted", "StepCompleted", "StepPaused", "StepContinued",
+      "StepExecutorPaused", "StepExecutorContinued", "StepOutputReview", "StepError",
+      "LoopExecutionStarted", "LoopIterationStarted", "LoopIterationCompleted", "LoopExecutionCompleted",
+      "ParallelExecutionStarted", "ParallelExecutionCompleted",
+      "ConditionExecutionStarted", "ConditionExecutionCompleted", "ConditionPaused",
+      "RouterExecutionStarted", "RouterExecutionCompleted", "RouterPaused",
+      "StepsExecutionStarted", "StepsExecutionCompleted",
+      "StepOutput",
+      "CustomEvent",
+    ];
+
+    it("matches the agno 3.0.0 enum sizes", () => {
+      expect(agnoRunEvent).toHaveLength(35);
+      expect(agnoTeamRunEvent).toHaveLength(40);
+      expect(agnoWorkflowRunEvent).toHaveLength(31);
+    });
+
+    it("has a constant for every agno 3.0.0 event value", () => {
+      const known = new Set<string>(Object.values(RunEventType));
+      const missing = [...agnoRunEvent, ...agnoTeamRunEvent, ...agnoWorkflowRunEvent].filter(
+        (name) => !known.has(name),
+      );
+      expect(missing).toEqual([]);
     });
   });
 
@@ -832,6 +950,241 @@ describe("streaming event types", () => {
 
       expect(event.steps_count).toBe(5);
       expect(event.executed_steps).toBe(4);
+    });
+  });
+
+  describe("agno 3.0 event interfaces", () => {
+    // Shapes follow the agno 3.0.0 dataclasses; `created_at` values are
+    // arbitrary. A `RunRequirement` is what the agent/team continue routes
+    // read back, so these fixtures round-trip the whole HITL payload.
+    const requirement: RunRequirement = {
+      id: "req-1",
+      created_at: "2026-09-04T15:25:00.124305+00:00",
+      tool_execution: {
+        tool_call_id: "call-1",
+        tool_name: "validate_and_run_sql",
+        tool_args: { sql: "SELECT 1 FROM SYSIBM.SYSDUMMY1" },
+        created_at: 1788535298,
+        requires_confirmation: true,
+        confirmed: null,
+        approval_type: "required",
+      },
+      member_agent_id: "ibmi-agent",
+      member_run_id: "member-run-1",
+    };
+
+    it("RunPausedEvent carries requirements", () => {
+      const event: RunPausedEvent = {
+        event: "RunPaused",
+        created_at: 1,
+        run_id: "run-1",
+        requirements: [requirement],
+      };
+
+      expect(event.requirements?.[0]?.tool_execution?.requires_confirmation).toBe(true);
+    });
+
+    it("TeamRunPausedEvent narrows through the TeamRunEvent union", () => {
+      const event: TeamRunEvent = {
+        event: "TeamRunPaused",
+        created_at: 1,
+        run_id: "run-1",
+        team_id: "ibmi-team",
+        requirements: [requirement],
+      };
+
+      if (event.event === "TeamRunPaused") {
+        expect(event.requirements?.[0]?.member_agent_id).toBe("ibmi-agent");
+      } else {
+        throw new Error("expected TeamRunPaused");
+      }
+    });
+
+    it("TeamRunPausedEvent narrows through the EventMap", () => {
+      const handler = (event: EventMap["TeamRunPaused"]) =>
+        event.requirements?.map((r) => r.id);
+      const paused: TeamRunPausedEvent = {
+        event: "TeamRunPaused",
+        created_at: 1,
+        requirements: [requirement],
+      };
+      expect(handler(paused)).toEqual(["req-1"]);
+    });
+
+    it("WorkflowPausedEvent types step_requirements as StepRequirement[]", () => {
+      const stepRequirement: StepRequirement = {
+        step_id: "step-1",
+        step_name: "review",
+        step_index: 0,
+        step_type: "Step",
+        requires_confirmation: true,
+        confirmation_message: "Run this step?",
+        confirmed: null,
+        on_reject: "cancel",
+        requires_user_input: false,
+        retry_count: 0,
+        max_retries: null,
+        timeout_at: null,
+        on_timeout: "cancel",
+      };
+      const event: WorkflowPausedEvent = {
+        event: "WorkflowPaused",
+        created_at: 1,
+        run_id: "wf-run-1",
+        status: "PAUSED",
+        pause_kind: "step",
+        paused_step_index: 0,
+        paused_step_name: "review",
+        step_requirements: [stepRequirement],
+        step_results: [],
+      };
+
+      const handler = (e: EventMap["WorkflowPaused"]) => e.step_requirements?.at(-1)?.step_id;
+      expect(handler(event)).toBe("step-1");
+      // The decision is stamped on the active (last) entry and sent back through workflows.continue()
+      const active = event.step_requirements?.at(-1);
+      if (active) active.confirmed = true;
+      expect(stepRequirement.confirmed).toBe(true);
+    });
+
+    it("StepPausedEvent has confirmation and user-input fields", () => {
+      const event: StepPausedEvent = {
+        event: "StepPaused",
+        created_at: 1,
+        step_id: "step-1",
+        step_name: "collect",
+        step_index: 1,
+        requires_confirmation: false,
+        requires_user_input: true,
+        user_input_message: "Which region?",
+        user_input_schema: [
+          { name: "region", field_type: "str", required: true, allowed_values: ["us", "eu"] },
+        ],
+      };
+
+      expect(event.user_input_schema?.[0]?.allowed_values).toEqual(["us", "eu"]);
+    });
+
+    it("StepExecutorPausedEvent carries the executor's unresolved requirements", () => {
+      const event: StepExecutorPausedEvent = {
+        event: "StepExecutorPaused",
+        created_at: 1,
+        step_id: "step-1",
+        executor_type: "agent",
+        executor_id: "ibmi-agent",
+        executor_run_id: "agent-run-1",
+        executor_requirements: [requirement],
+      };
+
+      expect(event.executor_requirements?.[0]?.tool_execution?.tool_name).toBe("validate_and_run_sql");
+    });
+
+    it("RouterPausedEvent has the available choices", () => {
+      const event: RouterPausedEvent = {
+        event: "RouterPaused",
+        created_at: 1,
+        step_name: "route",
+        available_choices: ["fast", "thorough"],
+        allow_multiple_selections: false,
+      };
+      const union: WorkflowRunEvent = event;
+
+      if (union.event === "RouterPaused") {
+        expect(union.available_choices).toHaveLength(2);
+      } else {
+        throw new Error("expected RouterPaused");
+      }
+    });
+
+    it("ModelRequestCompletedEvent carries per-request token usage", () => {
+      const event: ModelRequestCompletedEvent = {
+        event: "ModelRequestCompleted",
+        created_at: 1,
+        model: "gpt-4.1",
+        model_provider: "OpenAI",
+        input_tokens: 120,
+        output_tokens: 30,
+        total_tokens: 150,
+        time_to_first_token: 0.42,
+      };
+
+      expect(event.total_tokens).toBe(150);
+    });
+
+    it("ReasoningContentDeltaEvent and ToolCallErrorEvent narrow through AgentRunEvent", () => {
+      const events: AgentRunEvent[] = [
+        { event: "ReasoningContentDelta", created_at: 1, reasoning_content: "thinking…" },
+        {
+          event: "ToolCallError",
+          created_at: 1,
+          error: "boom",
+          tool: { tool_call_id: "c", tool_name: "t", tool_args: {}, created_at: 1 },
+        },
+      ];
+
+      for (const event of events) {
+        switch (event.event) {
+          case "ReasoningContentDelta":
+            expect(event.reasoning_content).toBe("thinking…");
+            break;
+          case "ToolCallError":
+            expect(event.error).toBe("boom");
+            expect(event.tool?.tool_name).toBe("t");
+            break;
+        }
+      }
+    });
+
+    it("FollowupsCompletedEvent has followups", () => {
+      const event: FollowupsCompletedEvent = {
+        event: "FollowupsCompleted",
+        created_at: 1,
+        followups: ["Show the top 10 rows"],
+      };
+
+      expect(event.followups).toHaveLength(1);
+    });
+
+    it("team tasks-mode events carry structured tasks", () => {
+      const created: TeamTaskCreatedEvent = {
+        event: "TeamTaskCreated",
+        created_at: 1,
+        task_id: "t1",
+        title: "Audit users",
+        description: "List enabled profiles",
+        status: "pending",
+        dependencies: [],
+      };
+      const state: TeamTaskStateUpdatedEvent = {
+        event: "TeamTaskStateUpdated",
+        created_at: 1,
+        goal_complete: false,
+        tasks: [
+          {
+            id: "t1",
+            title: "Audit users",
+            description: "List enabled profiles",
+            status: "in_progress",
+            assignee: "ibmi-security-agent",
+            dependencies: [],
+            result: null,
+          },
+        ],
+      };
+
+      expect(created.status).toBe("pending");
+      expect(state.tasks[0]?.assignee).toBe("ibmi-security-agent");
+    });
+
+    it("ReasoningContentDeltaEvent and ToolCallErrorEvent are exported", () => {
+      const delta: ReasoningContentDeltaEvent = {
+        event: "ReasoningContentDelta",
+        created_at: 1,
+        reasoning_content: "…",
+      };
+      const error: ToolCallErrorEvent = { event: "ToolCallError", created_at: 1 };
+      expect(delta.event).toBe("ReasoningContentDelta");
+      expect(error.event).toBe("ToolCallError");
     });
   });
 
