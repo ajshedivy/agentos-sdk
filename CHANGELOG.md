@@ -67,8 +67,37 @@ warnings:
 - The hand-written `OSConfig` type is no longer exported. It never matched the
   server's `/config` payload; use `components["schemas"]["ConfigResponse"]`
   instead. `AgentOSClient.getConfig()` returns that type now.
+- `workflows.getRun(workflowId, runId, sessionId)` takes a required positional
+  `sessionId` (third argument), matching `agents.getRun` / `teams.getRun`.
+  `GET /workflows/{id}/runs/{run_id}` declares `session_id` as a required
+  query parameter, so the old two-argument call always 422'd.
+- `CreateSessionOptions.type` is `"agent" | "team" | "workflow"` (exported as
+  `SessionType`) instead of `string` — the only values `POST /sessions?type=`
+  accepts, and the SDK now needs it to pick the `agent_id` / `team_id` /
+  `workflow_id` body field.
 
 Release note: this warrants a minor bump (0.7.0), not a patch.
+
+### Fixed
+
+- `sessions.create()` now matches `POST /sessions`: `type` and `db_id` go in
+  the query string and the JSON body is a `CreateSessionRequest`
+  (`session_name`, `user_id`, and `componentId` mapped to `agent_id` /
+  `team_id` / `workflow_id`). It used to send everything as a JSON body the
+  route ignored, so `create({ type: 'team', componentId, name })` returned
+  200 but persisted an unnamed agent session with no component id.
+- `sessions.rename()` sends `{ session_name }` (the route's `Body(embed=True)`
+  field) instead of `{ name }`, which 422'd.
+- `teams.continue()` sends human-in-the-loop resolutions as the
+  `requirements` form field that `POST /teams/{id}/runs/{run_id}/continue`
+  reads. It used to post `tools`, which only the agent route reads; the team
+  route dropped it silently, so an approved tool was never marked resolved and
+  the run paused again on the same call. `TeamContinueOptions` gains
+  `requirements` (JSON array of the RunPaused `requirements[]` entries with
+  `tool_execution.confirmed` / `confirmation` stamped) and `input` (follow-up
+  message). `tools` is deprecated but still accepted: each entry is wrapped as
+  `{ tool_execution: entry }` and sent as `requirements`, and it is never
+  posted as `tools`.
 
 ### Added
 

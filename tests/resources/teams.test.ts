@@ -352,7 +352,7 @@ describe("TeamsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       const result = await resource.continue("team-1", "run-123", {
-        tools: "[]",
+        requirements: "[]",
       });
 
       expect(result).toBeInstanceOf(AgentStream);
@@ -375,7 +375,7 @@ describe("TeamsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       const result = await resource.continue("team-1", "run-123", {
-        tools: "[]",
+        requirements: "[]",
         stream: true,
       });
 
@@ -387,7 +387,7 @@ describe("TeamsResource", () => {
       requestSpy.mockResolvedValueOnce(mockResult);
 
       const result = await resource.continue("team-1", "run-123", {
-        tools: "[]",
+        requirements: "[]",
         stream: false,
       });
 
@@ -403,16 +403,112 @@ describe("TeamsResource", () => {
       expect(formData.get("stream")).toBe("false");
     });
 
-    it("includes tools parameter", async () => {
+    it("posts requirements as the requirements form field, never tools", async () => {
       const mockResponse = new Response("data: event", { status: 200 });
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
-      const toolsJSON = '[{"name":"get_weather","result":"sunny"}]';
-      await resource.continue("team-1", "run-123", { tools: toolsJSON });
+      const requirementsJSON = JSON.stringify([
+        {
+          id: "req-1",
+          tool_execution: {
+            tool_call_id: "call_1",
+            tool_name: "validate_and_run_sql",
+            confirmed: true,
+          },
+        },
+      ]);
+      await resource.continue("team-1", "run-123", {
+        requirements: requirementsJSON,
+      });
 
       const callArgs = requestStreamSpy.mock.calls[0];
       const formData = callArgs[2].body as FormData;
-      expect(formData.get("tools")).toBe(toolsJSON);
+      expect(formData.get("requirements")).toBe(requirementsJSON);
+      expect(formData.has("tools")).toBe(false);
+    });
+
+    it("wraps legacy tools entries as { tool_execution } requirements", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      const tool = {
+        tool_call_id: "call_1",
+        tool_name: "validate_and_run_sql",
+        tool_args: { sql: "SELECT 1" },
+        requires_confirmation: true,
+        confirmed: true,
+      };
+      await resource.continue("team-1", "run-123", {
+        tools: JSON.stringify([tool]),
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.has("tools")).toBe(false);
+      expect(JSON.parse(formData.get("requirements") as string)).toEqual([
+        { tool_execution: tool },
+      ]);
+    });
+
+    it("prefers requirements over tools when both are provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("team-1", "run-123", {
+        requirements: '[{"id":"req-1","confirmation":true}]',
+        tools: '[{"tool_call_id":"call_1","confirmed":false}]',
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("requirements")).toBe(
+        '[{"id":"req-1","confirmation":true}]',
+      );
+      expect(formData.has("tools")).toBe(false);
+    });
+
+    it("throws when tools is not a JSON array", async () => {
+      await expect(
+        resource.continue("team-1", "run-123", { tools: '{"a":1}' }),
+      ).rejects.toThrow(TypeError);
+      expect(requestStreamSpy).not.toHaveBeenCalled();
+    });
+
+    it("omits requirements when neither requirements nor tools is given", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("team-1", "run-123", { input: "go on" });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.has("requirements")).toBe(false);
+      expect(formData.has("tools")).toBe(false);
+    });
+
+    it("includes input when provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("team-1", "run-123", {
+        requirements: "[]",
+        input: "Also summarize the result",
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("input")).toBe("Also summarize the result");
+    });
+
+    it("omits input when not provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("team-1", "run-123", { requirements: "[]" });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.has("input")).toBe(false);
     });
 
     it("includes session_id when provided", async () => {
@@ -420,7 +516,7 @@ describe("TeamsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       await resource.continue("team-1", "run-123", {
-        tools: "[]",
+        requirements: "[]",
         sessionId: "session-456",
       });
 
@@ -434,7 +530,7 @@ describe("TeamsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       await resource.continue("team-1", "run-123", {
-        tools: "[]",
+        requirements: "[]",
         userId: "user-789",
       });
 
@@ -447,7 +543,9 @@ describe("TeamsResource", () => {
       const mockResponse = new Response("data: event", { status: 200 });
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
-      await resource.continue("team/special", "run/123", { tools: "[]" });
+      await resource.continue("team/special", "run/123", {
+        requirements: "[]",
+      });
 
       expect(requestStreamSpy).toHaveBeenCalledWith(
         "POST",
