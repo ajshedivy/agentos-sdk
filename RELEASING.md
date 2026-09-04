@@ -52,11 +52,10 @@ npm version minor --no-git-tag-version
 npm version major --no-git-tag-version
 ```
 
-Also update the version in `src/index.ts`:
-
-```typescript
-export const VERSION = "0.1.1"; // Update to match package.json
-```
+`package.json` is the only place the version lives: `VERSION` in
+`src/index.ts` (exposed as `client.version` and sent in the `User-Agent`
+header) is read from `package.json` at build time, and `tests/index.test.ts`
+asserts the two match.
 
 ### Step 3: Update Changelog (Optional)
 
@@ -65,7 +64,7 @@ If you maintain a CHANGELOG.md, update it with the new version's changes.
 ### Step 4: Commit Version Bump
 
 ```bash
-git add package.json package-lock.json src/client.ts
+git add package.json package-lock.json
 git commit -m "chore: bump version to X.Y.Z"
 git push origin main
 ```
@@ -170,5 +169,5 @@ git push origin vX.Y.Z
 
 - `.github/workflows/publish.yml` - Publish workflow
 - `.github/workflows/ci.yml` - CI workflow (runs on PRs)
-- `package.json` - Package configuration
-- `src/client.ts` - Contains version constant
+- `package.json` - Package configuration and the single source of the version
+- `src/index.ts` - Exports `VERSION`, read from `package.json` at build time

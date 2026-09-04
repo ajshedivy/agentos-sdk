@@ -131,11 +131,24 @@ export interface RunContinuedEvent extends BaseAgentRunEvent {
 /**
  * Error event during agent run.
  *
+ * agno >= 3.0 stamps run-level failures with the same machine-readable
+ * identity it puts in HTTP error bodies (`error_type` / `error_id`, e.g.
+ * `"model_provider_error"`), so consumers can branch on the failure kind
+ * instead of matching `content` text. Non-streaming runs report these
+ * failures as a 200 with `status: "ERROR"`, so this event is the only place
+ * the identity is exposed.
+ *
  * @public
  */
 export interface RunErrorEvent extends BaseAgentRunEvent {
   event: "RunError";
   content: string;
+  /** Machine-readable failure kind (agno >= 3.0), e.g. `"model_provider_error"` */
+  error_type?: string;
+  /** Stable error identifier (agno >= 3.0); agno currently mirrors `error_type` */
+  error_id?: string;
+  /** Extra structured context attached by the raising exception */
+  additional_data?: Record<string, unknown>;
 }
 
 /**

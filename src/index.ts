@@ -4,8 +4,13 @@
  * @packageDocumentation
  */
 
-// Version
-export const VERSION = "0.4.0";
+import { version } from "../package.json";
+
+/**
+ * SDK version, read from `package.json` at build time so it cannot drift
+ * from the published package version. Sent as `User-Agent: agentos-sdk/<VERSION>`.
+ */
+export const VERSION: string = version;
 
 // Client
 export { AgentOSClient } from "./client";
@@ -223,9 +228,10 @@ export type {
   TeamOutputModelResponseStartedEvent,
   TeamOutputModelResponseCompletedEvent,
   TeamCustomEvent,
-  // Workflow event interfaces (18)
+  // Workflow event interfaces (19)
   WorkflowStartedEvent,
   WorkflowCompletedEvent,
+  WorkflowErrorEvent,
   WorkflowCancelledEvent,
   StepStartedEvent,
   StepCompletedEvent,

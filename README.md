@@ -11,7 +11,10 @@ TypeScript SDK for the AgentOS HTTP API. Run agents, teams, and workflows with s
 ```typescript
 import { AgentOSClient } from '@worksofadam/agentos-sdk';
 
-const client = new AgentOSClient({ apiKey: process.env.AGENTOS_API_KEY });
+const client = new AgentOSClient({
+  baseUrl: 'http://localhost:7777', // required
+  apiKey: 'your-api-key',           // optional; the SDK reads no environment variables
+});
 const stream = await client.agents.runStream('agent-id', { message: 'Hello!' });
 for await (const event of stream) {
   if (event.event === 'RunContent') console.log(event.content);
@@ -37,7 +40,7 @@ pnpm add @worksofadam/agentos-sdk
 
 **List all agents:**
 ```typescript
-const client = new AgentOSClient({ apiKey: 'your-api-key' });
+const client = new AgentOSClient({ baseUrl: 'http://localhost:7777', apiKey: 'your-api-key' });
 const agents = await client.agents.list();
 console.log(agents);
 ```
@@ -140,6 +143,21 @@ const result = await client.workflows.run('workflow-id', {
   sessionId: 'session-123'
 });
 console.log(result);
+```
+
+**Continue a paused workflow run:**
+```typescript
+// The paused run (WorkflowPaused event or getRun()) carries step_requirements[];
+// the LAST entry is the active pause. Stamp the decision on it and send the
+// whole array back: the server replaces its stored list with what you send.
+// (Agents take `tools`, teams take `requirements`; workflows differ.)
+const reqs = paused.step_requirements;
+reqs[reqs.length - 1].confirmed = true; // or user_input / selected_choices
+
+const stream = await client.workflows.continue('workflow-id', paused.run_id, {
+  stepRequirements: JSON.stringify(reqs),
+  sessionId: paused.session_id
+});
 ```
 
 ### Sessions
@@ -273,10 +291,9 @@ if (status.status === 'completed') {
 **List traces with filtering:**
 ```typescript
 const traces = await client.traces.list({
-  run_id: 'run-123',
-  session_id: 'session-456',
-  starting_date: '2024-01-01',
-  ending_date: '2024-01-31'
+  runId: 'run-123',
+  sessionId: 'session-456',
+  limit: 50
 });
 console.log(traces);
 ```
@@ -285,10 +302,12 @@ console.log(traces);
 
 **Get metrics:**
 ```typescript
+// GetMetricsOptions: startingDate / endingDate (YYYY-MM-DD), userId, dbId.
+// There is no session filter; GET /metrics aggregates per day.
 const metrics = await client.metrics.get({
-  session_id: 'session-123',
-  starting_date: '2024-01-01',
-  ending_date: '2024-01-31'
+  startingDate: '2024-01-01',
+  endingDate: '2024-01-31',
+  userId: 'user-123'
 });
 console.log(metrics);
 ```
@@ -385,6 +404,33 @@ try {
   }
 }
 ```
+
+### Run Errors
+
+A run that fails after the stream has started does not raise an HTTP error:
+the server ends the stream with a `RunError` event (`TeamRunError` for teams,
+`WorkflowError` for workflows, where the message field is `error` rather than
+`content`). On agno >= 3.0 that event carries the same machine-readable
+identity agno puts in HTTP error bodies (`error_type` / `error_id`, e.g.
+`"model_provider_error"`), so you can branch on the failure kind instead of
+matching the message text:
+
+```typescript
+for await (const event of stream) {
+  if (event.event === 'RunError') {
+    if (event.error_type === 'model_provider_error') {
+      console.error('Model provider rejected the request:', event.content);
+    } else {
+      console.error('Run failed:', event.error_type ?? 'unknown', event.content);
+    }
+  }
+}
+```
+
+`error_type`, `error_id` and `additional_data` are `undefined` on servers older
+than agno 3.0. Non-streaming runs report the same failures as a 200 response
+with `status: "ERROR"` and the message in `content`, so the stream event is the
+only place the identity is exposed.
 
 ## File Uploads
 
@@ -572,11 +618,14 @@ of its handler) in `openapi.json`.
 new AgentOSClient(options: AgentOSClientOptions)
 ```
 
-**Options:**
-- `apiKey?: string` - API key for authentication (can also use `AGENTOS_API_KEY` env var)
-- `baseUrl?: string` - Base URL for API (default: `https://api.agno.com`)
-- `timeout?: number` - Request timeout in milliseconds (default: 60000)
-- `maxRetries?: number` - Maximum retry attempts (default: 3)
+**Options** (`AgentOSClientOptions`):
+- `baseUrl: string` - Base URL of the AgentOS server (required; the constructor throws without it)
+- `apiKey?: string` - API key sent as a `Bearer` token. The SDK reads no environment variables; pass the value yourself
+- `timeout?: number` - Request timeout in milliseconds (default: 30000)
+- `maxRetries?: number` - Maximum retry attempts for transient failures (default: 2)
+- `headers?: Record<string, string>` - Extra headers sent with every request
+
+`client.version` exposes the SDK version (also sent as `User-Agent: agentos-sdk/<version>`); it is read from `package.json` at build time.
 
 **Methods:**
 - `getConfig(): Promise<ConfigResponse>` - Get server configuration (`components['schemas']['ConfigResponse']`)

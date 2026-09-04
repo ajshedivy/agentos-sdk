@@ -56,10 +56,36 @@ export interface WorkflowStreamRunOptions {
 
 /**
  * Options for continuing a paused workflow run
+ *
+ * The workflow continue route resolves human-in-the-loop pauses from the
+ * `step_requirements` form field (the agent route's `tools` field and the
+ * team route's `requirements` field are ignored here). Send back the
+ * `step_requirements[]` array from the paused run (the `WorkflowPaused`
+ * event or `getRun()`), with the decision stamped on the LAST entry: the
+ * server replaces the stored list with what you send and treats the last
+ * entry as the active requirement (earlier entries are resolved history).
+ * Each entry must keep its `step_id`. Stamp `confirmed: true | false` for a
+ * confirmation pause, `user_input` for a user-input pause,
+ * `selected_choices` for a router pause, or `confirmed` on each
+ * `executor_requirements[].tool_execution` for an agent/team tool pause
+ * inside a step.
  */
 export interface WorkflowContinueOptions {
-  /** JSON string containing array of tool execution results */
-  tools: string;
+  /**
+   * JSON string containing the paused run's `step_requirements` array with
+   * the active (last) entry resolved (see interface doc). May be omitted when
+   * the server can resolve the pause itself (e.g. a timed-out requirement
+   * with an `on_timeout` policy).
+   */
+  stepRequirements?: string;
+  /**
+   * @deprecated The workflow route reads `step_requirements`, not `tools`,
+   * and a bare tool-execution list cannot be mapped onto a `StepRequirement`
+   * (which needs the paused step's `step_id`). Passing this throws a
+   * `TypeError`; pass `stepRequirements` instead. It used to be posted as
+   * `tools`, which the server dropped silently.
+   */
+  tools?: string;
   /** Optional session ID */
   sessionId?: string;
   /** Optional user ID */
@@ -266,20 +292,41 @@ export class WorkflowsResource {
   }
 
   /**
-   * Continue a paused workflow run with tool results.
+   * Continue a paused workflow run with resolved step requirements.
    *
    * @param workflowId - The workflow identifier
    * @param runId - The run identifier to continue
-   * @param options - Continue options including tool results
+   * @param options - Continue options including the resolved step requirements
    * @returns AgentStream if streaming, otherwise the run result
+   *
+   * @example
+   * ```typescript
+   * // `paused` is the WorkflowPaused event (or getRun() output); confirm the
+   * // active requirement, which is the last entry of step_requirements
+   * const reqs = paused.step_requirements;
+   * reqs[reqs.length - 1].confirmed = true;
+   * const stream = await client.workflows.continue('workflow-id', paused.run_id, {
+   *   stepRequirements: JSON.stringify(reqs),
+   *   sessionId: paused.session_id,
+   * });
+   * ```
    */
   async continue(
     workflowId: string,
     runId: string,
     options: WorkflowContinueOptions,
   ): Promise<AgentStream | unknown> {
+    if (options.tools !== undefined && options.stepRequirements === undefined) {
+      throw new TypeError(
+        "WorkflowContinueOptions.tools is not supported: the workflow continue route reads step_requirements, " +
+          "and a tool-execution list cannot be mapped onto a StepRequirement. Pass stepRequirements " +
+          "(the paused run's step_requirements[] with the last entry resolved) instead.",
+      );
+    }
     const formData = new FormData();
-    formData.append("tools", options.tools);
+    if (options.stepRequirements !== undefined) {
+      formData.append("step_requirements", options.stepRequirements);
+    }
     formData.append("stream", String(options.stream ?? true));
 
     if (options.sessionId) {

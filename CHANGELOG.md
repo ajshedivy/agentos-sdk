@@ -6,6 +6,38 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `workflows.continue()` sends human-in-the-loop resolutions as the
+  `step_requirements` form field that
+  `POST /workflows/{id}/runs/{run_id}/continue` reads. It used to post `tools`,
+  which only the agent route reads; the workflow route swept it into unread
+  kwargs, so a paused workflow run continued through the SDK was never
+  resolved. `WorkflowContinueOptions` gains `stepRequirements` (JSON array: the
+  paused run's `step_requirements[]` with the active — last — entry resolved,
+  e.g. `confirmed`, `user_input`, `selected_choices`, or `confirmed` on each
+  `executor_requirements[].tool_execution`; every entry keeps its `step_id`).
+  `tools` is deprecated and now throws a `TypeError` instead of being posted:
+  the workflow route has no `tool_execution` wrapper, and a bare tool list
+  cannot be mapped onto a `StepRequirement` without the paused step's
+  `step_id`, so there is no wrap that would not 400 server-side.
+- `RunErrorEvent` and `TeamRunErrorEvent` type the failure identity agno >= 3.0
+  stamps on run-error stream events: `error_type` (e.g.
+  `"model_provider_error"`), `error_id` and `additional_data`, all optional.
+  The workflow-level `WorkflowError` event (`error`, `error_type`, `error_id`,
+  `additional_data`) was missing from the SDK entirely: `WorkflowErrorEvent`
+  is now part of `WorkflowRunEvent` / `EventMap`, and
+  `WorkflowEventType.WorkflowError` / `RunEventType.WorkflowError` exist.
+- `VERSION` (and therefore `client.version` and the `User-Agent` header) is
+  read from `package.json` at build time instead of a hand-maintained literal
+  in `src/index.ts`, which had stayed at `0.4.0` through 0.5.0 - 0.6.2. The
+  test that pinned the literal now compares against `package.json`, and
+  `RELEASING.md` no longer asks for a second manual bump.
+- README API reference matches the client: `baseUrl` is required (the SDK
+  reads no `AGENTOS_API_KEY` env var), `timeout` defaults to 30000 and
+  `maxRetries` to 2, `headers` is documented, and the `metrics.get()` /
+  `traces.list()` snippets use the camelCase option keys the resources take.
+
 ### Changed
 
 - Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
