@@ -9,7 +9,11 @@
 export interface APIErrorOptions {
   /** Stable error identifier, e.g. `"migration_required_error"` */
   errorId?: string;
-  /** Error class name on the server, e.g. `"MigrationRequiredError"` */
+  /**
+   * Server-side error type. agno currently sets it to the same snake_case
+   * value as `error_id` (e.g. `"migration_required_error"`); branch on
+   * `errorId` and treat this as informational.
+   */
   errorType?: string;
 }
 
@@ -39,7 +43,7 @@ export class APIError extends Error {
   readonly headers?: Record<string, string>;
   /** Stable error identifier from the response body (agno >= 3.0), if any */
   readonly errorId?: string;
-  /** Server-side error type from the response body (agno >= 3.0), if any */
+  /** Server-side error type from the response body (agno >= 3.0), if any; see `APIErrorOptions` */
   readonly errorType?: string;
 
   constructor(

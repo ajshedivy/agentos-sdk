@@ -509,8 +509,9 @@ All API errors extend `APIError` and include:
 - `headers`: Response headers
 - `errorId`: Stable error identifier from the response body (agno >= 3.0), e.g.
   `"migration_required_error"`; `undefined` when the body carries none
-- `errorType`: Server-side error class name (agno >= 3.0), e.g.
-  `"MigrationRequiredError"`; `undefined` when the body carries none
+- `errorType`: Server-side error type (agno >= 3.0). agno currently sets it to
+  the same snake_case value as `error_id`, so branch on `errorId` and treat this
+  as informational; `undefined` when the body carries none
 
 Streaming and non-streaming requests parse error bodies the same way.
 
