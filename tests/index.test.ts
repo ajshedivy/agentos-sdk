@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { version as packageVersion } from "../package.json";
 import {
   APIError,
   AgentOSClient,
@@ -91,7 +92,9 @@ describe("Package Exports", () => {
     expect(typeof VERSION).toBe("string");
     // Verify semver format (X.Y.Z)
     expect(VERSION).toMatch(/^\d+\.\d+\.\d+$/);
-    expect(VERSION).toBe("0.4.0");
+    // VERSION is read from package.json at build time; a literal pin here let
+    // the two drift for three releases (0.5.0 - 0.6.2 shipped as "0.4.0").
+    expect(VERSION).toBe(packageVersion);
   });
 
   it("should export AgentOSClient", () => {
