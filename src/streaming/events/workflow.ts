@@ -1,5 +1,5 @@
 /**
- * Workflow streaming event interfaces (19 event types).
+ * Workflow streaming event interfaces (30 event types).
  *
  * @packageDocumentation
  */
@@ -9,7 +9,10 @@ import type {
   BaseWorkflowRunEvent,
   ImageData,
   ResponseAudio,
+  RunRequirement,
   StepOutput,
+  StepRequirement,
+  UserInputField,
   VideoData,
 } from "./shared";
 
@@ -33,6 +36,35 @@ export interface WorkflowStartedEvent extends BaseWorkflowRunEvent {
  */
 export interface WorkflowCompletedEvent extends BaseWorkflowRunEvent {
   event: "WorkflowCompleted";
+}
+
+/**
+ * Workflow paused for human input (HITL, agno >= 3.0).
+ *
+ * Carries the full paused state so a client can build a continue call from
+ * this one event: `step_requirements` is the array `workflows.continue()`
+ * sends back as `stepRequirements`, with the active (last) entry resolved.
+ * Emitted after the step-level pause event (`StepPaused`,
+ * `StepExecutorPaused`, `StepOutputReview` or `RouterPaused`).
+ *
+ * @public
+ */
+export interface WorkflowPausedEvent extends BaseWorkflowRunEvent {
+  event: "WorkflowPaused";
+  /** Run status of the paused run: `"PAUSED"` */
+  status?: string;
+  paused_step_index?: number;
+  paused_step_name?: string;
+  /** `"step"` (step-level pause) or `"executor"` (agent/team tool pause inside a step) */
+  pause_kind?: string;
+  /** Requirements to resolve before the run can continue */
+  step_requirements?: StepRequirement[];
+  /** Outputs of the steps that already ran; nested lists hold parallel / loop iteration results */
+  step_results?: (StepOutput | StepOutput[])[];
+  /** Serialized agno `RunOutput` / `TeamRunOutput` / `WorkflowRunOutput` of the executed steps */
+  step_executor_runs?: Record<string, unknown>[];
+  content?: string | object;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -67,6 +99,31 @@ export interface WorkflowCancelledEvent extends BaseWorkflowRunEvent {
 }
 
 // ---------------------------------------------------------------------------
+// Workflow agent events
+// ---------------------------------------------------------------------------
+
+/**
+ * The workflow agent started (before it decides whether to run the
+ * workflow or answer directly).
+ *
+ * @public
+ */
+export interface WorkflowAgentStartedEvent extends BaseWorkflowRunEvent {
+  event: "WorkflowAgentStarted";
+}
+
+/**
+ * The workflow agent completed (after running the workflow or answering
+ * directly).
+ *
+ * @public
+ */
+export interface WorkflowAgentCompletedEvent extends BaseWorkflowRunEvent {
+  event: "WorkflowAgentCompleted";
+  content?: string | object;
+}
+
+// ---------------------------------------------------------------------------
 // Step events
 // ---------------------------------------------------------------------------
 
@@ -97,6 +154,96 @@ export interface StepCompletedEvent extends BaseWorkflowRunEvent {
   audio?: AudioData[];
   response_audio?: ResponseAudio;
   step_response?: StepOutput;
+}
+
+/**
+ * Step paused for confirmation or user input (step-level HITL). The
+ * matching `StepRequirement` arrives on the `WorkflowPaused` event that
+ * follows.
+ *
+ * @public
+ */
+export interface StepPausedEvent extends BaseWorkflowRunEvent {
+  event: "StepPaused";
+  step_name?: string;
+  step_index?: number | [number, number];
+  requires_confirmation: boolean;
+  confirmation_message?: string;
+  requires_user_input: boolean;
+  user_input_message?: string;
+  user_input_schema?: UserInputField[];
+}
+
+/**
+ * Paused step resumed after its step-level HITL was resolved.
+ *
+ * @public
+ */
+export interface StepContinuedEvent extends BaseWorkflowRunEvent {
+  event: "StepContinued";
+  step_name?: string;
+  step_index?: number | [number, number];
+}
+
+/**
+ * A step's agent/team executor paused for tool-level HITL.
+ *
+ * @public
+ */
+export interface StepExecutorPausedEvent extends BaseWorkflowRunEvent {
+  event: "StepExecutorPaused";
+  step_name?: string;
+  step_index?: number | [number, number];
+  executor_id?: string;
+  executor_name?: string;
+  executor_run_id?: string;
+  /** `"agent"` | `"team"` */
+  executor_type?: string;
+  /** Unresolved requirements of the paused executor run */
+  executor_requirements?: RunRequirement[];
+}
+
+/**
+ * Paused executor resumed after its tool-level HITL was resolved.
+ *
+ * @public
+ */
+export interface StepExecutorContinuedEvent extends BaseWorkflowRunEvent {
+  event: "StepExecutorContinued";
+  step_name?: string;
+  step_index?: number | [number, number];
+  executor_id?: string;
+  executor_name?: string;
+  executor_run_id?: string;
+  /** `"agent"` | `"team"` */
+  executor_type?: string;
+}
+
+/**
+ * Step output requires human review before the workflow continues. The
+ * output itself is on the `WorkflowPaused` event's `step_requirements[]`
+ * (`step_output`).
+ *
+ * @public
+ */
+export interface StepOutputReviewEvent extends BaseWorkflowRunEvent {
+  event: "StepOutputReview";
+  step_name?: string;
+  step_index?: number | [number, number];
+  output_review_message?: string;
+  requires_output_review: boolean;
+}
+
+/**
+ * Step execution failed.
+ *
+ * @public
+ */
+export interface StepErrorEvent extends BaseWorkflowRunEvent {
+  event: "StepError";
+  step_name?: string;
+  step_index?: number | [number, number];
+  error?: string;
 }
 
 /**
@@ -146,6 +293,20 @@ export interface ConditionExecutionCompletedEvent extends BaseWorkflowRunEvent {
   condition_result?: boolean;
   executed_steps?: number;
   step_results?: StepOutput[];
+}
+
+/**
+ * Condition paused event.
+ *
+ * agno 3.0.0 declares this value in `WorkflowRunEvent` but defines no event
+ * dataclass for it and never emits it; a condition's confirmation pause is
+ * reported as `StepPaused` + `WorkflowPaused` instead. Typed with the base
+ * fields only so that the constant and the union stay complete.
+ *
+ * @public
+ */
+export interface ConditionPausedEvent extends BaseWorkflowRunEvent {
+  event: "ConditionPaused";
 }
 
 // ---------------------------------------------------------------------------
@@ -265,6 +426,23 @@ export interface RouterExecutionCompletedEvent extends BaseWorkflowRunEvent {
   step_results?: StepOutput[];
 }
 
+/**
+ * Router paused for the user to pick a route (HITL). The selection is sent
+ * back as `selected_choices` on the matching `StepRequirement` of the
+ * `WorkflowPaused` event that follows.
+ *
+ * @public
+ */
+export interface RouterPausedEvent extends BaseWorkflowRunEvent {
+  event: "RouterPaused";
+  step_name?: string;
+  step_index?: number | [number, number];
+  /** Route names the user can choose from */
+  available_choices: string[];
+  user_input_message?: string;
+  allow_multiple_selections: boolean;
+}
+
 // ---------------------------------------------------------------------------
 // Steps group events
 // ---------------------------------------------------------------------------
@@ -300,20 +478,30 @@ export interface StepsExecutionCompletedEvent extends BaseWorkflowRunEvent {
 // ---------------------------------------------------------------------------
 
 /**
- * Discriminated union of all workflow run streaming events (19 types).
+ * Discriminated union of all workflow run streaming events (30 types).
  *
  * @public
  */
 export type WorkflowRunEvent =
   | WorkflowStartedEvent
   | WorkflowCompletedEvent
+  | WorkflowPausedEvent
   | WorkflowErrorEvent
   | WorkflowCancelledEvent
+  | WorkflowAgentStartedEvent
+  | WorkflowAgentCompletedEvent
   | StepStartedEvent
   | StepCompletedEvent
+  | StepPausedEvent
+  | StepContinuedEvent
+  | StepExecutorPausedEvent
+  | StepExecutorContinuedEvent
+  | StepOutputReviewEvent
+  | StepErrorEvent
   | StepOutputEvent
   | ConditionExecutionStartedEvent
   | ConditionExecutionCompletedEvent
+  | ConditionPausedEvent
   | ParallelExecutionStartedEvent
   | ParallelExecutionCompletedEvent
   | LoopExecutionStartedEvent
@@ -322,5 +510,6 @@ export type WorkflowRunEvent =
   | LoopExecutionCompletedEvent
   | RouterExecutionStartedEvent
   | RouterExecutionCompletedEvent
+  | RouterPausedEvent
   | StepsExecutionStartedEvent
   | StepsExecutionCompletedEvent;

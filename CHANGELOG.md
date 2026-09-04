@@ -28,6 +28,35 @@ This project follows [Semantic Versioning](https://semver.org/).
   `additional_data`) was missing from the SDK entirely: `WorkflowErrorEvent`
   is now part of `WorkflowRunEvent` / `EventMap`, and
   `WorkflowEventType.WorkflowError` / `RunEventType.WorkflowError` exist.
+- The stream event typings cover every event agno 3.0.0 emits. 34 event types
+  the server sends were missing from `AgentEventType` / `TeamEventType` /
+  `WorkflowEventType` and from the `AgentRunEvent` / `TeamRunEvent` /
+  `WorkflowRunEvent` unions (so from `EventMap`), which meant
+  `stream.on(<name>)` did not typecheck for them and `for await` consumers
+  could not narrow on them even though `AgentStream` delivered them at
+  runtime. Added, with interfaces derived from the agno 3.0.0 dataclasses:
+  - agent (8): `ToolCallError`, `ReasoningContentDelta`, `ModelRequestStarted`,
+    `ModelRequestCompleted`, `CompressionStarted`, `CompressionCompleted`,
+    `FollowupsStarted`, `FollowupsCompleted`.
+  - team (15): `TeamRunPaused`, `TeamRunContinued`, `TeamToolCallError`,
+    `TeamReasoningContentDelta`, `TeamModelRequestStarted`,
+    `TeamModelRequestCompleted`, `TeamCompressionStarted`,
+    `TeamCompressionCompleted`, `TeamFollowupsStarted`, `TeamFollowupsCompleted`,
+    `TeamTaskIterationStarted`, `TeamTaskIterationCompleted`,
+    `TeamTaskStateUpdated`, `TeamTaskCreated`, `TeamTaskUpdated`.
+  - workflow (11): `WorkflowPaused`, `WorkflowAgentStarted`,
+    `WorkflowAgentCompleted`, `StepPaused`, `StepContinued`,
+    `StepExecutorPaused`, `StepExecutorContinued`, `StepOutputReview`,
+    `StepError`, `ConditionPaused`, `RouterPaused`.
+  `TeamRunPausedEvent.requirements` is typed as `RunRequirement[]` and
+  `WorkflowPausedEvent.step_requirements` as `StepRequirement[]` — the exact
+  objects the team and workflow continue routes read back — and
+  `RunPausedEvent` gains the same `requirements` field. The HITL types
+  (`RunRequirement`, `StepRequirement`, `StepInput`, `UserInputField`,
+  `UserFeedbackQuestion`, `UserFeedbackOption`, `TeamTaskData`) are exported,
+  and `ToolCallData` gains the `ToolExecution` HITL fields
+  (`requires_confirmation`, `confirmed`, `user_input_schema`, ...). Existing
+  names and shapes are unchanged.
 - `VERSION` (and therefore `client.version` and the `User-Agent` header) is
   read from `package.json` at build time instead of a hand-maintained literal
   in `src/index.ts`, which had stayed at `0.4.0` through 0.5.0 - 0.6.2. The
