@@ -10,46 +10,86 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Parse error body from a failed response.
- * Attempts to extract a message from common JSON formats,
- * falling back to text or statusText.
+ * The parts of a failed response body the SDK surfaces on `APIError`.
  */
-async function parseErrorBody(response: Response): Promise<string> {
-  try {
-    const json: unknown = await response.json();
+export interface ParsedErrorBody {
+  /** Human-readable message (from `message`, `error`, `error.message` or `detail`) */
+  message: string;
+  /** agno >= 3.0 `error_id`, when the body carries one */
+  errorId?: string;
+  /** agno >= 3.0 `error_type`, when the body carries one */
+  errorType?: string;
+}
 
-    // Try common message formats
-    if (isObject(json)) {
-      if (typeof json.message === "string") {
-        return json.message;
-      }
-      if (typeof json.error === "string") {
-        return json.error;
-      }
-      if (isObject(json.error) && typeof json.error.message === "string") {
-        return json.error.message;
-      }
-      if (typeof json.detail === "string") {
-        return json.detail;
-      }
-    }
-
-    // Return stringified JSON if no message field found
-    return JSON.stringify(json);
-  } catch {
-    // JSON parsing failed, try text
-    try {
-      const text = await response.text();
-      if (text) {
-        return text;
-      }
-    } catch {
-      // Text parsing also failed
-    }
-
-    // Fall back to statusText
-    return response.statusText || `HTTP ${response.status}`;
+/**
+ * Extract a message from common JSON error formats.
+ */
+function extractMessage(json: Record<string, unknown>): string | undefined {
+  if (typeof json.message === "string") {
+    return json.message;
   }
+  if (typeof json.error === "string") {
+    return json.error;
+  }
+  if (isObject(json.error) && typeof json.error.message === "string") {
+    return json.error.message;
+  }
+  if (typeof json.detail === "string") {
+    return json.detail;
+  }
+  return undefined;
+}
+
+/**
+ * Parse error body from a failed response.
+ *
+ * Attempts to extract a message from common JSON formats, falling back to
+ * the raw text or statusText. When the body is an agno >= 3.0 error body
+ * (`{ detail, error_id, error_type }`) the identity fields are returned too,
+ * so callers can branch on `errorId` instead of matching `message` text.
+ *
+ * The body is read once as text and then parsed: a failed `response.json()`
+ * has already consumed the stream, so a `text()` fallback after it throws
+ * "Body is unusable" and non-JSON bodies would surface as `HTTP <status>`.
+ */
+export async function parseErrorBody(
+  response: Response,
+): Promise<ParsedErrorBody> {
+  let text: string;
+  try {
+    text = await response.text();
+  } catch {
+    text = "";
+  }
+
+  if (!text) {
+    // Empty or unreadable body: fall back to statusText
+    return { message: response.statusText || `HTTP ${response.status}` };
+  }
+
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    // Not JSON: the raw text is the message
+    return { message: text };
+  }
+
+  if (isObject(json)) {
+    const result: ParsedErrorBody = {
+      // Return stringified JSON if no message field found
+      message: extractMessage(json) ?? text,
+    };
+    if (typeof json.error_id === "string") {
+      result.errorId = json.error_id;
+    }
+    if (typeof json.error_type === "string") {
+      result.errorType = json.error_type;
+    }
+    return result;
+  }
+
+  return { message: text };
 }
 
 /**
@@ -113,12 +153,13 @@ export async function request<T>(
   const responseHeaders = extractHeaders(response.headers);
 
   if (!response.ok) {
-    const message = await parseErrorBody(response);
+    const { message, errorId, errorType } = await parseErrorBody(response);
     throw createErrorFromResponse(
       response.status,
       message,
       requestId,
       responseHeaders,
+      { errorId, errorType },
     );
   }
 

@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentOSClient } from "../src/client";
-import { AuthenticationError } from "../src/errors";
+import { AuthenticationError, InternalServerError } from "../src/errors";
 import { VERSION } from "../src/index";
 
-// Mock the http module
-vi.mock("../src/http", () => ({
-  requestWithRetry: vi.fn(),
-}));
+// Mock the http module (keep the real parseErrorBody so requestStream's
+// error path is exercised end-to-end)
+vi.mock("../src/http", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../src/http")>();
+  return { ...actual, requestWithRetry: vi.fn() };
+});
 
 import { requestWithRetry } from "../src/http";
 
@@ -682,6 +684,46 @@ describe("AgentOSClient", () => {
       const promise = (client as any).requestStream("POST", "/stream");
 
       await expect(promise).rejects.toThrow(AuthenticationError);
+    });
+
+    it("should parse a JSON error body and surface error_id / error_type", async () => {
+      const mockFetch = vi.fn(() =>
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              detail: "Database schema is out of date",
+              error_id: "migration_required_error",
+              error_type: "MigrationRequiredError",
+            }),
+            {
+              status: 500,
+              headers: {
+                "content-type": "application/json",
+                "x-request-id": "req-500",
+              },
+            },
+          ),
+        ),
+      );
+
+      vi.stubGlobal("fetch", mockFetch);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: Need to access internal method for testing
+      const promise = (client as any).requestStream("POST", "/stream");
+
+      await expect(promise).rejects.toThrow(InternalServerError);
+      await expect(promise).rejects.toMatchObject({
+        status: 500,
+        // The message is the parsed `detail`, not the raw JSON text
+        message: "Database schema is out of date",
+        errorId: "migration_required_error",
+        errorType: "MigrationRequiredError",
+        requestId: "req-500",
+      });
     });
 
     it("should include Authorization header when apiKey is set", async () => {
