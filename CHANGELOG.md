@@ -60,6 +60,14 @@ Consumers that type-reference the re-exported `components`/`paths` are affected
 by the regeneration. Under `strict` TypeScript these are compile errors, not
 warnings:
 
+- `HealthStatus` (the return type of `client.health()`) is now an alias of
+  `components["schemas"]["HealthResponse"]`: `{ status: string;
+  instantiated_at: string }`. The previous hand-written shape
+  (`status: "healthy" | "degraded" | "unhealthy"`, `timestamp`, `details`)
+  never matched what `GET /health` returns. Code that read `.timestamp` or
+  `.details`, or narrowed `.status` against those literals, no longer compiles;
+  code that cast the result through `unknown` to reach `instantiated_at` can
+  drop the cast.
 - `error_code` is gone from every error schema; read `error_id` / `error_type`
   instead (`ValidationErrorResponse` carries neither).
 - `ConfigResponse.available_models` is `Model[]` (`{ id, provider }`), not
@@ -76,14 +84,6 @@ warnings:
 - The hand-written `OSConfig` type is no longer exported. It never matched the
   server's `/config` payload; use `components["schemas"]["ConfigResponse"]`
   instead. `AgentOSClient.getConfig()` returns that type now.
-- `HealthStatus` (the return type of `client.health()`) is now an alias of
-  `components["schemas"]["HealthResponse"]`: `{ status: string;
-  instantiated_at: string }`. The previous hand-written shape
-  (`status: "healthy" | "degraded" | "unhealthy"`, `timestamp`, `details`)
-  never matched what `GET /health` returns. Code that read `.timestamp` or
-  `.details`, or narrowed `.status` against those literals, no longer compiles;
-  code that cast the result through `unknown` to reach `instantiated_at` can
-  drop the cast.
 
 Release note: this warrants a minor bump (0.7.0), not a patch.
 
