@@ -611,28 +611,28 @@ describe("WorkflowsResource", () => {
   });
 
   describe("getRun()", () => {
-    it("calls GET /workflows/{workflowId}/runs/{runId}", async () => {
+    it("calls GET /workflows/{workflowId}/runs/{runId}?session_id=", async () => {
       const mockRun = { run_id: "run-1", status: "completed" };
       requestSpy.mockResolvedValueOnce(mockRun);
 
-      const result = await resource.getRun("workflow-1", "run-1");
+      const result = await resource.getRun("workflow-1", "run-1", "session-1");
 
       expect(result).toEqual(mockRun);
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
-        "/workflows/workflow-1/runs/run-1",
+        "/workflows/workflow-1/runs/run-1?session_id=session-1",
       );
       expect(requestSpy).toHaveBeenCalledTimes(1);
     });
 
-    it("URL-encodes workflowId and runId", async () => {
+    it("URL-encodes workflowId, runId and sessionId", async () => {
       requestSpy.mockResolvedValueOnce({});
 
-      await resource.getRun("workflow/special", "run/123");
+      await resource.getRun("workflow/special", "run/123", "session/xyz");
 
       expect(requestSpy).toHaveBeenCalledWith(
         "GET",
-        "/workflows/workflow%2Fspecial/runs/run%2F123",
+        "/workflows/workflow%2Fspecial/runs/run%2F123?session_id=session%2Fxyz",
       );
     });
 
@@ -640,7 +640,7 @@ describe("WorkflowsResource", () => {
       requestSpy.mockRejectedValueOnce(new Error("fail"));
 
       await expect(
-        resource.getRun("workflow-1", "run-1"),
+        resource.getRun("workflow-1", "run-1", "session-1"),
       ).rejects.toThrow("fail");
     });
   });

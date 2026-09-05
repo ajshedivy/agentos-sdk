@@ -103,6 +103,7 @@ export type {
   CreateSessionOptions,
   DeleteAllSessionsOptions,
   ListSessionsOptions,
+  SessionType,
   UpdateSessionOptions,
 } from "./resources/sessions";
 
