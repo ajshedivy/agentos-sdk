@@ -109,11 +109,20 @@ export interface TeamRunCompletedEvent extends BaseTeamRunEvent {
 /**
  * Team run error event.
  *
+ * Carries the same agno >= 3.0 failure identity as the agent `RunError`
+ * event; see `RunErrorEvent`.
+ *
  * @public
  */
 export interface TeamRunErrorEvent extends BaseTeamRunEvent {
   event: "TeamRunError";
   content: string;
+  /** Machine-readable failure kind (agno >= 3.0), e.g. `"model_provider_error"` */
+  error_type?: string;
+  /** Stable error identifier (agno >= 3.0); agno currently mirrors `error_type` */
+  error_id?: string;
+  /** Extra structured context attached by the raising exception */
+  additional_data?: Record<string, unknown>;
 }
 
 /**

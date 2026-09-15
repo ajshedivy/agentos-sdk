@@ -361,7 +361,7 @@ describe("WorkflowsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       const result = await resource.continue("workflow-1", "run-123", {
-        tools: "[]",
+        stepRequirements: "[]",
       });
 
       expect(result).toBeInstanceOf(AgentStream);
@@ -384,7 +384,7 @@ describe("WorkflowsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       const result = await resource.continue("workflow-1", "run-123", {
-        tools: "[]",
+        stepRequirements: "[]",
         stream: true,
       });
 
@@ -396,7 +396,7 @@ describe("WorkflowsResource", () => {
       requestSpy.mockResolvedValueOnce(mockResult);
 
       const result = await resource.continue("workflow-1", "run-123", {
-        tools: "[]",
+        stepRequirements: "[]",
         stream: false,
       });
 
@@ -412,16 +412,95 @@ describe("WorkflowsResource", () => {
       expect(formData.get("stream")).toBe("false");
     });
 
-    it("includes tools parameter", async () => {
+    it("posts stepRequirements as the step_requirements form field, never tools", async () => {
       const mockResponse = new Response("data: event", { status: 200 });
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
-      const toolsJSON = '[{"name":"get_weather","result":"sunny"}]';
-      await resource.continue("workflow-1", "run-123", { tools: toolsJSON });
+      // The paused run's step_requirements[] with the active (last) entry
+      // confirmed - the shape agno's StepRequirement.from_dict reads.
+      const stepRequirementsJSON = JSON.stringify([
+        {
+          step_id: "step-1",
+          step_name: "review",
+          step_index: 0,
+          step_type: "Step",
+          requires_confirmation: true,
+          confirmation_message: "Run the query?",
+          confirmed: true,
+          on_reject: "cancel",
+        },
+      ]);
+      await resource.continue("workflow-1", "run-123", {
+        stepRequirements: stepRequirementsJSON,
+      });
 
       const callArgs = requestStreamSpy.mock.calls[0];
       const formData = callArgs[2].body as FormData;
-      expect(formData.get("tools")).toBe(toolsJSON);
+      expect(formData.get("step_requirements")).toBe(stepRequirementsJSON);
+      expect(formData.has("tools")).toBe(false);
+      expect(formData.has("requirements")).toBe(false);
+    });
+
+    it("posts step_requirements on the non-streaming path too", async () => {
+      requestSpy.mockResolvedValueOnce({ run_id: "run-123" });
+
+      await resource.continue("workflow-1", "run-123", {
+        stepRequirements: '[{"step_id":"step-1","confirmed":false}]',
+        stream: false,
+      });
+
+      const callArgs = requestSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("step_requirements")).toBe(
+        '[{"step_id":"step-1","confirmed":false}]',
+      );
+      expect(formData.has("tools")).toBe(false);
+    });
+
+    it("omits step_requirements when not provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("workflow-1", "run-123", {
+        sessionId: "session-456",
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.has("step_requirements")).toBe(false);
+      expect(formData.has("tools")).toBe(false);
+    });
+
+    it("throws on the deprecated tools option instead of posting it", async () => {
+      await expect(
+        resource.continue("workflow-1", "run-123", {
+          tools: '[{"tool_call_id":"call_1","confirmed":true}]',
+        }),
+      ).rejects.toThrow(TypeError);
+      await expect(
+        resource.continue("workflow-1", "run-123", {
+          tools: '[{"tool_call_id":"call_1","confirmed":true}]',
+        }),
+      ).rejects.toThrow(/step_requirements/);
+      expect(requestStreamSpy).not.toHaveBeenCalled();
+      expect(requestSpy).not.toHaveBeenCalled();
+    });
+
+    it("ignores deprecated tools when stepRequirements is also provided", async () => {
+      const mockResponse = new Response("data: event", { status: 200 });
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
+
+      await resource.continue("workflow-1", "run-123", {
+        stepRequirements: '[{"step_id":"step-1","confirmed":true}]',
+        tools: '[{"tool_call_id":"call_1","confirmed":true}]',
+      });
+
+      const callArgs = requestStreamSpy.mock.calls[0];
+      const formData = callArgs[2].body as FormData;
+      expect(formData.get("step_requirements")).toBe(
+        '[{"step_id":"step-1","confirmed":true}]',
+      );
+      expect(formData.has("tools")).toBe(false);
     });
 
     it("includes session_id when provided", async () => {
@@ -429,7 +508,7 @@ describe("WorkflowsResource", () => {
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       await resource.continue("workflow-1", "run-123", {
-        tools: "[]",
+        stepRequirements: "[]",
         sessionId: "session-456",
       });
 
@@ -440,10 +519,10 @@ describe("WorkflowsResource", () => {
 
     it("includes user_id when provided", async () => {
       const mockResponse = new Response("data: event", { status: 200 });
-      requestStreamSpy.mock.calls[0];
+      requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
       await resource.continue("workflow-1", "run-123", {
-        tools: "[]",
+        stepRequirements: "[]",
         userId: "user-789",
       });
 
@@ -456,7 +535,9 @@ describe("WorkflowsResource", () => {
       const mockResponse = new Response("data: event", { status: 200 });
       requestStreamSpy.mockResolvedValueOnce(mockResponse);
 
-      await resource.continue("workflow/special", "run/123", { tools: "[]" });
+      await resource.continue("workflow/special", "run/123", {
+        stepRequirements: "[]",
+      });
 
       expect(requestStreamSpy).toHaveBeenCalledWith(
         "POST",

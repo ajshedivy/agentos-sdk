@@ -110,6 +110,7 @@ export type {
   WorkflowRunEvent,
   WorkflowStartedEvent,
   WorkflowCompletedEvent,
+  WorkflowErrorEvent,
   WorkflowCancelledEvent,
   StepStartedEvent,
   StepCompletedEvent,

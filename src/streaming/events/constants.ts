@@ -105,7 +105,7 @@ export const TeamEventType = {
 } as const;
 
 /**
- * Constants for workflow streaming event types (18 events).
+ * Constants for workflow streaming event types (19 events).
  *
  * @public
  */
@@ -113,6 +113,7 @@ export const WorkflowEventType = {
   // Lifecycle
   WorkflowStarted: "WorkflowStarted",
   WorkflowCompleted: "WorkflowCompleted",
+  WorkflowError: "WorkflowError",
   WorkflowCancelled: "WorkflowCancelled",
 
   // Steps

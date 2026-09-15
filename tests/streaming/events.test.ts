@@ -45,8 +45,10 @@ import {
   type TeamPreHookStartedEvent,
   type TeamSessionSummaryCompletedEvent,
   type TeamCustomEvent,
+  type TeamRunErrorEvent,
   type WorkflowStartedEvent,
   type WorkflowCompletedEvent,
+  type WorkflowErrorEvent,
   type WorkflowCancelledEvent,
   type StepStartedEvent,
   type StepCompletedEvent,
@@ -409,13 +411,14 @@ describe("streaming event types", () => {
   });
 
   describe("WorkflowEventType constants", () => {
-    it("has 18 workflow event type constants", () => {
-      expect(Object.keys(WorkflowEventType)).toHaveLength(18);
+    it("has 19 workflow event type constants", () => {
+      expect(Object.keys(WorkflowEventType)).toHaveLength(19);
     });
 
     it("includes all expected workflow event types", () => {
       expect(WorkflowEventType.WorkflowStarted).toBe("WorkflowStarted");
       expect(WorkflowEventType.WorkflowCompleted).toBe("WorkflowCompleted");
+      expect(WorkflowEventType.WorkflowError).toBe("WorkflowError");
       expect(WorkflowEventType.WorkflowCancelled).toBe("WorkflowCancelled");
       expect(WorkflowEventType.StepStarted).toBe("StepStarted");
       expect(WorkflowEventType.StepCompleted).toBe("StepCompleted");
@@ -559,6 +562,36 @@ describe("streaming event types", () => {
       };
 
       expect(event.content).toBe("Error message");
+      expect(event.error_type).toBeUndefined();
+    });
+
+    it("RunErrorEvent types the agno 3.0 error identity fields", () => {
+      // Shape observed from a vanilla agno 3.0.0 AgentOS run-error stream event
+      const event: RunErrorEvent = {
+        event: "RunError",
+        created_at: 1788535298,
+        agent_id: "probe-agent",
+        content: "Incorrect API key provided: sk-bogus...",
+        error_type: "model_provider_error",
+        error_id: "model_provider_error",
+        additional_data: { provider: "openai" },
+      };
+
+      expect(event.error_type).toBe("model_provider_error");
+      expect(event.error_id).toBe("model_provider_error");
+      expect(event.additional_data?.provider).toBe("openai");
+    });
+
+    it("TeamRunErrorEvent types the agno 3.0 error identity fields", () => {
+      const event: TeamRunErrorEvent = {
+        event: "TeamRunError",
+        created_at: Date.now(),
+        content: "Member failed",
+        error_type: "model_provider_error",
+      };
+
+      expect(event.error_type).toBe("model_provider_error");
+      expect(event.error_id).toBeUndefined();
     });
 
     it("RunContentCompletedEvent is constructible", () => {
@@ -690,6 +723,26 @@ describe("streaming event types", () => {
 
       expect(event.reason).toBe("timeout");
       expect(event.is_cancelled).toBe(true);
+    });
+
+    it("WorkflowErrorEvent has error and the agno 3.0 error identity fields", () => {
+      const event: WorkflowErrorEvent = {
+        event: "WorkflowError",
+        created_at: Date.now(),
+        error: "Step 'review' failed",
+        error_type: "model_provider_error",
+        error_id: "model_provider_error",
+      };
+
+      expect(event.error).toBe("Step 'review' failed");
+      expect(event.error_type).toBe("model_provider_error");
+    });
+
+    it("WorkflowErrorEvent narrows through the EventMap", () => {
+      const handler = (event: EventMap["WorkflowError"]) => event.error_type;
+      expect(
+        handler({ event: "WorkflowError", created_at: 1, error_type: "x" }),
+      ).toBe("x");
     });
 
     it("StepStartedEvent has step fields", () => {

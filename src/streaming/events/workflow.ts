@@ -1,5 +1,5 @@
 /**
- * Workflow streaming event interfaces (18 event types).
+ * Workflow streaming event interfaces (19 event types).
  *
  * @packageDocumentation
  */
@@ -33,6 +33,26 @@ export interface WorkflowStartedEvent extends BaseWorkflowRunEvent {
  */
 export interface WorkflowCompletedEvent extends BaseWorkflowRunEvent {
   event: "WorkflowCompleted";
+}
+
+/**
+ * Workflow error event.
+ *
+ * The workflow-level counterpart of the agent `RunError` event. Note the
+ * message field is `error`, not `content`. Carries the same agno >= 3.0
+ * failure identity (`error_type` / `error_id`); see `RunErrorEvent`.
+ *
+ * @public
+ */
+export interface WorkflowErrorEvent extends BaseWorkflowRunEvent {
+  event: "WorkflowError";
+  error?: string;
+  /** Machine-readable failure kind (agno >= 3.0), e.g. `"model_provider_error"` */
+  error_type?: string;
+  /** Stable error identifier (agno >= 3.0); agno currently mirrors `error_type` */
+  error_id?: string;
+  /** Extra structured context attached by the raising exception */
+  additional_data?: Record<string, unknown>;
 }
 
 /**
@@ -280,13 +300,14 @@ export interface StepsExecutionCompletedEvent extends BaseWorkflowRunEvent {
 // ---------------------------------------------------------------------------
 
 /**
- * Discriminated union of all workflow run streaming events (18 types).
+ * Discriminated union of all workflow run streaming events (19 types).
  *
  * @public
  */
 export type WorkflowRunEvent =
   | WorkflowStartedEvent
   | WorkflowCompletedEvent
+  | WorkflowErrorEvent
   | WorkflowCancelledEvent
   | StepStartedEvent
   | StepCompletedEvent
