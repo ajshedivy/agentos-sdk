@@ -4,7 +4,163 @@ All notable changes to `@worksofadam/agentos-sdk` will be documented in this fil
 
 This project follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.7.0] - 2026-09-15
+
+### Breaking
+
+Consumers that type-reference the re-exported `components`/`paths` are affected
+by the regeneration. Under `strict` TypeScript these are compile errors, not
+warnings:
+
+- `HealthStatus` (the return type of `client.health()`) is now an alias of
+  `components["schemas"]["HealthResponse"]`: `{ status: string;
+  instantiated_at: string }`. The previous hand-written shape
+  (`status: "healthy" | "degraded" | "unhealthy"`, `timestamp`, `details`)
+  never matched what `GET /health` returns. Code that read `.timestamp` or
+  `.details`, or narrowed `.status` against those literals, no longer compiles;
+  code that cast the result through `unknown` to reach `instantiated_at` can
+  drop the cast.
+- `error_code` is gone from every error schema; read `error_id` / `error_type`
+  instead (`ValidationErrorResponse` carries neither).
+- `ConfigResponse.available_models` is `Model[]` (`{ id, provider }`), not
+  `string[] | null` — element member access changes.
+- `VectorSearchResult.id` is now optional and nullable (`string | null`) rather
+  than a required `string`. This is the element type of `knowledge.search()`
+  results, so `r.id` needs a null guard.
+- `EvalsConfig` and `EvalsDomainConfig` no longer carry `available_models`.
+- `Body_create_agent_run.version` is `integer`, not `string`.
+- `ValidationErrorResponse.detail` widened to `string | ValidationErrorDetail[]`.
+- Enums grew, which breaks exhaustive `switch`/never-checks: `RunStatus` gained
+  `REGENERATED`; `RegistryResourceType` gained `workflow`, `knowledge`,
+  `memory_manager`, `session_summary_manager` and `learning`.
+- The hand-written `OSConfig` type is no longer exported. It never matched the
+  server's `/config` payload; use `components["schemas"]["ConfigResponse"]`
+  instead. `AgentOSClient.getConfig()` returns that type now.
+- `workflows.getRun(workflowId, runId, sessionId)` takes a required positional
+  `sessionId` (third argument), matching `agents.getRun` / `teams.getRun`.
+  `GET /workflows/{id}/runs/{run_id}` declares `session_id` as a required
+  query parameter, so the old two-argument call always 422'd.
+- `CreateSessionOptions.type` is `"agent" | "team" | "workflow"` (exported as
+  `SessionType`) instead of `string` — the only values `POST /sessions?type=`
+  accepts, and the SDK now needs it to pick the `agent_id` / `team_id` /
+  `workflow_id` body field.
+- `WorkflowContinueOptions.tools` is deprecated and now throws a `TypeError`
+  instead of being posted; pass `stepRequirements` (see **Fixed**). A 0.6.2
+  caller that passed `tools` to `workflows.continue()` fails loudly rather than
+  silently leaving the run paused.
+- `TeamEventType.TeamCustomEvent` matches the custom events a team stream
+  carries. Its value was `"TeamCustomEvent"`, a string agno never sends:
+  `TeamRunEvent.custom_event` is `"CustomEvent"`, the same value `RunEvent`
+  and `WorkflowRunEvent` use (`agno/run/team.py`, unchanged since 2.0), so
+  `stream.on(TeamEventType.TeamCustomEvent, ...)` never fired on a team run.
+  The constant now carries `"CustomEvent"` and is deprecated in favour of
+  `RunEventType.CustomEvent`, which covers all three emitters. `CustomEvent`
+  is one domain-neutral shape (`event: "CustomEvent"` plus the optional
+  agent, team and workflow base fields; the user-defined payload comes
+  through as extra keys) that is a member of `AgentRunEvent`, `TeamRunEvent`
+  and `WorkflowRunEvent` — the workflow union had no custom-event member —
+  and `TeamCustomEvent` is a deprecated alias of it. `EventMap["CustomEvent"]`
+  resolves to that shape; the `"TeamCustomEvent"` key `EventMap` used to
+  carry is gone, since no event with that name exists.
+
+### Added
+
+- `client.info()` -> `GET /info`, typed as `components["schemas"]["InfoResponse"]`
+  (`os_id`, `name`, `os_version`, `agno_version`, `agent_count`, `team_count`,
+  `workflow_count`, `mcp`, `auth_mode`). The only route that reports the running
+  AgentOS version now that `GET /` left the OpenAPI schema.
+- `components.restore(componentId)` -> `POST /components/{id}/restore`, returns
+  the restored `ComponentResponse`. A non-archived component answers 409, which
+  surfaces as `APIError` with `status: 409`.
+- `includeDeleted?: boolean` on `ListComponentsOptions` and a new
+  `GetComponentOptions` second argument on `components.get()`. When `true`,
+  `include_deleted=true` is sent and archived components (with an integer
+  `deleted_at`) are returned instead of being omitted / 404ing.
+- `RefreshMetricsOptions.background` on `metrics.refresh()`, sent as
+  `background=true`; the server returns 202 with `{ status: "started" |
+  "already_running", message }` instead of blocking on the recalculation.
+- `metrics.refreshStatus({ dbId? })` -> `GET /metrics/refresh/status`, typed as
+  `components["schemas"]["MetricsRefreshStatusResponse"]` (`status: idle |
+  running | completed | failed`, `started_at`, `finished_at`, `error`).
+- Exported option types `GetComponentOptions`, `RefreshMetricsOptions` and
+  `RefreshStatusOptions`.
+- `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
+- `APIError.errorId` / `APIError.errorType`: the `error_id` / `error_type` that
+  agno >= 3.0 puts in typed error bodies (`migration_required_error`,
+  `schema_mismatch_error`, ...), so callers can branch on identity instead of
+  `message` text. Both are optional — a plain `{ detail }` body leaves them
+  `undefined`. Every error class accepts them through a trailing `options`
+  argument (`APIErrorOptions`, exported) and `createErrorFromResponse` threads
+  them through, on both the `request()` and `requestStream()` paths.
+- `ConflictError` (409). agno 3.0 answers 409 for a reused idempotency key and
+  for continuing a run that is not paused. Not retried by `requestWithRetry`.
+- `MigrateResult` (`{ message, failed?, skipped? }`): the body of
+  `POST /databases/{db_id}/migrate` and `POST /databases/all/migrate`.
+- `MigrationFailedError` (status 207), thrown by `database.migrateAll()` when
+  the server answers 207 Multi-Status with a non-empty `failed` map (database
+  id -> failure reason); `skipped` lists the remote databases the server left
+  alone.
+
+### Changed
+
+- `metrics.refresh()` now returns the response body instead of discarding it:
+  `DayAggregatedMetrics[]` on the default synchronous path (the server has
+  returned this list since 2.8.5), or `MetricsRefreshResponse`
+  (`{ status, message }`) when the server reports `already_running` or when
+  `background: true` is passed. Discriminate with `Array.isArray()`. Callers
+  that ignored the old `void` result are unaffected.
+- `components.delete()` is documented as an archive (soft delete): the server
+  stamps `deleted_at` and keeps the id reserved. It has behaved this way since
+  2.8.5; the JSDoc said "delete".
+- Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
+  agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
+  117 paths and 187 schemas. No route was removed and no schema key used by
+  `src/resources/*` disappeared, so every hand-written resource method keeps
+  working unchanged. It is **not** additive for consumers, though: `src/index.ts`
+  re-exports `components` and `paths`, so the schema changes below are part of
+  this package's public type surface. See **Breaking** for the source-breaking
+  subset.
+  - New routes: `/info`, `/toolsets`, `/toolsets/{name}`, `/learnings*`,
+    `/service-accounts*`, agent/team/workflow `runs/{run_id}/resume` and
+    `runs/{run_id}/checkpoints`, `sessions/{session_id}/fork`,
+    `teams|workflows/{id}/runs/{run_id}/continue`, `PATCH /agents/{agent_id}/model`,
+    `PATCH /teams/{team_id}/model`, `POST /agents:apply`, `DELETE /agents/{component_id}`,
+    `POST /components/{component_id}/restore`, `GET /metrics/refresh/status`,
+    `GET /sessions/{session_id}/media/{storage_key}`, `GET /workflows/{workflow_id}/runs`,
+    the `/a2a/*` interface routes, and the `/queue` stub routes.
+  - Error payloads: `error_code` is gone from `BadRequestResponse`,
+    `NotFoundResponse`, `UnauthenticatedResponse`, `InternalServerErrorResponse`
+    and `ValidationErrorResponse`; the first four now carry `error_id` and
+    `error_type`. `ValidationErrorResponse.detail` widened to
+    `string | ValidationErrorDetail[]`.
+  - `ConfigResponse.available_models` changed from `string[] | null` to `Model[]`
+    (`{ id, provider }`).
+  - `user_id` added to `EvalSchema`, `ScheduleResponse`, `ScheduleRunResponse` and
+    `ComponentResponse`; `ScheduleResponse` also gained `managed_by`, `target_type`,
+    `target_id` and `disabled_reason`.
+  - `Body_create_agent_run.version` changed from `string` to `integer`.
+
+- `client.models.list()` now falls back to `GET /config` -> `available_models`
+  when `GET /models` answers 404. agno 3.0 removed the `/models` route, so
+  `models.list()` threw `NotFoundError` against a vanilla agno >= 3.0 server;
+  `/models` is still the first attempt, and ixora stacks (which keep their own
+  `/models` serving a superset catalog) are unaffected.
+- `AgentOSClient.getConfig()` returns `components["schemas"]["ConfigResponse"]`
+  instead of the hand-written `OSConfig`, so `available_models` typechecks as
+  `Model[]`.
+- `database.migrate()` / `database.migrateAll()` return `Promise<MigrateResult>`
+  instead of `Promise<void>`, and `migrateAll()` throws `MigrationFailedError`
+  on a 207 Multi-Status instead of resolving as success. A 207 satisfies
+  `response.ok`, so a failed migration — which a stack that registers every
+  database under one id always reports as 207, never 5xx — was previously
+  reported to the caller as a clean success.
+- Streaming requests (`agents.runStream()`, `teams.runStream()`, ...) parse a
+  non-2xx body the same way non-streaming ones do: `message` is the JSON
+  `detail` (or `message` / `error`) rather than the raw body text, and
+  `errorId` / `errorType` are populated.
+- Error bodies are read once as text and then parsed. Previously a non-JSON
+  error body surfaced as `HTTP <status>`: the `text()` fallback ran after a
+  failed `json()` had already consumed the stream.
 
 ### Fixed
 
@@ -71,125 +227,6 @@ This project follows [Semantic Versioning](https://semver.org/).
   reads no `AGENTOS_API_KEY` env var), `timeout` defaults to 30000 and
   `maxRetries` to 2, `headers` is documented, and the `metrics.get()` /
   `traces.list()` snippets use the camelCase option keys the resources take.
-- `TeamEventType.TeamCustomEvent` matches the custom events a team stream
-  carries. Its value was `"TeamCustomEvent"`, a string agno never sends:
-  `TeamRunEvent.custom_event` is `"CustomEvent"`, the same value `RunEvent`
-  and `WorkflowRunEvent` use (`agno/run/team.py`, unchanged since 2.0), so
-  `stream.on(TeamEventType.TeamCustomEvent, ...)` never fired on a team run.
-  The constant now carries `"CustomEvent"` and is deprecated in favour of
-  `RunEventType.CustomEvent`, which covers all three emitters. `CustomEvent`
-  is one domain-neutral shape (`event: "CustomEvent"` plus the optional
-  agent, team and workflow base fields; the user-defined payload comes
-  through as extra keys) that is a member of `AgentRunEvent`, `TeamRunEvent`
-  and `WorkflowRunEvent` — the workflow union had no custom-event member —
-  and `TeamCustomEvent` is a deprecated alias of it. `EventMap["CustomEvent"]`
-  resolves to that shape; the `"TeamCustomEvent"` key `EventMap` used to
-  carry is gone, since no event with that name exists.
-
-### Changed
-
-- `metrics.refresh()` now returns the response body instead of discarding it:
-  `DayAggregatedMetrics[]` on the default synchronous path (the server has
-  returned this list since 2.8.5), or `MetricsRefreshResponse`
-  (`{ status, message }`) when the server reports `already_running` or when
-  `background: true` is passed. Discriminate with `Array.isArray()`. Callers
-  that ignored the old `void` result are unaffected.
-- `components.delete()` is documented as an archive (soft delete): the server
-  stamps `deleted_at` and keeps the id reserved. It has behaved this way since
-  2.8.5; the JSDoc said "delete".
-- Regenerated `openapi.json` and `src/generated/types.ts` from an AgentOS running
-  agno 3.0.0. The committed spec predated 2.8.5 (76 paths); the new capture has
-  117 paths and 187 schemas. No route was removed and no schema key used by
-  `src/resources/*` disappeared, so every hand-written resource method keeps
-  working unchanged. It is **not** additive for consumers, though: `src/index.ts`
-  re-exports `components` and `paths`, so the schema changes below are part of
-  this package's public type surface. See **Breaking** for the source-breaking
-  subset.
-  - New routes: `/info`, `/toolsets`, `/toolsets/{name}`, `/learnings*`,
-    `/service-accounts*`, agent/team/workflow `runs/{run_id}/resume` and
-    `runs/{run_id}/checkpoints`, `sessions/{session_id}/fork`,
-    `teams|workflows/{id}/runs/{run_id}/continue`, `PATCH /agents/{agent_id}/model`,
-    `PATCH /teams/{team_id}/model`, `POST /agents:apply`, `DELETE /agents/{component_id}`,
-    `POST /components/{component_id}/restore`, `GET /metrics/refresh/status`,
-    `GET /sessions/{session_id}/media/{storage_key}`, `GET /workflows/{workflow_id}/runs`,
-    the `/a2a/*` interface routes, and the `/queue` stub routes.
-  - Error payloads: `error_code` is gone from `BadRequestResponse`,
-    `NotFoundResponse`, `UnauthenticatedResponse`, `InternalServerErrorResponse`
-    and `ValidationErrorResponse`; the first four now carry `error_id` and
-    `error_type`. `ValidationErrorResponse.detail` widened to
-    `string | ValidationErrorDetail[]`.
-  - `ConfigResponse.available_models` changed from `string[] | null` to `Model[]`
-    (`{ id, provider }`).
-  - `user_id` added to `EvalSchema`, `ScheduleResponse`, `ScheduleRunResponse` and
-    `ComponentResponse`; `ScheduleResponse` also gained `managed_by`, `target_type`,
-    `target_id` and `disabled_reason`.
-  - `Body_create_agent_run.version` changed from `string` to `integer`.
-
-- `client.models.list()` now falls back to `GET /config` -> `available_models`
-  when `GET /models` answers 404. agno 3.0 removed the `/models` route, so
-  `models.list()` threw `NotFoundError` against a vanilla agno >= 3.0 server;
-  `/models` is still the first attempt, and ixora stacks (which keep their own
-  `/models` serving a superset catalog) are unaffected.
-- `AgentOSClient.getConfig()` returns `components["schemas"]["ConfigResponse"]`
-  instead of the hand-written `OSConfig`, so `available_models` typechecks as
-  `Model[]`.
-- `database.migrate()` / `database.migrateAll()` return `Promise<MigrateResult>`
-  instead of `Promise<void>`, and `migrateAll()` throws `MigrationFailedError`
-  on a 207 Multi-Status instead of resolving as success. A 207 satisfies
-  `response.ok`, so a failed migration — which a stack that registers every
-  database under one id always reports as 207, never 5xx — was previously
-  reported to the caller as a clean success.
-- Streaming requests (`agents.runStream()`, `teams.runStream()`, ...) parse a
-  non-2xx body the same way non-streaming ones do: `message` is the JSON
-  `detail` (or `message` / `error`) rather than the raw body text, and
-  `errorId` / `errorType` are populated.
-- Error bodies are read once as text and then parsed. Previously a non-JSON
-  error body surfaced as `HTTP <status>`: the `text()` fallback ran after a
-  failed `json()` had already consumed the stream.
-
-### Breaking
-
-Consumers that type-reference the re-exported `components`/`paths` are affected
-by the regeneration. Under `strict` TypeScript these are compile errors, not
-warnings:
-
-- `HealthStatus` (the return type of `client.health()`) is now an alias of
-  `components["schemas"]["HealthResponse"]`: `{ status: string;
-  instantiated_at: string }`. The previous hand-written shape
-  (`status: "healthy" | "degraded" | "unhealthy"`, `timestamp`, `details`)
-  never matched what `GET /health` returns. Code that read `.timestamp` or
-  `.details`, or narrowed `.status` against those literals, no longer compiles;
-  code that cast the result through `unknown` to reach `instantiated_at` can
-  drop the cast.
-- `error_code` is gone from every error schema; read `error_id` / `error_type`
-  instead (`ValidationErrorResponse` carries neither).
-- `ConfigResponse.available_models` is `Model[]` (`{ id, provider }`), not
-  `string[] | null` — element member access changes.
-- `VectorSearchResult.id` is now optional and nullable (`string | null`) rather
-  than a required `string`. This is the element type of `knowledge.search()`
-  results, so `r.id` needs a null guard.
-- `EvalsConfig` and `EvalsDomainConfig` no longer carry `available_models`.
-- `Body_create_agent_run.version` is `integer`, not `string`.
-- `ValidationErrorResponse.detail` widened to `string | ValidationErrorDetail[]`.
-- Enums grew, which breaks exhaustive `switch`/never-checks: `RunStatus` gained
-  `REGENERATED`; `RegistryResourceType` gained `workflow`, `knowledge`,
-  `memory_manager`, `session_summary_manager` and `learning`.
-- The hand-written `OSConfig` type is no longer exported. It never matched the
-  server's `/config` payload; use `components["schemas"]["ConfigResponse"]`
-  instead. `AgentOSClient.getConfig()` returns that type now.
-- `workflows.getRun(workflowId, runId, sessionId)` takes a required positional
-  `sessionId` (third argument), matching `agents.getRun` / `teams.getRun`.
-  `GET /workflows/{id}/runs/{run_id}` declares `session_id` as a required
-  query parameter, so the old two-argument call always 422'd.
-- `CreateSessionOptions.type` is `"agent" | "team" | "workflow"` (exported as
-  `SessionType`) instead of `string` — the only values `POST /sessions?type=`
-  accepts, and the SDK now needs it to pick the `agent_id` / `team_id` /
-  `workflow_id` body field.
-
-Release note: this warrants a minor bump (0.7.0), not a patch.
-
-### Fixed
-
 - `sessions.create()` now matches `POST /sessions`: `type` and `db_id` go in
   the query string and the JSON body is a `CreateSessionRequest`
   (`session_name`, `user_id`, and `componentId` mapped to `agent_id` /
@@ -208,45 +245,6 @@ Release note: this warrants a minor bump (0.7.0), not a patch.
   message). `tools` is deprecated but still accepted: each entry is wrapped as
   `{ tool_execution: entry }` and sent as `requirements`, and it is never
   posted as `tools`.
-
-### Added
-
-- `client.info()` -> `GET /info`, typed as `components["schemas"]["InfoResponse"]`
-  (`os_id`, `name`, `os_version`, `agno_version`, `agent_count`, `team_count`,
-  `workflow_count`, `mcp`, `auth_mode`). The only route that reports the running
-  AgentOS version now that `GET /` left the OpenAPI schema.
-- `components.restore(componentId)` -> `POST /components/{id}/restore`, returns
-  the restored `ComponentResponse`. A non-archived component answers 409, which
-  surfaces as `APIError` with `status: 409`.
-- `includeDeleted?: boolean` on `ListComponentsOptions` and a new
-  `GetComponentOptions` second argument on `components.get()`. When `true`,
-  `include_deleted=true` is sent and archived components (with an integer
-  `deleted_at`) are returned instead of being omitted / 404ing.
-- `RefreshMetricsOptions.background` on `metrics.refresh()`, sent as
-  `background=true`; the server returns 202 with `{ status: "started" |
-  "already_running", message }` instead of blocking on the recalculation.
-- `metrics.refreshStatus({ dbId? })` -> `GET /metrics/refresh/status`, typed as
-  `components["schemas"]["MetricsRefreshStatusResponse"]` (`status: idle |
-  running | completed | failed`, `started_at`, `finished_at`, `error`).
-- Exported option types `GetComponentOptions`, `RefreshMetricsOptions` and
-  `RefreshStatusOptions`.
-- `GetMetricsOptions.userId`, sent as the `user_id` query param on `GET /metrics`.
-- `APIError.errorId` / `APIError.errorType`: the `error_id` / `error_type` that
-  agno >= 3.0 puts in typed error bodies (`migration_required_error`,
-  `schema_mismatch_error`, ...), so callers can branch on identity instead of
-  `message` text. Both are optional — a plain `{ detail }` body leaves them
-  `undefined`. Every error class accepts them through a trailing `options`
-  argument (`APIErrorOptions`, exported) and `createErrorFromResponse` threads
-  them through, on both the `request()` and `requestStream()` paths.
-- `ConflictError` (409). agno 3.0 answers 409 for a reused idempotency key and
-  for continuing a run that is not paused. Not retried by `requestWithRetry`.
-- `MigrateResult` (`{ message, failed?, skipped? }`): the body of
-  `POST /databases/{db_id}/migrate` and `POST /databases/all/migrate`.
-- `MigrationFailedError` (status 207), thrown by `database.migrateAll()` when
-  the server answers 207 Multi-Status with a non-empty `failed` map (database
-  id -> failure reason); `skipped` lists the remote databases the server left
-  alone.
-
 
 ## [0.6.1] - 2026-06-05
 
