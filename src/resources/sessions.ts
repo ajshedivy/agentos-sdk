@@ -5,6 +5,23 @@ import type { components } from "../generated/types";
 type SessionSchema = components["schemas"]["SessionSchema"];
 type PaginatedResponse =
   components["schemas"]["PaginatedResponse_SessionSchema_"];
+type CreateSessionRequest = components["schemas"]["CreateSessionRequest"];
+type RenameSessionBody = components["schemas"]["Body_rename_session"];
+
+/**
+ * Session type accepted by `POST /sessions?type=`
+ */
+export type SessionType = "agent" | "team" | "workflow";
+
+/** `CreateSessionRequest` field that carries the component ID for each session type */
+const COMPONENT_ID_FIELD: Record<
+  SessionType,
+  "agent_id" | "team_id" | "workflow_id"
+> = {
+  agent: "agent_id",
+  team: "team_id",
+  workflow: "workflow_id",
+};
 
 /**
  * Options for listing sessions
@@ -35,7 +52,7 @@ export interface ListSessionsOptions {
  */
 export interface CreateSessionOptions {
   /** Session type (agent, team, or workflow) */
-  type: string;
+  type: SessionType;
   /** Component ID to associate with session */
   componentId: string;
   /** Optional session name */
@@ -228,22 +245,30 @@ export class SessionsResource {
    * ```
    */
   async create(options: CreateSessionOptions): Promise<SessionSchema> {
-    const body: Record<string, unknown> = {
-      type: options.type,
-      component_id: options.componentId,
-    };
+    // The route reads `type` and `db_id` from the query; the JSON body is a
+    // CreateSessionRequest, which carries the component ID as agent_id /
+    // team_id / workflow_id.
+    const params = new URLSearchParams();
+    params.append("type", options.type);
+    if (options.dbId !== undefined) {
+      params.append("db_id", options.dbId);
+    }
+
+    const body: CreateSessionRequest = {};
+    body[COMPONENT_ID_FIELD[options.type]] = options.componentId;
 
     if (options.name !== undefined) {
-      body.name = options.name;
+      body.session_name = options.name;
     }
     if (options.userId !== undefined) {
       body.user_id = options.userId;
     }
-    if (options.dbId !== undefined) {
-      body.db_id = options.dbId;
-    }
 
-    return this.client.request<SessionSchema>("POST", "/sessions", { body });
+    return this.client.request<SessionSchema>(
+      "POST",
+      `/sessions?${params.toString()}`,
+      { body },
+    );
   }
 
   /**
@@ -258,7 +283,7 @@ export class SessionsResource {
    * ```
    */
   async rename(sessionId: string, name: string): Promise<void> {
-    const body = { name };
+    const body: RenameSessionBody = { session_name: name };
 
     await this.client.request<void>(
       "POST",

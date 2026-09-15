@@ -287,7 +287,7 @@ describe("SessionsResource", () => {
   });
 
   describe("create()", () => {
-    it("sends POST /sessions with JSON body (not FormData)", async () => {
+    it("sends POST /sessions?type= with a CreateSessionRequest JSON body", async () => {
       const mockSession = {
         session_id: "new-session",
         session_name: "New Session",
@@ -301,12 +301,12 @@ describe("SessionsResource", () => {
 
       expect(result).toEqual(mockSession);
       expect(requestSpy).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions", {
-        body: { type: "agent", component_id: "agent-123" },
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions?type=agent", {
+        body: { agent_id: "agent-123" },
       });
     });
 
-    it("includes type and component_id in body object", async () => {
+    it("maps componentId to team_id for team sessions", async () => {
       requestSpy.mockResolvedValueOnce({ session_id: "s1" });
 
       await resource.create({
@@ -314,12 +314,27 @@ describe("SessionsResource", () => {
         componentId: "team-456",
       });
 
-      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions", {
-        body: { type: "team", component_id: "team-456" },
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions?type=team", {
+        body: { team_id: "team-456" },
       });
     });
 
-    it("includes optional name when provided", async () => {
+    it("maps componentId to workflow_id for workflow sessions", async () => {
+      requestSpy.mockResolvedValueOnce({ session_id: "s1" });
+
+      await resource.create({
+        type: "workflow",
+        componentId: "workflow-789",
+      });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/sessions?type=workflow",
+        { body: { workflow_id: "workflow-789" } },
+      );
+    });
+
+    it("sends name as session_name in the body", async () => {
       requestSpy.mockResolvedValueOnce({ session_id: "s1" });
 
       await resource.create({
@@ -329,12 +344,14 @@ describe("SessionsResource", () => {
       });
 
       const callBody = requestSpy.mock.calls[0][2].body;
-      expect(callBody.name).toBe("My Workflow Session");
-      expect(callBody.type).toBe("workflow");
-      expect(callBody.component_id).toBe("workflow-789");
+      expect(callBody.session_name).toBe("My Workflow Session");
+      expect(callBody.workflow_id).toBe("workflow-789");
+      expect(callBody).not.toHaveProperty("name");
+      expect(callBody).not.toHaveProperty("type");
+      expect(callBody).not.toHaveProperty("component_id");
     });
 
-    it("includes optional user_id when provided", async () => {
+    it("includes optional user_id in the body when provided", async () => {
       requestSpy.mockResolvedValueOnce({ session_id: "s1" });
 
       await resource.create({
@@ -347,7 +364,7 @@ describe("SessionsResource", () => {
       expect(callBody.user_id).toBe("user-999");
     });
 
-    it("includes optional db_id when provided", async () => {
+    it("sends dbId as the db_id query param, not in the body", async () => {
       requestSpy.mockResolvedValueOnce({ session_id: "s1" });
 
       await resource.create({
@@ -356,30 +373,33 @@ describe("SessionsResource", () => {
         dbId: "db-888",
       });
 
-      const callBody = requestSpy.mock.calls[0][2].body;
-      expect(callBody.db_id).toBe("db-888");
+      const [, path, { body }] = requestSpy.mock.calls[0];
+      expect(path).toBe("/sessions?type=agent&db_id=db-888");
+      expect(body).not.toHaveProperty("db_id");
     });
 
-    it("includes name, user_id, db_id in body when all provided", async () => {
+    it("splits query and body correctly when all options provided", async () => {
       requestSpy.mockResolvedValueOnce({ session_id: "s1" });
 
       await resource.create({
-        type: "agent",
-        componentId: "agent-123",
+        type: "team",
+        componentId: "team-456",
         name: "Test Session",
         userId: "user-999",
         dbId: "db-888",
       });
 
-      expect(requestSpy).toHaveBeenCalledWith("POST", "/sessions", {
-        body: {
-          type: "agent",
-          component_id: "agent-123",
-          name: "Test Session",
-          user_id: "user-999",
-          db_id: "db-888",
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/sessions?type=team&db_id=db-888",
+        {
+          body: {
+            team_id: "team-456",
+            session_name: "Test Session",
+            user_id: "user-999",
+          },
         },
-      });
+      );
     });
 
     it("does not include optional fields when undefined", async () => {
@@ -393,17 +413,14 @@ describe("SessionsResource", () => {
         dbId: undefined,
       });
 
-      const callBody = requestSpy.mock.calls[0][2].body;
-      expect(callBody.type).toBe("agent");
-      expect(callBody.component_id).toBe("agent-123");
-      expect(callBody).not.toHaveProperty("name");
-      expect(callBody).not.toHaveProperty("user_id");
-      expect(callBody).not.toHaveProperty("db_id");
+      const [, path, { body }] = requestSpy.mock.calls[0];
+      expect(path).toBe("/sessions?type=agent");
+      expect(body).toEqual({ agent_id: "agent-123" });
     });
   });
 
   describe("rename()", () => {
-    it("sends POST /sessions/{id}/rename with JSON body (not FormData)", async () => {
+    it("sends POST /sessions/{id}/rename with a Body_rename_session JSON body", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.rename("session-123", "Updated Name");
@@ -412,17 +429,18 @@ describe("SessionsResource", () => {
       expect(requestSpy).toHaveBeenCalledWith(
         "POST",
         "/sessions/session-123/rename",
-        { body: { name: "Updated Name" } },
+        { body: { session_name: "Updated Name" } },
       );
     });
 
-    it("body contains name field as plain object", async () => {
+    it("body contains session_name only (route uses Body(embed=True))", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.rename("session-456", "New Session Name");
 
       const callBody = requestSpy.mock.calls[0][2].body;
-      expect(callBody).toEqual({ name: "New Session Name" });
+      expect(callBody).toEqual({ session_name: "New Session Name" });
+      expect(callBody).not.toHaveProperty("name");
     });
 
     it("URL-encodes sessionId", async () => {
@@ -433,7 +451,7 @@ describe("SessionsResource", () => {
       expect(requestSpy).toHaveBeenCalledWith(
         "POST",
         "/sessions/session%2Fspecial/rename",
-        { body: { name: "Name" } },
+        { body: { session_name: "Name" } },
       );
     });
   });

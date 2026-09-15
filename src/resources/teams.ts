@@ -56,16 +56,53 @@ export interface TeamStreamRunOptions {
 
 /**
  * Options for continuing a paused team run
+ *
+ * The team continue route resolves human-in-the-loop pauses from the
+ * `requirements` form field (the agent route's `tools` field is ignored
+ * here). Send the `requirements[]` entries from the RunPaused event back
+ * with the decision stamped: `tool_execution.confirmed: true | false`
+ * (optionally `tool_execution.confirmation_note`), or the requirement-level
+ * `confirmation`. Keep each entry's `id` and `tool_execution.tool_call_id`
+ * so the server can bind it to the stored requirement.
  */
 export interface TeamContinueOptions {
-  /** JSON string containing array of tool execution results */
-  tools: string;
+  /**
+   * JSON string containing an array of RunRequirement entries with their
+   * resolution (see interface doc). May be empty when an admin-required
+   * approval has already been resolved server-side.
+   */
+  requirements?: string;
+  /** Optional follow-up user message appended to the run before resuming */
+  input?: string;
+  /**
+   * @deprecated Use `requirements`. JSON string containing an array of tool
+   * executions; each entry is wrapped as `{ tool_execution: entry }` and sent
+   * as `requirements`. Ignored when `requirements` is provided.
+   */
+  tools?: string;
   /** Optional session ID */
   sessionId?: string;
   /** Optional user ID */
   userId?: string;
   /** Whether to stream the response (default: true) */
   stream?: boolean;
+}
+
+/**
+ * Wrap a legacy `tools` payload (array of tool executions) into the
+ * `requirements` shape the team route reads: `[{ tool_execution: entry }]`.
+ * The server binds each entry to the stored requirement by `tool_call_id`.
+ */
+function wrapToolsAsRequirements(tools: string): string {
+  const entries: unknown = JSON.parse(tools);
+  if (!Array.isArray(entries)) {
+    throw new TypeError(
+      "TeamContinueOptions.tools must be a JSON array of tool executions",
+    );
+  }
+  return JSON.stringify(
+    entries.map((tool_execution: unknown) => ({ tool_execution })),
+  );
 }
 
 /**
@@ -271,12 +308,27 @@ export class TeamsResource {
   }
 
   /**
-   * Continue a paused team run with tool results.
+   * Continue a paused team run with resolved requirements.
    *
    * @param teamId - The team identifier
    * @param runId - The run identifier to continue
-   * @param options - Continue options including tool results
+   * @param options - Continue options including the resolved requirements
    * @returns AgentStream if streaming, otherwise the run result
+   *
+   * @example
+   * ```typescript
+   * // `paused` is the RunPaused event; approve every requirement
+   * const requirements = JSON.stringify(
+   *   paused.requirements.map((r) => ({
+   *     ...r,
+   *     tool_execution: { ...r.tool_execution, confirmed: true },
+   *   })),
+   * );
+   * const stream = await client.teams.continue('team-id', paused.run_id, {
+   *   requirements,
+   *   sessionId: paused.session_id,
+   * });
+   * ```
    */
   async continue(
     teamId: string,
@@ -284,7 +336,17 @@ export class TeamsResource {
     options: TeamContinueOptions,
   ): Promise<AgentStream | unknown> {
     const formData = new FormData();
-    formData.append("tools", options.tools);
+    const requirements =
+      options.requirements ??
+      (options.tools !== undefined
+        ? wrapToolsAsRequirements(options.tools)
+        : undefined);
+    if (requirements !== undefined) {
+      formData.append("requirements", requirements);
+    }
+    if (options.input !== undefined) {
+      formData.append("input", options.input);
+    }
     formData.append("stream", String(options.stream ?? true));
 
     if (options.sessionId) {

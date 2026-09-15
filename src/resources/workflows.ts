@@ -320,18 +320,25 @@ export class WorkflowsResource {
    *
    * @param workflowId - The unique identifier for the workflow
    * @param runId - The unique identifier for the run
+   * @param sessionId - The session ID the run belongs to
    * @returns The run result
    *
    * @example
    * ```typescript
-   * const run = await client.workflows.getRun('workflow-id', 'run-id');
+   * const run = await client.workflows.getRun('workflow-id', 'run-id', 'session-123');
    * console.log(run);
    * ```
    */
-  async getRun(workflowId: string, runId: string): Promise<unknown> {
+  async getRun(
+    workflowId: string,
+    runId: string,
+    sessionId: string,
+  ): Promise<unknown> {
+    const params = new URLSearchParams();
+    params.append("session_id", sessionId);
     return this.client.request<unknown>(
       "GET",
-      `/workflows/${encodeURIComponent(workflowId)}/runs/${encodeURIComponent(runId)}`,
+      `/workflows/${encodeURIComponent(workflowId)}/runs/${encodeURIComponent(runId)}?${params.toString()}`,
     );
   }
 }

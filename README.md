@@ -146,12 +146,20 @@ console.log(result);
 
 **Create a new session:**
 ```typescript
+// type selects the route's ?type= query and which of agent_id / team_id /
+// workflow_id carries componentId in the CreateSessionRequest body
 const session = await client.sessions.create({
-  userId: 'user-123',
-  agentId: 'agent-456',
-  sessionName: 'Customer Support Chat'
+  type: 'team',
+  componentId: 'team-456',
+  name: 'Customer Support Chat',
+  userId: 'user-123'
 });
-console.log(session.id);
+console.log(session.session_id);
+```
+
+**Rename a session:**
+```typescript
+await client.sessions.rename('session-id', 'New name');
 ```
 
 **List sessions with filtering:**
