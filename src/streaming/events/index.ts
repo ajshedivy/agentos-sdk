@@ -11,6 +11,7 @@ export type {
   BaseAgentRunEvent,
   BaseTeamRunEvent,
   BaseWorkflowRunEvent,
+  CustomEvent,
   Metrics,
   RunMetrics,
   ToolCallData,
@@ -88,7 +89,6 @@ export type {
   CompressionCompletedEvent,
   FollowupsStartedEvent,
   FollowupsCompletedEvent,
-  CustomEvent,
 } from "./agent";
 
 // Team events

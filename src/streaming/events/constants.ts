@@ -69,7 +69,8 @@ export const AgentEventType = {
   FollowupsStarted: "FollowupsStarted",
   FollowupsCompleted: "FollowupsCompleted",
 
-  // Custom
+  // Custom. agno emits this same "CustomEvent" string for agent, team and
+  // workflow custom events, so this one constant matches all three streams.
   CustomEvent: "CustomEvent",
 } as const;
 
@@ -142,15 +143,20 @@ export const TeamEventType = {
   TeamTaskCreated: "TeamTaskCreated",
   TeamTaskUpdated: "TeamTaskUpdated",
 
-  // Custom
-  TeamCustomEvent: "TeamCustomEvent",
+  // Custom. There is no "TeamCustomEvent" on the wire: agno's
+  // TeamRunEvent.custom_event is "CustomEvent", the same string agent and
+  // workflow custom events carry.
+  /** @deprecated Use `RunEventType.CustomEvent` (same value). */
+  TeamCustomEvent: "CustomEvent",
 } as const;
 
 /**
  * Constants for workflow streaming event types (30 events).
  *
  * Covers every value of agno 3.0's `WorkflowRunEvent` enum
- * (`agno/run/workflow.py`).
+ * (`agno/run/workflow.py`) except `custom_event`, whose `"CustomEvent"`
+ * string is shared with agent and team streams: use
+ * `RunEventType.CustomEvent`.
  *
  * @public
  */
