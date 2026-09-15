@@ -132,8 +132,26 @@ describe("MetricsResource", () => {
   });
 
   describe("refresh()", () => {
+    const dayList = [
+      {
+        id: "2025-08-12_daily",
+        agent_runs_count: 2,
+        agent_sessions_count: 2,
+        team_runs_count: 0,
+        team_sessions_count: 0,
+        workflow_runs_count: 0,
+        workflow_sessions_count: 0,
+        users_count: 1,
+        token_metrics: { input_tokens: 256, output_tokens: 441 },
+        model_metrics: [],
+        date: "2025-08-12T00:00:00Z",
+        created_at: "2025-08-12T08:01:47Z",
+        updated_at: "2025-08-12T08:01:47Z",
+      },
+    ];
+
     it("calls POST /metrics/refresh with no params", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+      requestSpy.mockResolvedValueOnce(dayList);
 
       await resource.refresh();
 
@@ -141,12 +159,64 @@ describe("MetricsResource", () => {
       expect(requestSpy).toHaveBeenCalledTimes(1);
     });
 
-    it("returns void/undefined", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+    it("returns the refreshed DayAggregatedMetrics list", async () => {
+      requestSpy.mockResolvedValueOnce(dayList);
 
       const result = await resource.refresh();
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual(dayList);
+      expect(Array.isArray(result)).toBe(true);
+      if (Array.isArray(result)) {
+        expect(result[0]?.agent_runs_count).toBe(2);
+      }
+    });
+
+    it("returns already_running when a sync refresh is already in flight", async () => {
+      const body = {
+        status: "already_running",
+        message: "A metrics refresh is already in progress",
+      };
+      requestSpy.mockResolvedValueOnce(body);
+
+      const result = await resource.refresh();
+
+      expect(result).toEqual(body);
+      expect(Array.isArray(result)).toBe(false);
+    });
+
+    it("appends background=true and returns the 202 status body", async () => {
+      const body = {
+        status: "started",
+        message: "Metrics refresh started in background",
+      };
+      requestSpy.mockResolvedValueOnce(body);
+
+      const result = await resource.refresh({ background: true });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/metrics/refresh?background=true",
+      );
+      expect(result).toEqual(body);
+    });
+
+    it("combines db_id and background query params", async () => {
+      requestSpy.mockResolvedValueOnce({ status: "started" });
+
+      await resource.refresh({ dbId: "mydb", background: true });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/metrics/refresh?db_id=mydb&background=true",
+      );
+    });
+
+    it("omits background when false", async () => {
+      requestSpy.mockResolvedValueOnce([]);
+
+      await resource.refresh({ background: false });
+
+      expect(requestSpy).toHaveBeenCalledWith("POST", "/metrics/refresh");
     });
 
     it("propagates errors from client.request", async () => {
@@ -156,20 +226,68 @@ describe("MetricsResource", () => {
     });
 
     it("adds db_id query param when dbId provided", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+      requestSpy.mockResolvedValueOnce([]);
 
       await resource.refresh({ dbId: "mydb" });
 
-      const callPath = requestSpy.mock.calls[0][1];
-      expect(callPath).toContain("db_id=mydb");
+      expect(requestSpy).toHaveBeenCalledWith(
+        "POST",
+        "/metrics/refresh?db_id=mydb",
+      );
+    });
+  });
+
+  describe("refreshStatus()", () => {
+    it("calls GET /metrics/refresh/status with no params", async () => {
+      const body = {
+        status: "idle",
+        started_at: null,
+        finished_at: null,
+        error: null,
+      };
+      requestSpy.mockResolvedValueOnce(body);
+
+      const result = await resource.refreshStatus();
+
+      expect(result).toEqual(body);
+      expect(requestSpy).toHaveBeenCalledWith("GET", "/metrics/refresh/status");
+      expect(requestSpy).toHaveBeenCalledTimes(1);
     });
 
-    it("calls POST /metrics/refresh with no query params when no options", async () => {
-      requestSpy.mockResolvedValueOnce(undefined);
+    it("returns the completed status shape", async () => {
+      const body = {
+        status: "completed",
+        started_at: "2025-08-12T08:01:47Z",
+        finished_at: "2025-08-12T08:01:49Z",
+        error: null,
+      };
+      requestSpy.mockResolvedValueOnce(body);
 
-      await resource.refresh();
+      const result = await resource.refreshStatus();
 
-      expect(requestSpy).toHaveBeenCalledWith("POST", "/metrics/refresh");
+      expect(result.status).toBe("completed");
+      expect(result.started_at).toBe("2025-08-12T08:01:47Z");
+      expect(result.finished_at).toBe("2025-08-12T08:01:49Z");
+      expect(result.error).toBeNull();
+    });
+
+    it("adds db_id query param when dbId provided", async () => {
+      requestSpy.mockResolvedValueOnce({ status: "running" });
+
+      await resource.refreshStatus({ dbId: "mydb" });
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        "GET",
+        "/metrics/refresh/status?db_id=mydb",
+      );
+    });
+
+    it("propagates errors from client.request", async () => {
+      requestSpy.mockRejectedValueOnce(new Error("Database not found"));
+
+      await expect(resource.refreshStatus()).rejects.toThrow(
+        "Database not found",
+      );
     });
   });
 });

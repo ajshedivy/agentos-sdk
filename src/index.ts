@@ -45,6 +45,7 @@ export { ComponentsResource } from "./resources/components";
 export type {
   CreateComponentOptions,
   CreateConfigOptions,
+  GetComponentOptions,
   ListComponentsOptions,
   UpdateComponentOptions,
   UpdateConfigOptions,
@@ -84,7 +85,11 @@ export type {
 } from "./resources/memories";
 
 export { MetricsResource } from "./resources/metrics";
-export type { GetMetricsOptions } from "./resources/metrics";
+export type {
+  GetMetricsOptions,
+  RefreshMetricsOptions,
+  RefreshStatusOptions,
+} from "./resources/metrics";
 
 export { ModelsResource } from "./resources/models";
 

@@ -1,3 +1,5 @@
+import type { components } from "./generated/types";
+
 /**
  * Configuration options for the AgentOSClient
  */
@@ -43,10 +45,9 @@ export interface RequestOptions {
 }
 
 /**
- * Health status response from /health endpoint
+ * Health status response from `GET /health`
+ *
+ * Mirrors the server's `HealthResponse` schema: `status` (`"ok"` on a healthy
+ * instance) and `instantiated_at` (ISO-8601 timestamp of process start).
  */
-export interface HealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
-  timestamp: string;
-  details?: Record<string, unknown>;
-}
+export type HealthStatus = components["schemas"]["HealthResponse"];

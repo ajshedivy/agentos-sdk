@@ -125,8 +125,8 @@ describe("AgentOSClient", () => {
   describe("health", () => {
     it("should fetch health from /health endpoint", async () => {
       const mockHealth = {
-        status: "healthy",
-        timestamp: "2026-01-31T00:00:00Z",
+        status: "ok",
+        instantiated_at: "2026-01-31T00:00:00Z",
       };
       mockRequestWithRetry.mockResolvedValueOnce(mockHealth);
 
@@ -145,13 +145,11 @@ describe("AgentOSClient", () => {
       );
     });
 
-    it("should handle degraded health status", async () => {
-      const mockHealth = {
-        status: "degraded",
-        timestamp: "2026-01-31T00:00:00Z",
-        details: { database: "slow" },
-      };
-      mockRequestWithRetry.mockResolvedValueOnce(mockHealth);
+    it("exposes the HealthResponse wire shape without a cast", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({
+        status: "ok",
+        instantiated_at: "2026-01-31T00:00:00Z",
+      });
 
       const client = new AgentOSClient({
         baseUrl: "https://api.example.com",
@@ -159,8 +157,81 @@ describe("AgentOSClient", () => {
 
       const health = await client.health();
 
-      expect(health.status).toBe("degraded");
-      expect(health.details).toEqual({ database: "slow" });
+      // Typechecks against components["schemas"]["HealthResponse"]
+      const instantiatedAt: string = health.instantiated_at;
+      expect(instantiatedAt).toBe("2026-01-31T00:00:00Z");
+      expect(health.status).toBe("ok");
+    });
+  });
+
+  describe("info", () => {
+    it("should fetch OS metadata from /info endpoint", async () => {
+      const mockInfo = {
+        os_id: "test-os",
+        name: "AgentOS",
+        os_version: "1.0.0",
+        agno_version: "3.0.0",
+        agent_count: 4,
+        team_count: 1,
+        workflow_count: 0,
+        mcp: { enabled: true, path: "/mcp", oauth: null },
+        auth_mode: "none",
+      };
+      mockRequestWithRetry.mockResolvedValueOnce(mockInfo);
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      const info = await client.info();
+
+      expect(info).toEqual(mockInfo);
+      expect(info.os_version).toBe("1.0.0");
+      expect(info.agno_version).toBe("3.0.0");
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/info",
+        expect.objectContaining({ method: "GET" }),
+        2, // default maxRetries
+        30000, // default timeout
+      );
+    });
+
+    it("should send the Bearer token on /info when apiKey is set", async () => {
+      mockRequestWithRetry.mockResolvedValueOnce({
+        os_id: "test-os",
+        os_version: "1.0.0",
+        agno_version: "3.0.0",
+      });
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+        apiKey: "my-secret-key",
+      });
+
+      await client.info();
+
+      expect(mockRequestWithRetry).toHaveBeenCalledWith(
+        "https://api.example.com/info",
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer my-secret-key",
+          }),
+        }),
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it("should propagate errors for info", async () => {
+      mockRequestWithRetry.mockRejectedValueOnce(
+        new AuthenticationError("Unauthorized", "req-789"),
+      );
+
+      const client = new AgentOSClient({
+        baseUrl: "https://api.example.com",
+      });
+
+      await expect(client.info()).rejects.toThrow(AuthenticationError);
     });
   });
 
@@ -510,6 +581,16 @@ describe("AgentOSClient", () => {
       expect(client.metrics).toBeDefined();
       expect(typeof client.metrics.get).toBe("function");
       expect(typeof client.metrics.refresh).toBe("function");
+      expect(typeof client.metrics.refreshStatus).toBe("function");
+    });
+
+    it("exposes components resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.components).toBeDefined();
+      expect(typeof client.components.list).toBe("function");
+      expect(typeof client.components.get).toBe("function");
+      expect(typeof client.components.delete).toBe("function");
+      expect(typeof client.components.restore).toBe("function");
     });
 
     it("agents resource uses client.request for API calls", async () => {

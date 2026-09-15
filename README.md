@@ -295,7 +295,33 @@ console.log(metrics);
 
 **Refresh metrics:**
 ```typescript
-await client.metrics.refresh();
+// Synchronous: returns the refreshed DayAggregatedMetrics[] (or
+// { status: "already_running" } if a refresh is already in flight)
+const days = await client.metrics.refresh();
+if (Array.isArray(days)) console.log(`${days.length} days refreshed`);
+
+// Background: 202 with { status: "started" | "already_running", message }
+const started = await client.metrics.refresh({ background: true });
+
+// Poll the most recent refresh: idle | running | completed | failed
+const status = await client.metrics.refreshStatus();
+console.log(status.status, status.finished_at, status.error);
+```
+
+### Components
+
+```typescript
+// Archived (soft-deleted) components are hidden by default
+const active = await client.components.list();
+const all = await client.components.list({ includeDeleted: true });
+
+// delete() archives: deleted_at is stamped and the id stays reserved
+await client.components.delete('component-123');
+const archived = await client.components.get('component-123', { includeDeleted: true });
+console.log(archived.deleted_at);
+
+// restore() undoes the archive; 409 (APIError) if it was not archived
+const restored = await client.components.restore('component-123');
 ```
 
 ## Streaming
@@ -580,7 +606,8 @@ new AgentOSClient(options: AgentOSClientOptions)
 
 **Methods:**
 - `getConfig(): Promise<ConfigResponse>` - Get server configuration (`components['schemas']['ConfigResponse']`)
-- `health(): Promise<HealthStatus>` - Check API health status
+- `health(): Promise<HealthStatus>` - Check API health status (`{ status, instantiated_at }`, typed from `components['schemas']['HealthResponse']`)
+- `info(): Promise<InfoResponse>` - Get OS metadata: `os_version`, `agno_version`, component counts, MCP and `auth_mode` (`components['schemas']['InfoResponse']`)
 
 ### Resource Namespaces
 
