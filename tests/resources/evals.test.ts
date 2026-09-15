@@ -311,15 +311,18 @@ describe("EvalsResource", () => {
   });
 
   describe("delete()", () => {
-    it("sends DELETE /eval-runs with JSON body containing ids", async () => {
+    it("sends DELETE /eval-runs with a DeleteEvalRunsRequest body (eval_run_ids)", async () => {
       requestSpy.mockResolvedValueOnce(undefined);
 
       await resource.delete({ ids: ["eval-1", "eval-2"] });
 
       expect(requestSpy).toHaveBeenCalledWith("DELETE", "/eval-runs", {
-        body: JSON.stringify({ ids: ["eval-1", "eval-2"] }),
+        body: JSON.stringify({ eval_run_ids: ["eval-1", "eval-2"] }),
         headers: { "Content-Type": "application/json" },
       });
+      // The server's schema key, not the option name
+      const sent = JSON.parse(requestSpy.mock.calls[0][2].body);
+      expect(sent).not.toHaveProperty("ids");
     });
 
     it("appends db_id and table as query params", async () => {
@@ -343,7 +346,7 @@ describe("EvalsResource", () => {
       await resource.delete({ ids: ["eval-1"] });
 
       expect(requestSpy).toHaveBeenCalledWith("DELETE", "/eval-runs", {
-        body: JSON.stringify({ ids: ["eval-1"] }),
+        body: JSON.stringify({ eval_run_ids: ["eval-1"] }),
         headers: { "Content-Type": "application/json" },
       });
     });

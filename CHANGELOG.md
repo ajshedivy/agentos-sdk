@@ -57,6 +57,11 @@ This project follows [Semantic Versioning](https://semver.org/).
   and `ToolCallData` gains the `ToolExecution` HITL fields
   (`requires_confirmation`, `confirmed`, `user_input_schema`, ...). Existing
   names and shapes are unchanged.
+- `evals.delete()` sends the body `DELETE /eval-runs` reads. It posted
+  `{ ids: [...] }`, but the route validates `DeleteEvalRunsRequest`
+  (`{ eval_run_ids: string[] }`), so every call failed with
+  `422 eval_run_ids: Field required`. `DeleteEvalsOptions.ids` is unchanged and
+  is now sent as `eval_run_ids`.
 - `VERSION` (and therefore `client.version` and the `User-Agent` header) is
   read from `package.json` at build time instead of a hand-maintained literal
   in `src/index.ts`, which had stayed at `0.4.0` through 0.5.0 - 0.6.2. The
