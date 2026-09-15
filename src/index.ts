@@ -52,7 +52,7 @@ export type {
 } from "./resources/components";
 
 export { DatabaseResource } from "./resources/database";
-export type { MigrateOptions } from "./resources/database";
+export type { MigrateOptions, MigrateResult } from "./resources/database";
 
 export { EvalsResource } from "./resources/evals";
 export type {
@@ -144,12 +144,15 @@ export {
   APIError,
   AuthenticationError,
   BadRequestError,
+  ConflictError,
   InternalServerError,
+  MigrationFailedError,
   NotFoundError,
   RateLimitError,
   RemoteServerUnavailableError,
   UnprocessableEntityError,
 } from "./errors";
+export type { APIErrorOptions } from "./errors";
 
 // Streaming
 export {

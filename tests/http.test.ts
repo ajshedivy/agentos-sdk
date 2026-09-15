@@ -2,19 +2,89 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   APIError,
   BadRequestError,
+  ConflictError,
   InternalServerError,
   NotFoundError,
   RateLimitError,
 } from "../src/errors";
-import { request, requestWithRetry } from "../src/http";
+import { parseErrorBody, request, requestWithRetry } from "../src/http";
 
 // Mock global fetch
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
+/**
+ * Build a real Response for the error path. parseErrorBody consumes the body
+ * exactly once, so mocks that only stub `json()` would not exercise it.
+ */
+function errorResponse(
+  status: number,
+  body: unknown,
+  init: { headers?: Record<string, string>; statusText?: string } = {},
+): Response {
+  return new Response(
+    typeof body === "string" ? body : JSON.stringify(body),
+    { status, ...init },
+  );
+}
+
 describe("HTTP Module", () => {
   beforeEach(() => {
     mockFetch.mockReset();
+  });
+
+  describe("parseErrorBody", () => {
+    it("returns error_id and error_type from an agno 3.0 error body", async () => {
+      const response = errorResponse(500, {
+        detail: "Database schema is out of date",
+        error_id: "migration_required_error",
+        error_type: "MigrationRequiredError",
+      });
+
+      await expect(parseErrorBody(response)).resolves.toEqual({
+        message: "Database schema is out of date",
+        errorId: "migration_required_error",
+        errorType: "MigrationRequiredError",
+      });
+    });
+
+    it("leaves errorId and errorType undefined for a plain {detail} body", async () => {
+      const parsed = await parseErrorBody(
+        errorResponse(404, { detail: "Not found" }),
+      );
+      expect(parsed).toEqual({ message: "Not found" });
+      expect(parsed.errorId).toBeUndefined();
+      expect(parsed.errorType).toBeUndefined();
+    });
+
+    it("ignores non-string error_id / error_type", async () => {
+      await expect(
+        parseErrorBody(
+          errorResponse(500, { detail: "x", error_id: 42, error_type: null }),
+        ),
+      ).resolves.toEqual({ message: "x" });
+    });
+
+    it("uses the raw text when the body is not JSON", async () => {
+      await expect(
+        parseErrorBody(errorResponse(500, "Internal Server Error")),
+      ).resolves.toEqual({ message: "Internal Server Error" });
+    });
+
+    it("stringifies a JSON body without a recognised message field", async () => {
+      await expect(
+        parseErrorBody(errorResponse(500, { foo: "bar" })),
+      ).resolves.toEqual({ message: '{"foo":"bar"}' });
+    });
+
+    it("falls back to statusText, then HTTP <status>, for an empty body", async () => {
+      await expect(
+        parseErrorBody(errorResponse(502, "", { statusText: "Bad Gateway" })),
+      ).resolves.toEqual({ message: "Bad Gateway" });
+      await expect(parseErrorBody(errorResponse(502, ""))).resolves.toEqual({
+        message: "HTTP 502",
+      });
+    });
   });
 
   describe("request", () => {
@@ -44,12 +114,13 @@ describe("HTTP Module", () => {
     });
 
     it("should throw BadRequestError for 400", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: () => Promise.resolve({ message: "Invalid input" }),
-        headers: new Headers({ "x-request-id": "req-123" }),
-      });
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(
+          400,
+          { message: "Invalid input" },
+          { headers: { "x-request-id": "req-123" } },
+        ),
+      );
 
       await expect(request("https://api.test.com/endpoint")).rejects.toThrow(
         BadRequestError,
@@ -57,12 +128,9 @@ describe("HTTP Module", () => {
     });
 
     it("should throw NotFoundError for 404", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-        json: () => Promise.resolve({ message: "Not found" }),
-        headers: new Headers(),
-      });
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(404, { message: "Not found" }),
+      );
 
       await expect(request("https://api.test.com/endpoint")).rejects.toThrow(
         NotFoundError,
@@ -70,83 +138,119 @@ describe("HTTP Module", () => {
     });
 
     it("should include requestId in error", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        json: () => Promise.resolve({ message: "Server error" }),
-        headers: new Headers({ "x-request-id": "req-456" }),
-      });
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(
+          500,
+          { message: "Server error" },
+          { headers: { "x-request-id": "req-456" } },
+        ),
+      );
 
-      try {
-        await request("https://api.test.com/endpoint");
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalServerError);
-        expect((error as APIError).requestId).toBe("req-456");
-      }
+      await expect(
+        request("https://api.test.com/endpoint"),
+      ).rejects.toMatchObject({
+        name: "InternalServerError",
+        requestId: "req-456",
+      });
     });
 
     it("should handle non-JSON error responses", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        json: () => Promise.reject(new Error("Not JSON")),
-        text: () => Promise.resolve("Internal Server Error"),
-        statusText: "Internal Server Error",
-        headers: new Headers(),
-      });
-
-      await expect(request("https://api.test.com/endpoint")).rejects.toThrow(
-        InternalServerError,
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(500, "Internal Server Error", {
+          statusText: "Internal Server Error",
+        }),
       );
+
+      await expect(
+        request("https://api.test.com/endpoint"),
+      ).rejects.toMatchObject({
+        name: "InternalServerError",
+        message: "Internal Server Error",
+      });
     });
 
     it("should handle error response with error field", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: () => Promise.resolve({ error: "Something went wrong" }),
-        headers: new Headers(),
-      });
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(400, { error: "Something went wrong" }),
+      );
 
-      try {
-        await request("https://api.test.com/endpoint");
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestError);
-        expect((error as BadRequestError).message).toBe("Something went wrong");
-      }
+      await expect(
+        request("https://api.test.com/endpoint"),
+      ).rejects.toMatchObject({
+        name: "BadRequestError",
+        message: "Something went wrong",
+      });
     });
 
     it("should handle error response with nested error.message", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: () =>
-          Promise.resolve({ error: { message: "Nested error message" } }),
-        headers: new Headers(),
-      });
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(400, { error: { message: "Nested error message" } }),
+      );
 
-      try {
-        await request("https://api.test.com/endpoint");
-      } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestError);
-        expect((error as BadRequestError).message).toBe("Nested error message");
-      }
+      await expect(
+        request("https://api.test.com/endpoint"),
+      ).rejects.toMatchObject({
+        name: "BadRequestError",
+        message: "Nested error message",
+      });
     });
 
     it("should handle error response with detail field", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 422,
-        json: () => Promise.resolve({ detail: "Validation failed" }),
-        headers: new Headers(),
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(422, { detail: "Validation failed" }),
+      );
+
+      await expect(
+        request("https://api.test.com/endpoint"),
+      ).rejects.toMatchObject({
+        name: "UnprocessableEntityError",
+        message: "Validation failed",
       });
+    });
+
+    it("surfaces error_id / error_type from a 500 agno 3.0 body", async () => {
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(500, {
+          detail: "Failed to migrate database: schema is out of date",
+          error_id: "migration_required_error",
+          error_type: "MigrationRequiredError",
+        }),
+      );
+
+      await expect(
+        request("https://api.test.com/endpoint"),
+      ).rejects.toMatchObject({
+        name: "InternalServerError",
+        status: 500,
+        message: "Failed to migrate database: schema is out of date",
+        errorId: "migration_required_error",
+        errorType: "MigrationRequiredError",
+      });
+    });
+
+    it("leaves errorId undefined for a plain {detail} 404 body", async () => {
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(404, { detail: "Not found" }),
+      );
 
       try {
         await request("https://api.test.com/endpoint");
+        expect.unreachable("request should have thrown");
       } catch (error) {
-        expect(error).toBeInstanceOf(APIError);
-        expect((error as APIError).message).toBe("Validation failed");
+        expect(error).toBeInstanceOf(NotFoundError);
+        expect((error as APIError).errorId).toBeUndefined();
+        expect((error as APIError).errorType).toBeUndefined();
       }
+    });
+
+    it("should throw ConflictError for 409", async () => {
+      mockFetch.mockResolvedValueOnce(
+        errorResponse(409, { detail: "Run is not paused" }),
+      );
+
+      await expect(request("https://api.test.com/endpoint")).rejects.toThrow(
+        ConflictError,
+      );
     });
 
     it("should send JSON body correctly", async () => {
@@ -222,12 +326,7 @@ describe("HTTP Module", () => {
   describe("requestWithRetry", () => {
     it("should retry on 500 errors", async () => {
       mockFetch
-        .mockResolvedValueOnce({
-          ok: false,
-          status: 500,
-          json: () => Promise.resolve({ message: "Server error" }),
-          headers: new Headers(),
-        })
+        .mockResolvedValueOnce(errorResponse(500, { message: "Server error" }))
         .mockResolvedValueOnce({
           ok: true,
           status: 200,
@@ -247,12 +346,9 @@ describe("HTTP Module", () => {
     });
 
     it("should NOT retry on 400 errors", async () => {
-      mockFetch.mockResolvedValue({
-        ok: false,
-        status: 400,
-        json: () => Promise.resolve({ message: "Bad request" }),
-        headers: new Headers(),
-      });
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(errorResponse(400, { message: "Bad request" })),
+      );
 
       await expect(
         requestWithRetry("https://api.test.com/endpoint", {}, 2, 5000),
@@ -262,16 +358,27 @@ describe("HTTP Module", () => {
     });
 
     it("should NOT retry on 404 errors", async () => {
-      mockFetch.mockResolvedValue({
-        ok: false,
-        status: 404,
-        json: () => Promise.resolve({ message: "Not found" }),
-        headers: new Headers(),
-      });
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(errorResponse(404, { message: "Not found" })),
+      );
 
       await expect(
         requestWithRetry("https://api.test.com/endpoint", {}, 2, 5000),
       ).rejects.toThrow(NotFoundError);
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("should NOT retry on 409 errors", async () => {
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(
+          errorResponse(409, { detail: "Idempotency key reused" }),
+        ),
+      );
+
+      await expect(
+        requestWithRetry("https://api.test.com/endpoint", {}, 2, 5000),
+      ).rejects.toThrow(ConflictError);
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -299,12 +406,7 @@ describe("HTTP Module", () => {
 
     it("should retry on 429 rate limit errors", async () => {
       mockFetch
-        .mockResolvedValueOnce({
-          ok: false,
-          status: 429,
-          json: () => Promise.resolve({ message: "Rate limited" }),
-          headers: new Headers(),
-        })
+        .mockResolvedValueOnce(errorResponse(429, { message: "Rate limited" }))
         .mockResolvedValueOnce({
           ok: true,
           status: 200,
@@ -324,12 +426,9 @@ describe("HTTP Module", () => {
     });
 
     it("should throw RateLimitError after exhausting retries on 429", async () => {
-      mockFetch.mockResolvedValue({
-        ok: false,
-        status: 429,
-        json: () => Promise.resolve({ message: "Rate limited" }),
-        headers: new Headers(),
-      });
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(errorResponse(429, { message: "Rate limited" })),
+      );
 
       await expect(
         requestWithRetry("https://api.test.com/endpoint", {}, 1, 5000),
@@ -340,16 +439,35 @@ describe("HTTP Module", () => {
     });
 
     it("should throw InternalServerError after exhausting retries on 500", async () => {
-      mockFetch.mockResolvedValue({
-        ok: false,
-        status: 500,
-        json: () => Promise.resolve({ message: "Server error" }),
-        headers: new Headers(),
-      });
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(errorResponse(500, { message: "Server error" })),
+      );
 
       await expect(
         requestWithRetry("https://api.test.com/endpoint", {}, 1, 5000),
       ).rejects.toThrow(InternalServerError);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("keeps errorId on the error thrown after exhausting retries", async () => {
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(
+          errorResponse(500, {
+            detail: "Database schema is out of date",
+            error_id: "migration_required_error",
+            error_type: "MigrationRequiredError",
+          }),
+        ),
+      );
+
+      await expect(
+        requestWithRetry("https://api.test.com/endpoint", {}, 1, 5000),
+      ).rejects.toMatchObject({
+        name: "InternalServerError",
+        errorId: "migration_required_error",
+        errorType: "MigrationRequiredError",
+      });
 
       expect(mockFetch).toHaveBeenCalledTimes(2);
     });

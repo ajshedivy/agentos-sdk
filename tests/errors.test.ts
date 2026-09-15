@@ -3,7 +3,9 @@ import {
   APIError,
   AuthenticationError,
   BadRequestError,
+  ConflictError,
   InternalServerError,
+  MigrationFailedError,
   NotFoundError,
   RateLimitError,
   RemoteServerUnavailableError,
@@ -19,6 +21,21 @@ describe("Error Classes", () => {
       expect(error.message).toBe("Server error");
       expect(error.requestId).toBe("req-123");
       expect(error.name).toBe("APIError");
+    });
+
+    it("carries errorId and errorType from the options arg", () => {
+      const error = new APIError(500, "Server error", undefined, undefined, {
+        errorId: "migration_required_error",
+        errorType: "MigrationRequiredError",
+      });
+      expect(error.errorId).toBe("migration_required_error");
+      expect(error.errorType).toBe("MigrationRequiredError");
+    });
+
+    it("has undefined errorId and errorType when options are omitted", () => {
+      const error = new APIError(500, "Server error");
+      expect(error.errorId).toBeUndefined();
+      expect(error.errorType).toBeUndefined();
     });
 
     it("should work with instanceof", () => {
@@ -101,6 +118,60 @@ describe("Error Classes", () => {
     it("should preserve requestId and headers", () => {
       const error = new NotFoundError("Resource not found", "req-003");
       expect(error.requestId).toBe("req-003");
+    });
+  });
+
+  describe("ConflictError", () => {
+    it("should have status 409", () => {
+      const error = new ConflictError("Run is not paused");
+      expect(error.status).toBe(409);
+      expect(error.name).toBe("ConflictError");
+    });
+
+    it("should work with instanceof", () => {
+      const error = new ConflictError("Run is not paused");
+      expect(error instanceof ConflictError).toBe(true);
+      expect(error instanceof APIError).toBe(true);
+      expect(error instanceof Error).toBe(true);
+    });
+
+    it("should preserve requestId, headers and options", () => {
+      const headers = { "content-type": "application/json" };
+      const error = new ConflictError("Conflict", "req-409", headers, {
+        errorId: "conflict_error",
+      });
+      expect(error.requestId).toBe("req-409");
+      expect(error.headers).toEqual(headers);
+      expect(error.errorId).toBe("conflict_error");
+    });
+  });
+
+  describe("MigrationFailedError", () => {
+    const failed = { "agentos-db": "relation already exists" };
+
+    it("should have status 207 and carry failed / skipped", () => {
+      const error = new MigrationFailedError(
+        "Migrated 0/1 databases to latest version",
+        failed,
+        ["remote-db"],
+      );
+      expect(error.status).toBe(207);
+      expect(error.name).toBe("MigrationFailedError");
+      expect(error.message).toBe("Migrated 0/1 databases to latest version");
+      expect(error.failed).toEqual(failed);
+      expect(error.skipped).toEqual(["remote-db"]);
+    });
+
+    it("leaves skipped undefined when not provided", () => {
+      const error = new MigrationFailedError("Migrated 0/1", failed);
+      expect(error.skipped).toBeUndefined();
+    });
+
+    it("should work with instanceof", () => {
+      const error = new MigrationFailedError("Migrated 0/1", failed);
+      expect(error instanceof MigrationFailedError).toBe(true);
+      expect(error instanceof APIError).toBe(true);
+      expect(error instanceof Error).toBe(true);
     });
   });
 
@@ -215,6 +286,12 @@ describe("Error Classes", () => {
       expect(error.status).toBe(404);
     });
 
+    it("should create ConflictError for 409", () => {
+      const error = createErrorFromResponse(409, "Conflict");
+      expect(error instanceof ConflictError).toBe(true);
+      expect(error.status).toBe(409);
+    });
+
     it("should create UnprocessableEntityError for 422", () => {
       const error = createErrorFromResponse(422, "Validation error");
       expect(error instanceof UnprocessableEntityError).toBe(true);
@@ -274,6 +351,24 @@ describe("Error Classes", () => {
       expect(error.requestId).toBe("req-test");
       expect(error.headers).toEqual(headers);
     });
+
+    it("threads errorId / errorType through to every class", () => {
+      const options = {
+        errorId: "migration_required_error",
+        errorType: "MigrationRequiredError",
+      };
+      for (const status of [400, 401, 404, 409, 422, 429, 500, 502, 503, 418]) {
+        const error = createErrorFromResponse(
+          status,
+          "msg",
+          undefined,
+          undefined,
+          options,
+        );
+        expect(error.errorId).toBe("migration_required_error");
+        expect(error.errorType).toBe("MigrationRequiredError");
+      }
+    });
   });
 
   describe("Error inheritance chain", () => {
@@ -282,10 +377,12 @@ describe("Error Classes", () => {
         new BadRequestError("test"),
         new AuthenticationError("test"),
         new NotFoundError("test"),
+        new ConflictError("test"),
         new UnprocessableEntityError("test"),
         new RateLimitError("test"),
         new InternalServerError("test"),
         new RemoteServerUnavailableError("test"),
+        new MigrationFailedError("test", { db: "reason" }),
       ];
 
       for (const error of errors) {

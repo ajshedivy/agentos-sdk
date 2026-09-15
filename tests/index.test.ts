@@ -9,12 +9,14 @@ import {
   AuthenticationError,
   BadRequestError,
   ComponentsResource,
+  ConflictError,
   DatabaseResource,
   EvalsResource,
   InternalServerError,
   KnowledgeResource,
   MemoriesResource,
   MetricsResource,
+  MigrationFailedError,
   ModelsResource,
   NotFoundError,
   RateLimitError,
@@ -30,6 +32,7 @@ import {
   normalizeFileInput,
 } from "../src/index";
 import type {
+  APIErrorOptions,
   AgentRunEvent,
   Audio,
   ContinueOptions,
@@ -62,6 +65,7 @@ import type {
   MemoryUpdateCompletedEvent,
   MemoryUpdateStartedEvent,
   MigrateOptions,
+  MigrateResult,
   OptimizeMemoriesOptions,
   ResolveApprovalOptions,
   RunCompletedEvent,
@@ -146,10 +150,20 @@ describe("Package Exports", () => {
     expect(BadRequestError).toBeDefined();
     expect(AuthenticationError).toBeDefined();
     expect(NotFoundError).toBeDefined();
+    expect(ConflictError).toBeDefined();
     expect(UnprocessableEntityError).toBeDefined();
     expect(RateLimitError).toBeDefined();
     expect(InternalServerError).toBeDefined();
     expect(RemoteServerUnavailableError).toBeDefined();
+    expect(MigrationFailedError).toBeDefined();
+  });
+
+  it("should export error-identity and migrate-result types", () => {
+    // Type-level check - if this compiles, exports work
+    const _options: APIErrorOptions = { errorId: "migration_required_error" };
+    const _result: MigrateResult = { message: "ok", skipped: [] };
+    expect(_options.errorId).toBe("migration_required_error");
+    expect(_result.message).toBe("ok");
   });
 
   it("should allow instantiation of AgentOSClient", () => {
