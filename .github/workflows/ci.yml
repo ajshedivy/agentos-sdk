@@ -3,8 +3,9 @@ name: CI
 on:
   push:
     branches: [main]
+  # No branches filter: stacked PRs (base = another feature branch) must get
+  # checks too, not only PRs targeting main.
   pull_request:
-    branches: [main]
 
 jobs:
   lint:
