@@ -62,16 +62,22 @@ warnings:
   and `TeamCustomEvent` is a deprecated alias of it. `EventMap["CustomEvent"]`
   resolves to that shape; the `"TeamCustomEvent"` key `EventMap` used to
   carry is gone, since no event with that name exists.
+- `database.migrate()` / `database.migrateAll()` return `Promise<MigrateResult>`
+  instead of `Promise<void>`, and `migrateAll()` throws `MigrationFailedError`
+  on a 207 Multi-Status instead of resolving as success. A 207 satisfies
+  `response.ok`, so a failed migration — which a stack that registers every
+  database under one id always reports as 207, never 5xx — was previously
+  reported to the caller as a clean success.
 
 ### Added
 
 - `client.info()` -> `GET /info`, typed as `components["schemas"]["InfoResponse"]`
   (`os_id`, `name`, `os_version`, `agno_version`, `agent_count`, `team_count`,
-  `workflow_count`, `mcp`, `auth_mode`). The only route that reports the running
-  AgentOS version now that `GET /` left the OpenAPI schema.
+  `workflow_count`, `mcp`, `auth_mode`). The route that reports the running AgentOS
+  and agno versions.
 - `components.restore(componentId)` -> `POST /components/{id}/restore`, returns
   the restored `ComponentResponse`. A non-archived component answers 409, which
-  surfaces as `APIError` with `status: 409`.
+  surfaces as `ConflictError` (an `APIError` with `status: 409`).
 - `includeDeleted?: boolean` on `ListComponentsOptions` and a new
   `GetComponentOptions` second argument on `components.get()`. When `true`,
   `include_deleted=true` is sent and archived components (with an integer
@@ -148,12 +154,6 @@ warnings:
 - `AgentOSClient.getConfig()` returns `components["schemas"]["ConfigResponse"]`
   instead of the hand-written `OSConfig`, so `available_models` typechecks as
   `Model[]`.
-- `database.migrate()` / `database.migrateAll()` return `Promise<MigrateResult>`
-  instead of `Promise<void>`, and `migrateAll()` throws `MigrationFailedError`
-  on a 207 Multi-Status instead of resolving as success. A 207 satisfies
-  `response.ok`, so a failed migration — which a stack that registers every
-  database under one id always reports as 207, never 5xx — was previously
-  reported to the caller as a clean success.
 - Streaming requests (`agents.runStream()`, `teams.runStream()`, ...) parse a
   non-2xx body the same way non-streaming ones do: `message` is the JSON
   `detail` (or `message` / `error`) rather than the raw body text, and
@@ -366,7 +366,8 @@ Initial release of the AgentOS TypeScript SDK.
 - `prepublishOnly` validation hook
 - Node.js 18+ runtime compatibility
 
-[Unreleased]: https://github.com/ajshedivy/agentos-sdk/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/ajshedivy/agentos-sdk/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/ajshedivy/agentos-sdk/compare/v0.6.2...v0.7.0
 [0.3.0]: https://github.com/ajshedivy/agentos-sdk/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/ajshedivy/agentos-sdk/compare/v0.1.1...v0.1.2
