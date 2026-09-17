@@ -15,6 +15,7 @@ import {
   EvalsResource,
   InternalServerError,
   KnowledgeResource,
+  LearningsResource,
   MemoriesResource,
   MetricsResource,
   MigrationFailedError,
@@ -43,21 +44,30 @@ import type {
   CreateConnectionOptions,
   CreateEvalOptions,
   CreateKeyOptions,
+  CreateLearningOptions,
   CreateScheduleOptions,
   DeleteAllMemoriesOptions,
   DeleteAllSessionsOptions,
   DeleteEvalsOptions,
+  DeleteLearningOptions,
+  DeleteLearningUserOptions,
   FileInput,
   FileType,
   GetMemoryStatsOptions,
   GetTopicsOptions,
   GetTraceStatsOptions,
   Image,
+  LearningCreate,
+  LearningResponse,
+  LearningUpdate,
+  LearningUserStats,
   ListAgentRunsOptions,
   ListApprovalsOptions,
   ListComponentsOptions,
   ListEvalsOptions,
   ListKnowledgeOptions,
+  ListLearningUsersOptions,
+  ListLearningsOptions,
   ListRegistryOptions,
   ListSchedulesOptions,
   ListSourceFilesOptions,
@@ -81,6 +91,7 @@ import type {
   UpdateConnectionOptions,
   UpdateContentOptions,
   UpdateEvalOptions,
+  UpdateLearningOptions,
   UpdateScheduleOptions,
   UpdateSessionOptions,
   UploadOptions,
@@ -125,6 +136,46 @@ describe("Package Exports", () => {
 
   it("exports MemoriesResource", () => {
     expect(MemoriesResource).toBeDefined();
+  });
+
+  it("exports LearningsResource", () => {
+    expect(LearningsResource).toBeDefined();
+    expect(typeof LearningsResource).toBe("function");
+  });
+
+  it("exports learnings option and schema types", () => {
+    // Type-level check - if this compiles, exports work
+    const listOpts: ListLearningsOptions = { learningType: "user_profile" };
+    const createOpts: CreateLearningOptions = {
+      learningType: "learned_knowledge",
+      content: { title: "t" },
+    };
+    const updateOpts: UpdateLearningOptions = { content: { title: "u" } };
+    const deleteOpts: DeleteLearningOptions = { dbId: "db-1" };
+    const listUsersOpts: ListLearningUsersOptions = { sortBy: "user_id" };
+    const deleteUserOpts: DeleteLearningUserOptions = {
+      learningType: "user_memory",
+    };
+    const create: LearningCreate = {
+      learning_type: "learned_knowledge",
+      content: { title: "t" },
+    };
+    const update: LearningUpdate = { metadata: { reviewed: true } };
+    const response: LearningResponse = {
+      learning_id: "lrn-1",
+      learning_type: "learned_knowledge",
+    };
+    const stats: LearningUserStats = { user_id: "user-1" };
+    expect(listOpts.learningType).toBe("user_profile");
+    expect(createOpts.learningType).toBe("learned_knowledge");
+    expect(updateOpts.content).toEqual({ title: "u" });
+    expect(deleteOpts.dbId).toBe("db-1");
+    expect(listUsersOpts.sortBy).toBe("user_id");
+    expect(deleteUserOpts.learningType).toBe("user_memory");
+    expect(create.learning_type).toBe("learned_knowledge");
+    expect(update.metadata).toEqual({ reviewed: true });
+    expect(response.learning_id).toBe("lrn-1");
+    expect(stats.user_id).toBe("user-1");
   });
 
   it("exports TracesResource", () => {

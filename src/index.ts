@@ -78,6 +78,21 @@ export type {
   UploadRemoteOptions,
 } from "./resources/knowledge";
 
+export { LearningsResource } from "./resources/learnings";
+export type {
+  CreateLearningOptions,
+  DeleteLearningOptions,
+  DeleteLearningUserOptions,
+  GetLearningOptions,
+  LearningCreate,
+  LearningResponse,
+  LearningUpdate,
+  LearningUserStats,
+  ListLearningUsersOptions,
+  ListLearningsOptions,
+  UpdateLearningOptions,
+} from "./resources/learnings";
+
 export { MemoriesResource } from "./resources/memories";
 export type {
   CreateMemoryOptions,

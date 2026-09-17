@@ -225,6 +225,58 @@ const results = await client.memories.list({
 console.log(results);
 ```
 
+### Learnings
+
+Learnings are the agno 3.0 learning-machine records (`GET /learnings`): typed
+JSON payloads such as `user_profile`, `user_memory`, `session_context`,
+`entity_memory` and `learned_knowledge`, each scoped by a `namespace` and by
+optional user / agent / team / session / entity identity fields.
+
+**List learnings with filters:**
+```typescript
+const learnings = await client.learnings.list({
+  learningType: 'learned_knowledge',
+  namespace: 'global',
+  agentId: 'ibmi-sysadmin',
+  limit: 20,
+});
+for (const learning of learnings.data) {
+  console.log(learning.learning_id, learning.content);
+}
+```
+
+**Create a learned-knowledge record:**
+```typescript
+const learning = await client.learnings.create({
+  learningType: 'learned_knowledge',
+  namespace: 'global',
+  content: {
+    title: 'Prefer QSYS2 services',
+    learning: 'Use QSYS2.OBJECT_STATISTICS instead of DSPOBJD output files',
+    context: 'IBM i object queries',
+    tags: ['ibmi', 'sql'],
+  },
+});
+console.log(learning.learning_id);
+```
+
+**Update, delete, and list owning users:**
+```typescript
+await client.learnings.update(learning.learning_id, {
+  content: { ...learning.content, tags: ['ibmi', 'sql', 'qsys2'] },
+});
+await client.learnings.delete(learning.learning_id);
+
+const users = await client.learnings.listUsers({ learningType: 'user_profile' });
+await client.learnings.deleteUser('user-123', { learningType: 'user_memory' });
+```
+
+The identity-keyed types (`user_profile`, `user_memory`, `session_context`,
+`entity_memory`) derive their `learning_id` from the identity fields you pass
+(`userId`, `sessionId`, `entityId` / `entityType`, ...), so a second `create`
+for the same identity answers `409 Conflict` — call `update` instead. Other
+types, such as `learned_knowledge`, get a generated id on every create.
+
 ### Knowledge
 
 **Upload a file to knowledge base:**
@@ -721,6 +773,7 @@ All resource operations are accessed via namespaced properties:
 - `client.workflows` - Workflow operations
 - `client.sessions` - Session management
 - `client.memories` - Memory operations
+- `client.learnings` - Learning records (agno 3.0 learning machine)
 - `client.knowledge` - Knowledge base operations
 - `client.traces` - Trace retrieval
 - `client.metrics` - Metrics retrieval
