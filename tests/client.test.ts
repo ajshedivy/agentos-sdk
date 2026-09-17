@@ -571,6 +571,18 @@ describe("AgentOSClient", () => {
       expect(typeof client.memories.create).toBe("function");
     });
 
+    it("exposes learnings resource", () => {
+      const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
+      expect(client.learnings).toBeDefined();
+      expect(typeof client.learnings.list).toBe("function");
+      expect(typeof client.learnings.get).toBe("function");
+      expect(typeof client.learnings.create).toBe("function");
+      expect(typeof client.learnings.update).toBe("function");
+      expect(typeof client.learnings.delete).toBe("function");
+      expect(typeof client.learnings.listUsers).toBe("function");
+      expect(typeof client.learnings.deleteUser).toBe("function");
+    });
+
     it("exposes traces resource", () => {
       const client = new AgentOSClient({ baseUrl: "https://api.example.com" });
       expect(client.traces).toBeDefined();

@@ -9,6 +9,7 @@ import { ComponentsResource } from "./resources/components";
 import { DatabaseResource } from "./resources/database";
 import { EvalsResource } from "./resources/evals";
 import { KnowledgeResource } from "./resources/knowledge";
+import { LearningsResource } from "./resources/learnings";
 import { MemoriesResource } from "./resources/memories";
 import { MetricsResource } from "./resources/metrics";
 import { ModelsResource } from "./resources/models";
@@ -50,6 +51,7 @@ export class AgentOSClient {
   readonly database: DatabaseResource;
   readonly evals: EvalsResource;
   readonly knowledge: KnowledgeResource;
+  readonly learnings: LearningsResource;
   readonly memories: MemoriesResource;
   readonly metrics: MetricsResource;
   readonly models: ModelsResource;
@@ -90,6 +92,7 @@ export class AgentOSClient {
     this.database = new DatabaseResource(this);
     this.evals = new EvalsResource(this);
     this.knowledge = new KnowledgeResource(this);
+    this.learnings = new LearningsResource(this);
     this.memories = new MemoriesResource(this);
     this.metrics = new MetricsResource(this);
     this.models = new ModelsResource(this);
