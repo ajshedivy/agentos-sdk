@@ -4,6 +4,19 @@ All notable changes to `@worksofadam/agentos-sdk` will be documented in this fil
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-09-17
+
+### Added
+
+- `client.learnings` — a `LearningsResource` over agno 3.0's `/learnings`
+  router (the LearningMachine stores): `list`, `get`, `create`, `update`,
+  `delete`, `listUsers`, `deleteUser`. Options are camelCase and mapped to the
+  wire like `memories`; `dbId`/`table` go on the query string. Exported types:
+  `LearningResponse`, `LearningCreate`, `LearningUpdate`, `LearningUserStats`
+  and the per-method option types. Identity-keyed types (`user_profile`,
+  `user_memory`, `session_context`, `entity_memory`) answer 409 on a duplicate
+  create; use `update`. (#35)
+
 ## [0.7.0] - 2026-09-15
 
 ### Breaking
